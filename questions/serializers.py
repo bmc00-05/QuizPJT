@@ -17,4 +17,5 @@ class  QuestionSerializer(serializers.ModelSerializer):
             'explanation',
             'category',
         )
-        read_only_fields = ['created_by_admin']
+        read_only_fields = ['created_by_admin'] # 어드민 문제 여부 유저등록 불가
+        

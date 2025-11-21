@@ -11,7 +11,7 @@ class Category(models.Model):
     
 class Problem(models.Model):
 
-    question = models.TextField()   # 문제 (필수)
+    question = models.TextField(max_length=500)   # 문제 (필수)
     choice1 = models.CharField(max_length=255)  # 객관식 항목 1~4 (필수)
     choice2 = models.CharField(max_length=255)
     choice3 = models.CharField(max_length=255)
