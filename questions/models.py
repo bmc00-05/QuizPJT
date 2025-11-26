@@ -1,5 +1,6 @@
 from django.db import models
 from django.core.validators import MinValueValidator, MaxValueValidator
+from django.conf import settings
 
 # 카테고리 모델
 class Category(models.Model):
@@ -8,7 +9,8 @@ class Category(models.Model):
 
     def __str__(self):
         return self.name
-    
+
+# 문제 모델
 class Problem(models.Model):
 
     question = models.TextField(max_length=500)   # 문제 (필수)
@@ -29,6 +31,15 @@ class Problem(models.Model):
     updated_at = models.DateTimeField(auto_now=True)    # 수정 시간
 
     created_by_admin = models.BooleanField(default = False) # 운영자 생성 여부
+
+    created_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="created_problems",
+        verbose_name="작성자"
+    )
 
     # 난이도 선택지
     EASY = 'easy'
