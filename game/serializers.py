@@ -10,9 +10,20 @@ class MapSerializer(serializers.ModelSerializer):
 
 # 문제집 시리얼라이저
 class ProblemSetSerializer(serializers.ModelSerializer):
+    like_count = serializers.SerializerMethodField()
+    created_by_name = serializers.SerializerMethodField()
+
     class Meta:
         model = ProblemSet
-        fields = ('id', 'title', 'description',)
+        fields = ('id', 'title', 'description', 'like_count', 'created_by_name', )
+
+    def get_like_count(self, obj):
+        return obj.like_users.count()
+    
+    def get_created_by_name(self, obj):
+        if obj.created_by:
+            return obj.created_by.username  # 또는 이름 필드
+        return None
 
 # 맵 문제집 시리얼라이저
 class MapProblemSetSerializer(serializers.ModelSerializer):
@@ -36,4 +47,4 @@ class ProblemSetProblemSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = ProblemSet
-        fields = ('id', 'title', 'description', 'questions',)
+        fields = ('id', 'title', 'description', 'problem',)

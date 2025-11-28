@@ -15,7 +15,7 @@ class ProblemSet(models.Model):
         related_name="created_problem_sets",  # User.created_problem_sets로 User에서 접근 가능
         verbose_name="작성자"
     )
-    questions = models.ManyToManyField( # 문제 M:N 참조
+    problem = models.ManyToManyField( # 문제 M:N 참조
         'questions.Problem',  # questions 앱에 있는 Question 모델
         through='ProblemSetQuestion', # 기본 M:N 테이블 대신 스루 테이블 생성
         related_name='problem_sets' # 역참조 이름 설정
@@ -37,11 +37,11 @@ class ProblemSet(models.Model):
 # 문제 x 문제집 중개 스루 테이블
 class ProblemSetQuestion(models.Model):
     problem_set = models.ForeignKey(ProblemSet, on_delete=models.CASCADE) 
-    question = models.ForeignKey('questions.Problem', on_delete=models.CASCADE)
-    order = models.PositiveIntegerField(null=True, blank=True)
+    problem = models.ForeignKey('questions.Problem', on_delete=models.CASCADE)
+    # order = models.PositiveIntegerField(null=True, blank=True)
     class Meta:
-        unique_together = ('problem_set', 'question') # 문제집 문제 중복 방지
-        ordering = ['order']  # order 기준 기본 정렬
+        unique_together = ('problem_set', 'problem') # 문제집 문제 중복 방지
+        # ordering = ['order']  # order 기준 기본 정렬
 
 # 게임 맵 테이블
 class Map(models.Model):

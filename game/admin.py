@@ -5,7 +5,7 @@ from .models import ProblemSet, Map, ProblemSetQuestion
 class ProblemSetQuestionInline(admin.TabularInline):
     model = ProblemSetQuestion
     extra = 1
-    autocomplete_fields = ['question']  # 문제 선택시 검색 가능 (선택사항)
+    autocomplete_fields = ['problem']  # 문제 선택시 검색 가능 (선택사항)
 
 class ProblemSetAdmin(admin.ModelAdmin):
     inlines = [ProblemSetQuestionInline]

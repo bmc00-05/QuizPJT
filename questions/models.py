@@ -65,7 +65,7 @@ class Problem(models.Model):
         on_delete=models.SET_NULL,  # 카테고리가 삭제되도 문제는 유지
         null=True,
         blank=True,
-        related_name='questions'
+        related_name='problems'
     )
     
     def __str__(self):
