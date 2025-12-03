@@ -16,6 +16,7 @@ def register(request):
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['POST'])
+@permission_classes([AllowAny])
 def login(request):
     username = request.data.get('username')
     password = request.data.get('password')

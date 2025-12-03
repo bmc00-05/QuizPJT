@@ -1,0 +1,1622 @@
+[
+  {
+    "model": "questions.problem",
+    "pk": 1,
+    "fields": {
+      "question": "네트워크에서 여러 장치가 동시에 전송하려 할 때 충돌을 줄이기 위해 사용되는 장치는?",
+      "choice1": "스위치",
+      "choice2": "허브",
+      "choice3": "라우터",
+      "choice4": "리피터",
+      "answer": 1,
+      "explanation": "스위치는 충돌 도메인을 분리하여 데이터 충돌을 줄여준다.",
+      "created_by_admin": true,
+      "difficulty": "easy",
+      "category": 1,
+      "created_at": "2025-12-03T07:39:57.809263Z",
+      "updated_at": "2025-12-03T07:39:57.809263Z"
+    }
+  },
+  {
+    "model": "questions.problem",
+    "pk": 2,
+    "fields": {
+      "question": "인터넷에서 데이터를 패킷 단위로 전송하는 방식을 무엇이라고 하는가?",
+      "choice1": "패킷 교환 방식",
+      "choice2": "회선 교환 방식",
+      "choice3": "버스 교환 방식",
+      "choice4": "프레임 교환 방식",
+      "answer": 1,
+      "explanation": "인터넷은 패킷 단위로 데이터를 나누어 전송하는 패킷 교환 방식을 사용한다.",
+      "created_by_admin": true,
+      "difficulty": "easy",
+      "category": 1,
+      "created_at": "2025-12-03T07:39:57.809263Z",
+      "updated_at": "2025-12-03T07:39:57.809263Z"
+    }
+  },
+  {
+    "model": "questions.problem",
+    "pk": 3,
+    "fields": {
+      "question": "MAC 주소는 어느 계층에서 사용되는 주소인가?",
+      "choice1": "데이터링크 계층",
+      "choice2": "네트워크 계층",
+      "choice3": "전송 계층",
+      "choice4": "응용 계층",
+      "answer": 1,
+      "explanation": "MAC 주소는 데이터링크 계층의 물리적 주소로 사용된다.",
+      "created_by_admin": true,
+      "difficulty": "easy",
+      "category": 1,
+      "created_at": "2025-12-03T07:39:57.809263Z",
+      "updated_at": "2025-12-03T07:39:57.809263Z"
+    }
+  },
+  {
+    "model": "questions.problem",
+    "pk": 4,
+    "fields": {
+      "question": "HTTP는 어떤 형태의 통신 프로토콜인가?",
+      "choice1": "비연결형 프로토콜",
+      "choice2": "연결형 프로토콜",
+      "choice3": "회선형 프로토콜",
+      "choice4": "물리 계층 프로토콜",
+      "answer": 1,
+      "explanation": "HTTP는 요청-응답 시점에만 연결을 유지하는 비연결형 프로토콜이다.",
+      "created_by_admin": true,
+      "difficulty": "easy",
+      "category": 1,
+      "created_at": "2025-12-03T07:39:57.809263Z",
+      "updated_at": "2025-12-03T07:39:57.809263Z"
+    }
+  },
+  {
+    "model": "questions.problem",
+    "pk": 5,
+    "fields": {
+      "question": "브라우저 주소창에 입력한 URL에서 www.example.com",
+      "choice1": "도메인 이름",
+      "choice2": "포트 번호",
+      "choice3": "IP 주소",
+      "choice4": "프로토콜 이름",
+      "answer": 1,
+      "explanation": "www.example.com은",
+      "created_by_admin": true,
+      "difficulty": "easy",
+      "category": 1,
+      "created_at": "2025-12-03T07:39:57.809263Z",
+      "updated_at": "2025-12-03T07:39:57.809263Z"
+    }
+  },
+  {
+    "model": "questions.problem",
+    "pk": 6,
+    "fields": {
+      "question": "한 네트워크 내에서 브로드캐스트 트래픽이 전달되는 범위를 무엇이라고 하는가?",
+      "choice1": "브로드캐스트 도메인",
+      "choice2": "충돌 도메인",
+      "choice3": "라우팅 테이블",
+      "choice4": "세션 영역",
+      "answer": 1,
+      "explanation": "브로드캐스트 도메인의 범위는 라우터를 기준으로 분리된다.",
+      "created_by_admin": true,
+      "difficulty": "easy",
+      "category": 1,
+      "created_at": "2025-12-03T07:39:57.809263Z",
+      "updated_at": "2025-12-03T07:39:57.809263Z"
+    }
+  },
+  {
+    "model": "questions.problem",
+    "pk": 7,
+    "fields": {
+      "question": "네트워크 장치 중 서로 다른 네트워크를 연결하는 역할을 하는 장치는?",
+      "choice1": "라우터",
+      "choice2": "스위치",
+      "choice3": "허브",
+      "choice4": "리피터",
+      "answer": 1,
+      "explanation": "라우터는 네트워크 간 패킷 전달을 담당한다.",
+      "created_by_admin": true,
+      "difficulty": "easy",
+      "category": 1,
+      "created_at": "2025-12-03T07:39:57.809263Z",
+      "updated_at": "2025-12-03T07:39:57.809263Z"
+    }
+  },
+  {
+    "model": "questions.problem",
+    "pk": 8,
+    "fields": {
+      "question": "TCP와 달리 데이터의 신뢰성을 보장하지 않는 전송 계층 프로토콜은?",
+      "choice1": "UDP",
+      "choice2": "SMTP",
+      "choice3": "FTP",
+      "choice4": "ICMP",
+      "answer": 1,
+      "explanation": "UDP는 비연결형이며 신뢰성을 보장하지 않는 프로토콜이다.",
+      "created_by_admin": true,
+      "difficulty": "easy",
+      "category": 1,
+      "created_at": "2025-12-03T07:39:57.809263Z",
+      "updated_at": "2025-12-03T07:39:57.809263Z"
+    }
+  },
+  {
+    "model": "questions.problem",
+    "pk": 9,
+    "fields": {
+      "question": "IPv4 주소의 길이는 몇 비트인가?",
+      "choice1": "32비트",
+      "choice2": "64비트",
+      "choice3": "16비트",
+      "choice4": "128비트",
+      "answer": 1,
+      "explanation": "IPv4는 32비트 주소 체계를 사용한다.",
+      "created_by_admin": true,
+      "difficulty": "easy",
+      "category": 1,
+      "created_at": "2025-12-03T07:39:57.809263Z",
+      "updated_at": "2025-12-03T07:39:57.809263Z"
+    }
+  },
+  {
+    "model": "questions.problem",
+    "pk": 10,
+    "fields": {
+      "question": "DHCP가 자동으로 할당하는 정보가 아닌 것은?",
+      "choice1": "도메인 이름",
+      "choice2": "IP 주소",
+      "choice3": "게이트웨이 주소",
+      "choice4": "서브넷 마스크",
+      "answer": 1,
+      "explanation": "DHCP는 도메인 이름 자체를 관리하지 않고 DNS 서버 주소를 제공한다.",
+      "created_by_admin": true,
+      "difficulty": "easy",
+      "category": 1,
+      "created_at": "2025-12-03T07:39:57.809263Z",
+      "updated_at": "2025-12-03T07:39:57.809263Z"
+    }
+  },
+  {
+    "model": "questions.problem",
+    "pk": 11,
+    "fields": {
+      "question": "HTTPS에서 통신을 보호하기 위해 사용하는 기술은?",
+      "choice1": "SSL/TLS",
+      "choice2": "MAC",
+      "choice3": "NAT",
+      "choice4": "ARP",
+      "answer": 1,
+      "explanation": "HTTPS는 SSL/TLS 기반 암호화를 사용한다.",
+      "created_by_admin": true,
+      "difficulty": "easy",
+      "category": 1,
+      "created_at": "2025-12-03T07:39:57.809263Z",
+      "updated_at": "2025-12-03T07:39:57.809263Z"
+    }
+  },
+  {
+    "model": "questions.problem",
+    "pk": 12,
+    "fields": {
+      "question": "동일 네트워크 내에서 상대 MAC 주소를 알아내기 위해 사용하는 프로토콜은?",
+      "choice1": "ARP",
+      "choice2": "RARP",
+      "choice3": "ICMP",
+      "choice4": "NAT",
+      "answer": 1,
+      "explanation": "ARP는 IP 주소로 MAC 주소를 조회하는 프로토콜이다.",
+      "created_by_admin": true,
+      "difficulty": "easy",
+      "category": 1,
+      "created_at": "2025-12-03T07:39:57.809263Z",
+      "updated_at": "2025-12-03T07:39:57.809263Z"
+    }
+  },
+  {
+    "model": "questions.problem",
+    "pk": 13,
+    "fields": {
+      "question": "ping 명령어가 내부적으로 사용하는 프로토콜은?",
+      "choice1": "ICMP",
+      "choice2": "TCP",
+      "choice3": "UDP",
+      "choice4": "FTP",
+      "answer": 1,
+      "explanation": "ping은 ICMP Echo 요청/응답 메시지를 이용한다.",
+      "created_by_admin": true,
+      "difficulty": "easy",
+      "category": 1,
+      "created_at": "2025-12-03T07:39:57.809263Z",
+      "updated_at": "2025-12-03T07:39:57.809263Z"
+    }
+  },
+  {
+    "model": "questions.problem",
+    "pk": 14,
+    "fields": {
+      "question": "네트워크에서 패킷이 최적 경로로 이동하도록 경로를 선택하는 기능을 무엇이라 하는가?",
+      "choice1": "라우팅",
+      "choice2": "스위칭",
+      "choice3": "브로드캐스팅",
+      "choice4": "포워딩",
+      "answer": 1,
+      "explanation": "라우팅은 목적지까지의 최적 경로를 결정한다.",
+      "created_by_admin": true,
+      "difficulty": "easy",
+      "category": 1,
+      "created_at": "2025-12-03T07:39:57.809263Z",
+      "updated_at": "2025-12-03T07:39:57.809263Z"
+    }
+  },
+  {
+    "model": "questions.problem",
+    "pk": 15,
+    "fields": {
+      "question": "NAT의 주요 목적은 무엇인가?",
+      "choice1": "공인 IP 절약",
+      "choice2": "데이터 암호화",
+      "choice3": "전송 속도 증가",
+      "choice4": "회선 안정화",
+      "answer": 1,
+      "explanation": "NAT는 사설 IP를 공인 IP로 변환해 IPv4 주소 부족을 해결한다.",
+      "created_by_admin": true,
+      "difficulty": "easy",
+      "category": 1,
+      "created_at": "2025-12-03T07:39:57.809263Z",
+      "updated_at": "2025-12-03T07:39:57.809263Z"
+    }
+  },
+  {
+    "model": "questions.problem",
+    "pk": 16,
+    "fields": {
+      "question": "OSI 7계층에서 전기적 신호를 다루는 계층은?",
+      "choice1": "물리 계층",
+      "choice2": "데이터 링크 계층",
+      "choice3": "네트워크 계층",
+      "choice4": "세션 계층",
+      "answer": 1,
+      "explanation": "물리 계층은 케이블, 신호 등 하드웨어적 요소를 다룬다.",
+      "created_by_admin": true,
+      "difficulty": "easy",
+      "category": 1,
+      "created_at": "2025-12-03T07:39:57.809263Z",
+      "updated_at": "2025-12-03T07:39:57.809263Z"
+    }
+  },
+  {
+    "model": "questions.problem",
+    "pk": 17,
+    "fields": {
+      "question": "Wi-Fi와 같은 무선 LAN 기술에서 사용되는 표준은?",
+      "choice1": "IEEE 802.11",
+      "choice2": "IEEE 802.3",
+      "choice3": "IEEE 802.5",
+      "choice4": "IEEE 802.15",
+      "answer": 1,
+      "explanation": "IEEE 802.11은 무선 LAN 표준이다.",
+      "created_by_admin": true,
+      "difficulty": "easy",
+      "category": 1,
+      "created_at": "2025-12-03T07:39:57.809263Z",
+      "updated_at": "2025-12-03T07:39:57.809263Z"
+    }
+  },
+  {
+    "model": "questions.problem",
+    "pk": 18,
+    "fields": {
+      "question": "브라우저가 웹 서버에 페이지 요청을 보낼 때 사용하는 기본 메서드는?",
+      "choice1": "GET",
+      "choice2": "POST",
+      "choice3": "PUT",
+      "choice4": "DELETE",
+      "answer": 1,
+      "explanation": "GET은 서버에서 자원을 요청하는 기본 메서드이다.",
+      "created_by_admin": true,
+      "difficulty": "easy",
+      "category": 1,
+      "created_at": "2025-12-03T07:39:57.809263Z",
+      "updated_at": "2025-12-03T07:39:57.809263Z"
+    }
+  },
+  {
+    "model": "questions.problem",
+    "pk": 19,
+    "fields": {
+      "question": "서버가 동시에 많은 클라이언트 요청을 처리할 수 있게 만드는 소프트웨어는?",
+      "choice1": "웹 서버",
+      "choice2": "스위치",
+      "choice3": "라우터",
+      "choice4": "모뎀",
+      "answer": 1,
+      "explanation": "웹 서버는 HTTP 요청을 받아 처리하는 역할을 한다.",
+      "created_by_admin": true,
+      "difficulty": "easy",
+      "category": 1,
+      "created_at": "2025-12-03T07:39:57.809263Z",
+      "updated_at": "2025-12-03T07:39:57.809263Z"
+    }
+  },
+  {
+    "model": "questions.problem",
+    "pk": 20,
+    "fields": {
+      "question": "IP 패킷의 조각화(Fragmentation)가 일어나는 이유는?",
+      "choice1": "MTU 크기 제한 때문",
+      "choice2": "대역폭을 늘리기 위해",
+      "choice3": "암호화를 위해",
+      "choice4": "라우팅 테이블 부족 때문",
+      "answer": 1,
+      "explanation": "MTU보다 큰 패킷은 조각화되어 전송된다.",
+      "created_by_admin": true,
+      "difficulty": "easy",
+      "category": 1,
+      "created_at": "2025-12-03T07:39:57.809263Z",
+      "updated_at": "2025-12-03T07:39:57.809263Z"
+    }
+  },
+  {
+    "model": "questions.problem",
+    "pk": 21,
+    "fields": {
+      "question": "TCP 3-way handshake에서 첫 번째 메시지는?",
+      "choice1": "SYN",
+      "choice2": "ACK",
+      "choice3": "SYN-ACK",
+      "choice4": "FIN",
+      "answer": 1,
+      "explanation": "연결 시작을 위해 클라이언트는 SYN을 보낸다.",
+      "created_by_admin": true,
+      "difficulty": "easy",
+      "category": 1,
+      "created_at": "2025-12-03T07:39:57.809263Z",
+      "updated_at": "2025-12-03T07:39:57.809263Z"
+    }
+  },
+  {
+    "model": "questions.problem",
+    "pk": 22,
+    "fields": {
+      "question": "서버가 클라이언트 요청을 받지 못하도록 접속을 차단하는 공격은?",
+      "choice1": "DDoS",
+      "choice2": "SQL Injection",
+      "choice3": "XSS",
+      "choice4": "Brute Force",
+      "answer": 1,
+      "explanation": "DDoS는 과도한 트래픽을 보내 서비스 마비를 유도한다.",
+      "created_by_admin": true,
+      "difficulty": "easy",
+      "category": 1,
+      "created_at": "2025-12-03T07:39:57.809263Z",
+      "updated_at": "2025-12-03T07:39:57.809263Z"
+    }
+  },
+  {
+    "model": "questions.problem",
+    "pk": 23,
+    "fields": {
+      "question": "도메인을 IP 주소로 변환하는 요청을 DNS 서버에게 보낼 때 사용하는 통신 방식은?",
+      "choice1": "질의(Query)",
+      "choice2": "세션(Session)",
+      "choice3": "토큰(Token)",
+      "choice4": "스트림(Stream)",
+      "answer": 1,
+      "explanation": "DNS는 질의-응답 방식으로 동작한다.",
+      "created_by_admin": true,
+      "difficulty": "easy",
+      "category": 1,
+      "created_at": "2025-12-03T07:39:57.809263Z",
+      "updated_at": "2025-12-03T07:39:57.809263Z"
+    }
+  },
+  {
+    "model": "questions.problem",
+    "pk": 24,
+    "fields": {
+      "question": "스위치가 MAC 주소 테이블을 이용해 프레임을 전달하는 방식을 무엇이라 하는가?",
+      "choice1": "스위칭",
+      "choice2": "라우팅",
+      "choice3": "브로드캐스팅",
+      "choice4": "캡슐화",
+      "answer": 1,
+      "explanation": "스위칭은 목적 MAC을 기준으로 프레임을 전달한다.",
+      "created_by_admin": true,
+      "difficulty": "easy",
+      "category": 1,
+      "created_at": "2025-12-03T07:39:57.809263Z",
+      "updated_at": "2025-12-03T07:39:57.809263Z"
+    }
+  },
+  {
+    "model": "questions.problem",
+    "pk": 25,
+    "fields": {
+      "question": "SSL 인증서의 주요 역할은 무엇인가?",
+      "choice1": "서버의 신뢰성 검증",
+      "choice2": "데이터 압축",
+      "choice3": "패킷 분할",
+      "choice4": "네트워크 속도 향상",
+      "answer": 1,
+      "explanation": "인증서는 서버의 신뢰성을 증명하고 암호화에 사용된다.",
+      "created_by_admin": true,
+      "difficulty": "easy",
+      "category": 1,
+      "created_at": "2025-12-03T07:39:57.809263Z",
+      "updated_at": "2025-12-03T07:39:57.809263Z"
+    }
+  },
+  {
+    "model": "questions.problem",
+    "pk": 26,
+    "fields": {
+      "question": "LAN에서 주로 사용되는 케이블 종류는?",
+      "choice1": "UTP 케이블",
+      "choice2": "동축 케이블",
+      "choice3": "광케이블",
+      "choice4": "HDMI 케이블",
+      "answer": 1,
+      "explanation": "대부분의 유선 LAN은 UTP 케이블을 사용한다.",
+      "created_by_admin": true,
+      "difficulty": "easy",
+      "category": 1,
+      "created_at": "2025-12-03T07:39:57.809263Z",
+      "updated_at": "2025-12-03T07:39:57.809263Z"
+    }
+  },
+  {
+    "model": "questions.problem",
+    "pk": 27,
+    "fields": {
+      "question": "TCP가 흐름 제어를 위해 사용하는 기법은?",
+      "choice1": "슬라이딩 윈도우",
+      "choice2": "라우팅 테이블",
+      "choice3": "세그멘테이션",
+      "choice4": "ARP 매핑",
+      "answer": 1,
+      "explanation": "슬라이딩 윈도우는 송수신 속도를 조절한다.",
+      "created_by_admin": true,
+      "difficulty": "easy",
+      "category": 1,
+      "created_at": "2025-12-03T07:39:57.809263Z",
+      "updated_at": "2025-12-03T07:39:57.809263Z"
+    }
+  },
+  {
+    "model": "questions.problem",
+    "pk": 28,
+    "fields": {
+      "question": "VPN의 핵심 기능은?",
+      "choice1": "암호화된 가상 터널 제공",
+      "choice2": "IP 주소를 무작위로 생성",
+      "choice3": "대역폭을 증가",
+      "choice4": "공유기를 자동 설정",
+      "answer": 1,
+      "explanation": "VPN은 공용 네트워크에서도 안전한 통신을 제공한다.",
+      "created_by_admin": true,
+      "difficulty": "easy",
+      "category": 1,
+      "created_at": "2025-12-03T07:39:57.809263Z",
+      "updated_at": "2025-12-03T07:39:57.809263Z"
+    }
+  },
+  {
+    "model": "questions.problem",
+    "pk": 29,
+    "fields": {
+      "question": "FTP의 기본 용도는 무엇인가?",
+      "choice1": "파일 전송",
+      "choice2": "메일 전송",
+      "choice3": "오류 검사",
+      "choice4": "경로 탐색",
+      "answer": 1,
+      "explanation": "FTP는 파일 업로드/다운로드 용도이다.",
+      "created_by_admin": true,
+      "difficulty": "easy",
+      "category": 1,
+      "created_at": "2025-12-03T07:39:57.809263Z",
+      "updated_at": "2025-12-03T07:39:57.809263Z"
+    }
+  },
+  {
+    "model": "questions.problem",
+    "pk": 30,
+    "fields": {
+      "question": "POP3는 어떤 용도로 사용되는 프로토콜인가?",
+      "choice1": "메일 수신",
+      "choice2": "메일 발신",
+      "choice3": "웹 페이지 제공",
+      "choice4": "스트리밍 전달",
+      "answer": 1,
+      "explanation": "POP3는 서버에서 메일을 가져오는 프로토콜이다.",
+      "created_by_admin": true,
+      "difficulty": "easy",
+      "category": 1,
+      "created_at": "2025-12-03T07:39:57.809263Z",
+      "updated_at": "2025-12-03T07:39:57.809263Z"
+    }
+  },
+  {
+    "model": "questions.problem",
+    "pk": 31,
+    "fields": {
+      "question": "서브넷팅에서 서브넷 마스크가 길어질수록 네트워크에 미치는 영향은?",
+      "choice1": "호스트 수가 감소한다",
+      "choice2": "브로드캐스트 도메인이 커진다",
+      "choice3": "네트워크 속도가 느려진다",
+      "choice4": "라우팅 테이블이 사라진다",
+      "answer": 1,
+      "explanation": "서브넷 마스크가 길어질수록 사용 가능한 호스트 수는 줄어들고 네트워크는 더 세분화된다.",
+      "created_by_admin": true,
+      "difficulty": "medium",
+      "category": 1,
+      "created_at": "2025-12-03T07:39:57.809263Z",
+      "updated_at": "2025-12-03T07:39:57.809263Z"
+    }
+  },
+  {
+    "model": "questions.problem",
+    "pk": 32,
+    "fields": {
+      "question": "TCP에서 혼잡 제어 기법으로 사용되지 않는 것은?",
+      "choice1": "스트리밍 모드",
+      "choice2": "느린 시작",
+      "choice3": "혼잡 회피",
+      "choice4": "빠른 재전송",
+      "answer": 1,
+      "explanation": "스트리밍 모드는 존재하지 않으며, 나머지는 TCP 혼잡 제어 알고리즘이다.",
+      "created_by_admin": true,
+      "difficulty": "medium",
+      "category": 1,
+      "created_at": "2025-12-03T07:39:57.809263Z",
+      "updated_at": "2025-12-03T07:39:57.809263Z"
+    }
+  },
+  {
+    "model": "questions.problem",
+    "pk": 33,
+    "fields": {
+      "question": "VLAN을 구성하는 주된 목적은 무엇인가?",
+      "choice1": "논리적으로 네트워크를 분리하기 위해",
+      "choice2": "네트워크 속도를 무조건 증가시키기 위해",
+      "choice3": "IP 주소를 자동 할당하기 위해",
+      "choice4": "라우터 없이 인터넷에 연결하기 위해",
+      "answer": 1,
+      "explanation": "VLAN은 물리적 장비를 공유하면서도 논리적으로 네트워크를 분리한다.",
+      "created_by_admin": true,
+      "difficulty": "medium",
+      "category": 1,
+      "created_at": "2025-12-03T07:39:57.809263Z",
+      "updated_at": "2025-12-03T07:39:57.809263Z"
+    }
+  },
+  {
+    "model": "questions.problem",
+    "pk": 34,
+    "fields": {
+      "question": "OSPF의 특징으로 올바른 것은?",
+      "choice1": "링크 상태 기반 라우팅 프로토콜이다",
+      "choice2": "거리 벡터 방식만 사용한다",
+      "choice3": "라우터 간에 경로 정보 교환이 없다",
+      "choice4": "AS 전체에 단일 경로만 제공한다",
+      "answer": 1,
+      "explanation": "OSPF는 링크 상태 라우팅 프로토콜이며, 토폴로지 정보를 기반으로 최적 경로를 계산한다.",
+      "created_by_admin": true,
+      "difficulty": "medium",
+      "category": 1,
+      "created_at": "2025-12-03T07:39:57.809263Z",
+      "updated_at": "2025-12-03T07:39:57.809263Z"
+    }
+  },
+  {
+    "model": "questions.problem",
+    "pk": 35,
+    "fields": {
+      "question": "라우팅 프로토콜에서 Administrative Distance(AD)의 목적은?",
+      "choice1": "경로의 신뢰도를 판단하는 기준",
+      "choice2": "패킷 크기를 제한하는 역할",
+      "choice3": "대역폭을 관리하는 역할",
+      "choice4": "암호화 수준을 정의하는 역할",
+      "answer": 1,
+      "explanation": "AD는 여러 라우팅 정보 중 어떤 경로를 우선 사용할지 결정하는 신뢰도 지표이다.",
+      "created_by_admin": true,
+      "difficulty": "medium",
+      "category": 1,
+      "created_at": "2025-12-03T07:39:57.809263Z",
+      "updated_at": "2025-12-03T07:39:57.809263Z"
+    }
+  },
+  {
+    "model": "questions.problem",
+    "pk": 36,
+    "fields": {
+      "question": "TCP의 포트 번호 범위 중 Well-known Port 범위는?",
+      "choice1": "0~1023",
+      "choice2": "1024~49151",
+      "choice3": "49152~65535",
+      "choice4": "10000~20000",
+      "answer": 1,
+      "explanation": "Well-known Port는 0~1023 범위로 주요 서비스가 예약되어 있다.",
+      "created_by_admin": true,
+      "difficulty": "medium",
+      "category": 1,
+      "created_at": "2025-12-03T07:39:57.809263Z",
+      "updated_at": "2025-12-03T07:39:57.809263Z"
+    }
+  },
+  {
+    "model": "questions.problem",
+    "pk": 37,
+    "fields": {
+      "question": "IPv6가 IPv4와 비교해 가지는 장점이 아닌 것은?",
+      "choice1": "주소 공간 축소",
+      "choice2": "보안 기능 내장",
+      "choice3": "헤더 구조 단순화",
+      "choice4": "NAT 불필요",
+      "answer": 1,
+      "explanation": "IPv6는 주소 공간이 확장되며 NAT를 거의 필요로 하지 않는다.",
+      "created_by_admin": true,
+      "difficulty": "medium",
+      "category": 1,
+      "created_at": "2025-12-03T07:39:57.809263Z",
+      "updated_at": "2025-12-03T07:39:57.809263Z"
+    }
+  },
+  {
+    "model": "questions.problem",
+    "pk": 38,
+    "fields": {
+      "question": "BGP의 주요 역할은 무엇인가?",
+      "choice1": "AS 간 라우팅 정보 교환",
+      "choice2": "LAN 내 스위칭",
+      "choice3": "DNS 주소 변환",
+      "choice4": "브로드캐스트 관리",
+      "answer": 1,
+      "explanation": "BGP는 인터넷 상 서로 다른 AS 간에 라우팅 경로를 교환하는 프로토콜이다.",
+      "created_by_admin": true,
+      "difficulty": "medium",
+      "category": 1,
+      "created_at": "2025-12-03T07:39:57.809263Z",
+      "updated_at": "2025-12-03T07:39:57.809263Z"
+    }
+  },
+  {
+    "model": "questions.problem",
+    "pk": 39,
+    "fields": {
+      "question": "프레임 릴레이나 MPLS에서 사용되는 논리적 연결 방식은?",
+      "choice1": "가상 회선",
+      "choice2": "브로드캐스트",
+      "choice3": "패킷 플러딩",
+      "choice4": "일대일 매핑",
+      "answer": 1,
+      "explanation": "가상 회선 방식은 논리적으로 연결된 경로를 설정하여 전달한다.",
+      "created_by_admin": true,
+      "difficulty": "medium",
+      "category": 1,
+      "created_at": "2025-12-03T07:39:57.809263Z",
+      "updated_at": "2025-12-03T07:39:57.809263Z"
+    }
+  },
+  {
+    "model": "questions.problem",
+    "pk": 40,
+    "fields": {
+      "question": "NAT의 문제점으로 가장 적절한 것은?",
+      "choice1": "종단 간 연결성이 떨어질 수 있다",
+      "choice2": "네트워크 암호화가 감소한다",
+      "choice3": "라우팅 테이블이 없어도 된다",
+      "choice4": "서브넷 분할이 불가능해진다",
+      "answer": 1,
+      "explanation": "NAT는 IP 변환으로 인해 P2P나 VoIP 등에서 연결 문제가 발생할 수 있다.",
+      "created_by_admin": true,
+      "difficulty": "medium",
+      "category": 1,
+      "created_at": "2025-12-03T07:39:57.809263Z",
+      "updated_at": "2025-12-03T07:39:57.809263Z"
+    }
+  },
+  {
+    "model": "questions.problem",
+    "pk": 41,
+    "fields": {
+      "question": "HTTPS 핸드셰이크에서 사용되는 공개키 암호화 방식의 목적은?",
+      "choice1": "세션 키 교환",
+      "choice2": "데이터 압축",
+      "choice3": "라우팅 경로 설정",
+      "choice4": "전송 속도 증가",
+      "answer": 1,
+      "explanation": "공개키는 대칭키(세션 키)를 안전하게 교환하는 데 사용된다.",
+      "created_by_admin": true,
+      "difficulty": "medium",
+      "category": 1,
+      "created_at": "2025-12-03T07:39:57.809263Z",
+      "updated_at": "2025-12-03T07:39:57.809263Z"
+    }
+  },
+  {
+    "model": "questions.problem",
+    "pk": 42,
+    "fields": {
+      "question": "스위치가 학습하지 않은 MAC 주소로 프레임을 받으면 수행하는 동작은?",
+      "choice1": "모든 포트로 플러딩한다",
+      "choice2": "버린다",
+      "choice3": "라우터로 전달한다",
+      "choice4": "출발 MAC만 기록하고 정지한다",
+      "answer": 1,
+      "explanation": "MAC 미학습 시 스위치는 일단 전체 포트로 전달해 목적지를 찾는다.",
+      "created_by_admin": true,
+      "difficulty": "medium",
+      "category": 1,
+      "created_at": "2025-12-03T07:39:57.809263Z",
+      "updated_at": "2025-12-03T07:39:57.809263Z"
+    }
+  },
+  {
+    "model": "questions.problem",
+    "pk": 43,
+    "fields": {
+      "question": "DNS의 레코드 타입 중 도메인을 특정 IPv4 주소와 매핑하는 것은?",
+      "choice1": "A 레코드",
+      "choice2": "MX 레코드",
+      "choice3": "CNAME 레코드",
+      "choice4": "NS 레코드",
+      "answer": 1,
+      "explanation": "A 레코드는 IPv4 주소를 반환한다.",
+      "created_by_admin": true,
+      "difficulty": "medium",
+      "category": 1,
+      "created_at": "2025-12-03T07:39:57.809263Z",
+      "updated_at": "2025-12-03T07:39:57.809263Z"
+    }
+  },
+  {
+    "model": "questions.problem",
+    "pk": 44,
+    "fields": {
+      "question": "TCP 연결 종료 시 사용하는 메시지 조합은?",
+      "choice1": "FIN / ACK",
+      "choice2": "SYN / FIN",
+      "choice3": "SYN / ACK",
+      "choice4": "FIN / SYN",
+      "answer": 1,
+      "explanation": "연결 종료는 FIN과 ACK 교환으로 이루어진다.",
+      "created_by_admin": true,
+      "difficulty": "medium",
+      "category": 1,
+      "created_at": "2025-12-03T07:39:57.809263Z",
+      "updated_at": "2025-12-03T07:39:57.809263Z"
+    }
+  },
+  {
+    "model": "questions.problem",
+    "pk": 45,
+    "fields": {
+      "question": "DHCP 서버가 클라이언트에게 IP를 임대하는 과정의 첫 번째 단계는?",
+      "choice1": "Discover",
+      "choice2": "Offer",
+      "choice3": "Request",
+      "choice4": "Acknowledge",
+      "answer": 1,
+      "explanation": "클라이언트는 먼저 Discover 메시지를 브로드캐스트로 보낸다.",
+      "created_by_admin": true,
+      "difficulty": "medium",
+      "category": 1,
+      "created_at": "2025-12-03T07:39:57.809263Z",
+      "updated_at": "2025-12-03T07:39:57.809263Z"
+    }
+  },
+  {
+    "model": "questions.problem",
+    "pk": 46,
+    "fields": {
+      "question": "CSMA/CD가 주로 사용되던 네트워크 매체는?",
+      "choice1": "유선 이더넷",
+      "choice2": "무선 LAN",
+      "choice3": "광 네트워크",
+      "choice4": "LTE 네트워크",
+      "answer": 1,
+      "explanation": "충돌 감지는 유선 이더넷에서 사용되며, 무선에서는 CSMA/CA가 쓰인다.",
+      "created_by_admin": true,
+      "difficulty": "medium",
+      "category": 1,
+      "created_at": "2025-12-03T07:39:57.809263Z",
+      "updated_at": "2025-12-03T07:39:57.809263Z"
+    }
+  },
+  {
+    "model": "questions.problem",
+    "pk": 47,
+    "fields": {
+      "question": "프록시 서버의 대표적 기능은 무엇인가?",
+      "choice1": "캐싱을 통한 성능 향상",
+      "choice2": "라우팅 경로 설정",
+      "choice3": "ARP 테이블 관리",
+      "choice4": "MAC 주소 변환",
+      "answer": 1,
+      "explanation": "프록시는 요청 결과를 캐싱하여 응답 속도를 개선한다.",
+      "created_by_admin": true,
+      "difficulty": "medium",
+      "category": 1,
+      "created_at": "2025-12-03T07:39:57.809263Z",
+      "updated_at": "2025-12-03T07:39:57.809263Z"
+    }
+  },
+  {
+    "model": "questions.problem",
+    "pk": 48,
+    "fields": {
+      "question": "Netstat 명령어의 주요 용도는?",
+      "choice1": "포트 및 연결 상태 확인",
+      "choice2": "네트워크 속도 측정",
+      "choice3": "DNS 서버 변경",
+      "choice4": "VLAN 구성",
+      "answer": 1,
+      "explanation": "netstat은 현재 사용 중인 포트와 연결 상태를 보여준다.",
+      "created_by_admin": true,
+      "difficulty": "medium",
+      "category": 1,
+      "created_at": "2025-12-03T07:39:57.809263Z",
+      "updated_at": "2025-12-03T07:39:57.809263Z"
+    }
+  },
+  {
+    "model": "questions.problem",
+    "pk": 49,
+    "fields": {
+      "question": "MTU보다 큰 패킷을 처리할 수 없을 때 라우터가 수행하는 동작은?",
+      "choice1": "ICMP Fragmentation Needed 메시지 전송",
+      "choice2": "자동 재조립",
+      "choice3": "암호화 요청",
+      "choice4": "경로 변경",
+      "answer": 1,
+      "explanation": "라우터는 분할이 필요한 패킷에 대해 ICMP 오류 메시지를 보낸다.",
+      "created_by_admin": true,
+      "difficulty": "medium",
+      "category": 1,
+      "created_at": "2025-12-03T07:39:57.809263Z",
+      "updated_at": "2025-12-03T07:39:57.809263Z"
+    }
+  },
+  {
+    "model": "questions.problem",
+    "pk": 50,
+    "fields": {
+      "question": "IPv6 주소 표현 방식 중 0을 축약하는 규칙으로 올바른 것은?",
+      "choice1": "연속된 0 그룹은 :: 로 한 번만 축약 가능",
+      "choice2": "여러 번 :: 사용 가능",
+      "choice3": "0은 제거 불가",
+      "choice4": "중간의 0만 제거할 수 있다",
+      "answer": 1,
+      "explanation": "::는 IPv6 주소에서 단 한 번만 사용할 수 있다.",
+      "created_by_admin": true,
+      "difficulty": "medium",
+      "category": 1,
+      "created_at": "2025-12-03T07:39:57.809263Z",
+      "updated_at": "2025-12-03T07:39:57.809263Z"
+    }
+  },
+  {
+    "model": "questions.problem",
+    "pk": 51,
+    "fields": {
+      "question": "스위치에서 STP(Spanning Tree Protocol)의 목적은?",
+      "choice1": "루프 방지",
+      "choice2": "대역폭 증가",
+      "choice3": "IP 추적",
+      "choice4": "MAC 주소 암호화",
+      "answer": 1,
+      "explanation": "STP는 스위치 간 루프를 제거하기 위해 특정 경로를 차단한다.",
+      "created_by_admin": true,
+      "difficulty": "medium",
+      "category": 1,
+      "created_at": "2025-12-03T07:39:57.809263Z",
+      "updated_at": "2025-12-03T07:39:57.809263Z"
+    }
+  },
+  {
+    "model": "questions.problem",
+    "pk": 52,
+    "fields": {
+      "question": "IPSec에서 AH(Authentication Header)가 제공하는 보안 기능은?",
+      "choice1": "무결성 및 인증",
+      "choice2": "암호화",
+      "choice3": "경로 최적화",
+      "choice4": "트랜스포트 계층 보호",
+      "answer": 1,
+      "explanation": "AH는 무결성과 인증을 제공하지만 암호화는 ESP가 담당한다.",
+      "created_by_admin": true,
+      "difficulty": "medium",
+      "category": 1,
+      "created_at": "2025-12-03T07:39:57.809263Z",
+      "updated_at": "2025-12-03T07:39:57.809263Z"
+    }
+  },
+  {
+    "model": "questions.problem",
+    "pk": 53,
+    "fields": {
+      "question": "CDN(Content Delivery Network)의 주요 목적은?",
+      "choice1": "콘텐츠를 사용자와 가까운 서버에서 제공",
+      "choice2": "브로드캐스트 트래픽 감소",
+      "choice3": "네트워크 장비 비용 절감",
+      "choice4": "DNS를 대체",
+      "answer": 1,
+      "explanation": "CDN은 지리적으로 가까운 서버에서 콘텐츠를 제공해 응답 속도를 개선한다.",
+      "created_by_admin": true,
+      "difficulty": "medium",
+      "category": 1,
+      "created_at": "2025-12-03T07:39:57.809263Z",
+      "updated_at": "2025-12-03T07:39:57.809263Z"
+    }
+  },
+  {
+    "model": "questions.problem",
+    "pk": 54,
+    "fields": {
+      "question": "ICMP의 주요 역할은?",
+      "choice1": "오류 및 제어 메시지 전달",
+      "choice2": "데이터 암호화",
+      "choice3": "ARP 테이블 저장",
+      "choice4": "세션 유지",
+      "answer": 1,
+      "explanation": "ICMP는 네트워크 오류 정보를 전달한다.",
+      "created_by_admin": true,
+      "difficulty": "medium",
+      "category": 1,
+      "created_at": "2025-12-03T07:39:57.809263Z",
+      "updated_at": "2025-12-03T07:39:57.809263Z"
+    }
+  },
+  {
+    "model": "questions.problem",
+    "pk": 55,
+    "fields": {
+      "question": "라우터가 목적지 네트워크를 모를 때 수행하는 동작은?",
+      "choice1": "기본 경로(Default Route)로 전달",
+      "choice2": "패킷을 모두 버린다",
+      "choice3": "DNS 서버로 전송",
+      "choice4": "임의의 경로로 전달",
+      "answer": 1,
+      "explanation": "기본 경로가 설정되어 있다면 해당 경로로 패킷이 전달된다.",
+      "created_by_admin": true,
+      "difficulty": "medium",
+      "category": 1,
+      "created_at": "2025-12-03T07:39:57.809263Z",
+      "updated_at": "2025-12-03T07:39:57.809263Z"
+    }
+  },
+  {
+    "model": "questions.problem",
+    "pk": 56,
+    "fields": {
+      "question": "SSL/TLS에서 사용되는 대칭키 암호화 방식의 장점은?",
+      "choice1": "전송 속도가 빠르다",
+      "choice2": "키 교환이 간단하다",
+      "choice3": "공격 방어에 절대적이다",
+      "choice4": "오류 제어가 필요 없다",
+      "answer": 1,
+      "explanation": "대칭키 방식은 암/복호화 속도가 빠른 것이 장점이다.",
+      "created_by_admin": true,
+      "difficulty": "medium",
+      "category": 1,
+      "created_at": "2025-12-03T07:39:57.809263Z",
+      "updated_at": "2025-12-03T07:39:57.809263Z"
+    }
+  },
+  {
+    "model": "questions.problem",
+    "pk": 57,
+    "fields": {
+      "question": "RARP의 주요 기능은 무엇인가?",
+      "choice1": "MAC 주소로 IP 주소를 알아낸다",
+      "choice2": "IP 주소를 MAC으로 변환",
+      "choice3": "DNS 서버 역할 수행",
+      "choice4": "라우팅 정보를 교환",
+      "answer": 1,
+      "explanation": "RARP는 MAC 주소만 알고 있을 때 IP를 요청하는 프로토콜이다.",
+      "created_by_admin": true,
+      "difficulty": "medium",
+      "category": 1,
+      "created_at": "2025-12-03T07:39:57.809263Z",
+      "updated_at": "2025-12-03T07:39:57.809263Z"
+    }
+  },
+  {
+    "model": "questions.problem",
+    "pk": 58,
+    "fields": {
+      "question": "ACL(Access Control List)의 사용 목적은?",
+      "choice1": "트래픽 필터링",
+      "choice2": "MAC 학습",
+      "choice3": "NAT 변환",
+      "choice4": "라우팅 경로 탐색",
+      "answer": 1,
+      "explanation": "ACL은 특정 트래픽을 허용하거나 차단하는 데 사용된다.",
+      "created_by_admin": true,
+      "difficulty": "medium",
+      "category": 1,
+      "created_at": "2025-12-03T07:39:57.809263Z",
+      "updated_at": "2025-12-03T07:39:57.809263Z"
+    }
+  },
+  {
+    "model": "questions.problem",
+    "pk": 59,
+    "fields": {
+      "question": "SSH의 특징으로 가장 적절한 것은?",
+      "choice1": "원격 접속 시 암호화된 통신을 제공",
+      "choice2": "파일을 압축해서 전송",
+      "choice3": "라우팅 경로를 자동 구성",
+      "choice4": "하드웨어 기반 인증만 사용",
+      "answer": 1,
+      "explanation": "SSH는 암호화된 원격 접속을 제공한다.",
+      "created_by_admin": true,
+      "difficulty": "medium",
+      "category": 1,
+      "created_at": "2025-12-03T07:39:57.809263Z",
+      "updated_at": "2025-12-03T07:39:57.809263Z"
+    }
+  },
+  {
+    "model": "questions.problem",
+    "pk": 60,
+    "fields": {
+      "question": "라우팅 프로토콜 중 거리 벡터 기반으로 동작하는 것은?",
+      "choice1": "RIP",
+      "choice2": "OSPF",
+      "choice3": "IS-IS",
+      "choice4": "EIGRP(하이브리드)",
+      "answer": 1,
+      "explanation": "RIP은 거리 벡터 기반으로 홉 수를 기준으로 경로를 선택한다.",
+      "created_by_admin": true,
+      "difficulty": "medium",
+      "category": 1,
+      "created_at": "2025-12-03T07:39:57.809263Z",
+      "updated_at": "2025-12-03T07:39:57.809263Z"
+    }
+  },
+  {
+    "model": "questions.problem",
+    "pk": 61,
+    "fields": {
+      "question": "BGP에서 경로 선택 시 가장 먼저 비교되는 항목은?",
+      "choice1": "Weight 값",
+      "choice2": "Local Preference",
+      "choice3": "AS-Path 길이",
+      "choice4": "MED 값",
+      "answer": 1,
+      "explanation": "BGP 경로 선택에서 Cisco 기준 Weight 값이 가장 우선 비교된다.",
+      "created_by_admin": true,
+      "difficulty": "hard",
+      "category": 1,
+      "created_at": "2025-12-03T07:39:57.809263Z",
+      "updated_at": "2025-12-03T07:39:57.809263Z"
+    }
+  },
+  {
+    "model": "questions.problem",
+    "pk": 62,
+    "fields": {
+      "question": "OSPF에서 DR/BDR 선출 시 가장 우선적으로 고려되는 값은?",
+      "choice1": "인터페이스 Priority",
+      "choice2": "라우터 ID",
+      "choice3": "코스트 값",
+      "choice4": "Hello Timer",
+      "answer": 1,
+      "explanation": "Priority가 가장 먼저 고려되며, 동일할 경우 라우터 ID로 결정된다.",
+      "created_by_admin": true,
+      "difficulty": "hard",
+      "category": 1,
+      "created_at": "2025-12-03T07:39:57.809263Z",
+      "updated_at": "2025-12-03T07:39:57.809263Z"
+    }
+  },
+  {
+    "model": "questions.problem",
+    "pk": 63,
+    "fields": {
+      "question": "MPLS에서 패킷 전달 시 사용되는 기본 정보 단위는?",
+      "choice1": "Label",
+      "choice2": "Segment",
+      "choice3": "Channel",
+      "choice4": "Frame ID",
+      "answer": 1,
+      "explanation": "MPLS는 패킷에 라벨을 부착해 Label Switching 방식으로 전달한다.",
+      "created_by_admin": true,
+      "difficulty": "hard",
+      "category": 1,
+      "created_at": "2025-12-03T07:39:57.809263Z",
+      "updated_at": "2025-12-03T07:39:57.809263Z"
+    }
+  },
+  {
+    "model": "questions.problem",
+    "pk": 64,
+    "fields": {
+      "question": "DNSSEC에서 데이터 위조를 방지하기 위해 사용하는 기술은?",
+      "choice1": "공개키 기반 전자서명",
+      "choice2": "대칭키 암호화",
+      "choice3": "토큰 기반 인증",
+      "choice4": "VPN 터널링",
+      "answer": 1,
+      "explanation": "DNSSEC은 리소스 레코드에 전자서명을 추가하여 위변조를 방지한다.",
+      "created_by_admin": true,
+      "difficulty": "hard",
+      "category": 1,
+      "created_at": "2025-12-03T07:39:57.809263Z",
+      "updated_at": "2025-12-03T07:39:57.809263Z"
+    }
+  },
+  {
+    "model": "questions.problem",
+    "pk": 65,
+    "fields": {
+      "question": "TCP의 Fast Recovery 알고리즘이 실행되는 조건은?",
+      "choice1": "중복 ACK 세 개 수신",
+      "choice2": "타임아웃 발생",
+      "choice3": "연결 재설정 신호 감지",
+      "choice4": "MSS 변경 신호 감지",
+      "answer": 1,
+      "explanation": "중복 ACK 3개 수신 시 빠른 재전송 후 빠른 회복 알고리즘이 실행된다.",
+      "created_by_admin": true,
+      "difficulty": "hard",
+      "category": 1,
+      "created_at": "2025-12-03T07:39:57.809263Z",
+      "updated_at": "2025-12-03T07:39:57.809263Z"
+    }
+  },
+  {
+    "model": "questions.problem",
+    "pk": 66,
+    "fields": {
+      "question": "SDN에서 컨트롤 플레인 역할을 주로 담당하는 요소는?",
+      "choice1": "SDN 컨트롤러",
+      "choice2": "스위치",
+      "choice3": "라우터",
+      "choice4": "DNS 서버",
+      "answer": 1,
+      "explanation": "SDN 컨트롤러가 네트워크의 중앙 지휘 역할을 하며 정책과 경로를 제어한다.",
+      "created_by_admin": true,
+      "difficulty": "hard",
+      "category": 1,
+      "created_at": "2025-12-03T07:39:57.809263Z",
+      "updated_at": "2025-12-03T07:39:57.809263Z"
+    }
+  },
+  {
+    "model": "questions.problem",
+    "pk": 67,
+    "fields": {
+      "question": "QUIC 프로토콜의 특징으로 가장 적절한 것은?",
+      "choice1": "TCP 대신 UDP 기반에서 TLS를 통합하여 동작",
+      "choice2": "HTTP/2만 지원",
+      "choice3": "라우터에서 경로 최적화를 수행",
+      "choice4": "전송 계층이 아닌 네트워크 계층에서 수행된다",
+      "answer": 1,
+      "explanation": "QUIC은 UDP 기반에서 TLS 암호화를 포함한 신속한 연결을 제공한다.",
+      "created_by_admin": true,
+      "difficulty": "hard",
+      "category": 1,
+      "created_at": "2025-12-03T07:39:57.809263Z",
+      "updated_at": "2025-12-03T07:39:57.809263Z"
+    }
+  },
+  {
+    "model": "questions.problem",
+    "pk": 68,
+    "fields": {
+      "question": "IPv6 Neighbor Discovery Protocol(NDP)의 기능이 아닌 것은?",
+      "choice1": "경로 선택",
+      "choice2": "주소 자동 구성",
+      "choice3": "이웃 MAC 주소 발견",
+      "choice4": "중복 주소 감지",
+      "answer": 1,
+      "explanation": "경로 선택은 라우팅 프로토콜의 역할이며 NDP 기능이 아니다.",
+      "created_by_admin": true,
+      "difficulty": "hard",
+      "category": 1,
+      "created_at": "2025-12-03T07:39:57.809263Z",
+      "updated_at": "2025-12-03T07:39:57.809263Z"
+    }
+  },
+  {
+    "model": "questions.problem",
+    "pk": 69,
+    "fields": {
+      "question": "TLS Handshake 중 Perfect Forward Secrecy(PFS)를 제공하려면 어떤 메커니즘이 필요한가?",
+      "choice1": "Ephemeral Diffie-Hellman",
+      "choice2": "RSA 단독 암호화",
+      "choice3": "AES-CBC",
+      "choice4": "IKEv1",
+      "answer": 1,
+      "explanation": "Ephemeral DH(ECDHE)를 사용해야 세션 키 노출을 방지할 수 있다.",
+      "created_by_admin": true,
+      "difficulty": "hard",
+      "category": 1,
+      "created_at": "2025-12-03T07:39:57.809263Z",
+      "updated_at": "2025-12-03T07:39:57.809263Z"
+    }
+  },
+  {
+    "model": "questions.problem",
+    "pk": 70,
+    "fields": {
+      "question": "VXLAN에서 L2 네트워크 확장을 위해 사용하는 기술은?",
+      "choice1": "MAC-in-UDP 캡슐화",
+      "choice2": "라우팅 테이블 분할",
+      "choice3": "MSS 조정",
+      "choice4": "AAA 인증",
+      "answer": 1,
+      "explanation": "VXLAN은 L2 프레임을 UDP 안에 캡슐화하여 가상 네트워크를 형성한다.",
+      "created_by_admin": true,
+      "difficulty": "hard",
+      "category": 1,
+      "created_at": "2025-12-03T07:39:57.809263Z",
+      "updated_at": "2025-12-03T07:39:57.809263Z"
+    }
+  },
+  {
+    "model": "questions.problem",
+    "pk": 71,
+    "fields": {
+      "question": "BGP에서 루프 방지를 위해 사용하는 메커니즘은?",
+      "choice1": "AS-Path",
+      "choice2": "TTL Decrement",
+      "choice3": "Hello 메시지",
+      "choice4": "Hold Timer",
+      "answer": 1,
+      "explanation": "AS-Path에 포함된 자신의 AS 번호가 있으면 루프로 판단한다.",
+      "created_by_admin": true,
+      "difficulty": "hard",
+      "category": 1,
+      "created_at": "2025-12-03T07:39:57.809263Z",
+      "updated_at": "2025-12-03T07:39:57.809263Z"
+    }
+  },
+  {
+    "model": "questions.problem",
+    "pk": 72,
+    "fields": {
+      "question": "TCP의 TIME-WAIT 상태가 중요한 이유는?",
+      "choice1": "지연된 패킷이 새 연결에 영향을 주지 않도록 하기 위해",
+      "choice2": "연결 속도를 높이기 위해",
+      "choice3": "라우터 성능을 높이기 위해",
+      "choice4": "ARP 캐시를 유지하기 위해",
+      "answer": 1,
+      "explanation": "TIME-WAIT는 오래된 패킷이 새로운 연결로 잘못 해석되는 것을 방지한다.",
+      "created_by_admin": true,
+      "difficulty": "hard",
+      "category": 1,
+      "created_at": "2025-12-03T07:39:57.809263Z",
+      "updated_at": "2025-12-03T07:39:57.809263Z"
+    }
+  },
+  {
+    "model": "questions.problem",
+    "pk": 73,
+    "fields": {
+      "question": "라우팅 프로토콜 중 링크 상태 알고리즘에 기반한 것은?",
+      "choice1": "OSPF",
+      "choice2": "RIP",
+      "choice3": "BGP",
+      "choice4": "EIGRP",
+      "answer": 1,
+      "explanation": "링크 상태 방식은 네트워크 전체 토폴로지를 활용하는 OSPF가 대표적이다.",
+      "created_by_admin": true,
+      "difficulty": "hard",
+      "category": 1,
+      "created_at": "2025-12-03T07:39:57.809263Z",
+      "updated_at": "2025-12-03T07:39:57.809263Z"
+    }
+  },
+  {
+    "model": "questions.problem",
+    "pk": 74,
+    "fields": {
+      "question": "IPSec의 ESP가 제공하지 않는 기능은?",
+      "choice1": "라우팅 최적화",
+      "choice2": "기밀성",
+      "choice3": "무결성",
+      "choice4": "인증",
+      "answer": 1,
+      "explanation": "ESP는 암호화와 무결성·인증을 제공하나 라우팅 기능은 없다.",
+      "created_by_admin": true,
+      "difficulty": "hard",
+      "category": 1,
+      "created_at": "2025-12-03T07:39:57.809263Z",
+      "updated_at": "2025-12-03T07:39:57.809263Z"
+    }
+  },
+  {
+    "model": "questions.problem",
+    "pk": 75,
+    "fields": {
+      "question": "MPLS에서 Control Plane과 Data Plane이 상호작용하는 방식으로 가장 적절한 것은?",
+      "choice1": "Control Plane이 LSP를 설정하고 Data Plane이 라벨 기반으로 전달",
+      "choice2": "Data Plane이 라벨을 생성하고 Control Plane이 전달",
+      "choice3": "둘 다 라우팅 정보만 교환",
+      "choice4": "둘 다 스위칭만 수행",
+      "answer": 1,
+      "explanation": "Control Plane은 경로 설정, Data Plane은 라벨 스위칭을 수행한다.",
+      "created_by_admin": true,
+      "difficulty": "hard",
+      "category": 1,
+      "created_at": "2025-12-03T07:39:57.809263Z",
+      "updated_at": "2025-12-03T07:39:57.809263Z"
+    }
+  },
+  {
+    "model": "questions.problem",
+    "pk": 76,
+    "fields": {
+      "question": "HTTP/3가 HTTP/2와 근본적으로 다른 점은?",
+      "choice1": "전송 계층을 QUIC 기반으로 변경",
+      "choice2": "TLS를 사용하지 않는다",
+      "choice3": "스트림을 지원하지 않는다",
+      "choice4": "서버 푸시 기능이 없다",
+      "answer": 1,
+      "explanation": "HTTP/3는 TCP가 아닌 QUIC(UDP 기반)에서 동작한다.",
+      "created_by_admin": true,
+      "difficulty": "hard",
+      "category": 1,
+      "created_at": "2025-12-03T07:39:57.809263Z",
+      "updated_at": "2025-12-03T07:39:57.809263Z"
+    }
+  },
+  {
+    "model": "questions.problem",
+    "pk": 77,
+    "fields": {
+      "question": "SD-WAN이 기존 WAN 대비 제공하는 주요 이점은?",
+      "choice1": "경로 선택을 애플리케이션 레벨에서 수행",
+      "choice2": "모든 트래픽을 반드시 MPLS로 전달",
+      "choice3": "라우터를 제거",
+      "choice4": "IPv6만 지원",
+      "answer": 1,
+      "explanation": "SD-WAN은 트래픽의 우선순위와 애플리케이션 특성을 기반으로 경로를 동적으로 최적화한다.",
+      "created_by_admin": true,
+      "difficulty": "hard",
+      "category": 1,
+      "created_at": "2025-12-03T07:39:57.809263Z",
+      "updated_at": "2025-12-03T07:39:57.809263Z"
+    }
+  },
+  {
+    "model": "questions.problem",
+    "pk": 78,
+    "fields": {
+      "question": "Ethernet에서 Jumbo Frame의 목적은?",
+      "choice1": "CPU 처리 부담 감소",
+      "choice2": "보안 강화",
+      "choice3": "라우팅 성능 증가",
+      "choice4": "ARP 사용량 감소",
+      "answer": 1,
+      "explanation": "더 큰 프레임을 사용해 CPU 부하와 인터럽트 발생을 줄인다.",
+      "created_by_admin": true,
+      "difficulty": "hard",
+      "category": 1,
+      "created_at": "2025-12-03T07:39:57.809263Z",
+      "updated_at": "2025-12-03T07:39:57.809263Z"
+    }
+  },
+  {
+    "model": "questions.problem",
+    "pk": 79,
+    "fields": {
+      "question": "라우터가 경로 재분배(Route Redistribution)를 수행할 때 발생할 수 있는 문제는?",
+      "choice1": "루프 생성",
+      "choice2": "케이블 손상",
+      "choice3": "MAC 테이블 손실",
+      "choice4": "포트 미러링 실패",
+      "answer": 1,
+      "explanation": "잘못된 재분배는 라우팅 루프나 불안정성을 초래할 수 있다.",
+      "created_by_admin": true,
+      "difficulty": "hard",
+      "category": 1,
+      "created_at": "2025-12-03T07:39:57.809263Z",
+      "updated_at": "2025-12-03T07:39:57.809263Z"
+    }
+  },
+  {
+    "model": "questions.problem",
+    "pk": 80,
+    "fields": {
+      "question": "IEEE 802.1X에서 EAPOL이 수행하는 역할은?",
+      "choice1": "인증 프레임 전달",
+      "choice2": "라우팅 경로 계산",
+      "choice3": "VPN 터널 생성",
+      "choice4": "ARP 요청 대체",
+      "answer": 1,
+      "explanation": "EAPOL은 스위치와 클라이언트 간 인증 정보를 교환한다.",
+      "created_by_admin": true,
+      "difficulty": "hard",
+      "category": 1,
+      "created_at": "2025-12-03T07:39:57.809263Z",
+      "updated_at": "2025-12-03T07:39:57.809263Z"
+    }
+  },
+  {
+    "model": "questions.problem",
+    "pk": 81,
+    "fields": {
+      "question": "QoS에서 DiffServ의 핵심 개념은?",
+      "choice1": "DSCP 값 기반 트래픽 분류",
+      "choice2": "패킷 크기 증가",
+      "choice3": "암호화 자동 적용",
+      "choice4": "MAC 주소 기반 분류",
+      "answer": 1,
+      "explanation": "DiffServ는 DSCP 필드를 통해 서비스 우선순위를 지정한다.",
+      "created_by_admin": true,
+      "difficulty": "hard",
+      "category": 1,
+      "created_at": "2025-12-03T07:39:57.809263Z",
+      "updated_at": "2025-12-03T07:39:57.809263Z"
+    }
+  },
+  {
+    "model": "questions.problem",
+    "pk": 82,
+    "fields": {
+      "question": "라우터에서 Equal-Cost Multi-Path(ECMP)의 목적은?",
+      "choice1": "부하 분산",
+      "choice2": "암호화",
+      "choice3": "장비 인증",
+      "choice4": "브로드캐스트 관리",
+      "answer": 1,
+      "explanation": "ECMP는 동일 코스트 경로가 여러 개 있을 때 부하를 분산한다.",
+      "created_by_admin": true,
+      "difficulty": "hard",
+      "category": 1,
+      "created_at": "2025-12-03T07:39:57.809263Z",
+      "updated_at": "2025-12-03T07:39:57.809263Z"
+    }
+  },
+  {
+    "model": "questions.problem",
+    "pk": 83,
+    "fields": {
+      "question": "STP의 RSTP로의 개선 사항 중 하나는?",
+      "choice1": "수렴 속도 증가",
+      "choice2": "MAC 주소 암호화",
+      "choice3": "패킷 필터링 자동화",
+      "choice4": "포트 개수 축소",
+      "answer": 1,
+      "explanation": "RSTP는 STP보다 훨씬 빠른 수렴 속도를 제공한다.",
+      "created_by_admin": true,
+      "difficulty": "hard",
+      "category": 1,
+      "created_at": "2025-12-03T07:39:57.809263Z",
+      "updated_at": "2025-12-03T07:39:57.809263Z"
+    }
+  },
+  {
+    "model": "questions.problem",
+    "pk": 84,
+    "fields": {
+      "question": "LISP(Locator/ID Separation Protocol)의 주요 목적은?",
+      "choice1": "엔드포인트 식별자와 위치 정보를 분리",
+      "choice2": "DNS를 대체하기 위해",
+      "choice3": "ARP를 제거",
+      "choice4": "라우터를 단순화",
+      "answer": 1,
+      "explanation": "LISP는 ID와 Locator를 분리하여 확장성 있는 네트워크 구조를 제공한다.",
+      "created_by_admin": true,
+      "difficulty": "hard",
+      "category": 1,
+      "created_at": "2025-12-03T07:39:57.809263Z",
+      "updated_at": "2025-12-03T07:39:57.809263Z"
+    }
+  },
+  {
+    "model": "questions.problem",
+    "pk": 85,
+    "fields": {
+      "question": "BGP에서 Route Flapping을 억제하기 위한 메커니즘은?",
+      "choice1": "Route Dampening",
+      "choice2": "Split Horizon",
+      "choice3": "Poison Reverse",
+      "choice4": "TTL-Security",
+      "answer": 1,
+      "explanation": "Route Dampening은 잦은 경로 변경을 억제한다.",
+      "created_by_admin": true,
+      "difficulty": "hard",
+      "category": 1,
+      "created_at": "2025-12-03T07:39:57.809263Z",
+      "updated_at": "2025-12-03T07:39:57.809263Z"
+    }
+  },
+  {
+    "model": "questions.problem",
+    "pk": 86,
+    "fields": {
+      "question": "TCP의 SACK 옵션이 제공하는 이점은?",
+      "choice1": "선택적 재전송을 통해 성능 향상",
+      "choice2": "암호화 수준 강화",
+      "choice3": "혼잡 윈도우 제거",
+      "choice4": "3-way handshake 제거",
+      "answer": 1,
+      "explanation": "SACK은 손실된 부분만 재전송하여 효율을 높인다.",
+      "created_by_admin": true,
+      "difficulty": "hard",
+      "category": 1,
+      "created_at": "2025-12-03T07:39:57.809263Z",
+      "updated_at": "2025-12-03T07:39:57.809263Z"
+    }
+  },
+  {
+    "model": "questions.problem",
+    "pk": 87,
+    "fields": {
+      "question": "IPv6에서 Anycast 주소의 주요 특징은?",
+      "choice1": "가장 가까운 노드로 패킷이 전달된다",
+      "choice2": "모든 노드에게 브로드캐스트된다",
+      "choice3": "지정된 노드로만 전달된다",
+      "choice4": "멀티캐스트보다 우선 순위가 낮다",
+      "answer": 1,
+      "explanation": "Anycast는 여러 수신자 중 가장 가까운 노드로 전달된다.",
+      "created_by_admin": true,
+      "difficulty": "hard",
+      "category": 1,
+      "created_at": "2025-12-03T07:39:57.809263Z",
+      "updated_at": "2025-12-03T07:39:57.809263Z"
+    }
+  },
+  {
+    "model": "questions.problem",
+    "pk": 88,
+    "fields": {
+      "question": "SSL/TLS에서 Record Layer의 역할은?",
+      "choice1": "데이터 암호화 및 무결성 제공",
+      "choice2": "핸드셰이크 수행",
+      "choice3": "라우팅 경로 생성",
+      "choice4": "TLS 종료 트리거",
+      "answer": 1,
+      "explanation": "Record Layer는 실제 응용 데이터에 대한 암호화와 인증을 처리한다.",
+      "created_by_admin": true,
+      "difficulty": "hard",
+      "category": 1,
+      "created_at": "2025-12-03T07:39:57.809263Z",
+      "updated_at": "2025-12-03T07:39:57.809263Z"
+    }
+  },
+  {
+    "model": "questions.problem",
+    "pk": 89,
+    "fields": {
+      "question": "IEEE 802.11에서 OFDM을 사용하는 주요 목적은?",
+      "choice1": "멀티패스 간섭 최소화",
+      "choice2": "송신 전력 증가",
+      "choice3": "보안 강화",
+      "choice4": "MAC 계층 단순화",
+      "answer": 1,
+      "explanation": "OFDM은 다중 경로 간섭을 줄여 무선 성능을 향상시킨다.",
+      "created_by_admin": true,
+      "difficulty": "hard",
+      "category": 1,
+      "created_at": "2025-12-03T07:39:57.809263Z",
+      "updated_at": "2025-12-03T07:39:57.809263Z"
+    }
+  },
+  {
+    "model": "questions.problem",
+    "pk": 90,
+    "fields": {
+      "question": "TCP 기반 애플리케이션이 높은 지연 환경에서 성능이 저하되는 이유는?",
+      "choice1": "윈도우 기반 흐름 제어의 한계",
+      "choice2": "MAC 주소 검색 지연",
+      "choice3": "ARP 충돌",
+      "choice4": "DNS 캐시 실패",
+      "answer": 1,
+      "explanation": "RTT가 증가하면 슬라이딩 윈도우 기반 전송량이 제한된다.",
+      "created_by_admin": true,
+      "difficulty": "hard",
+      "category": 1,
+      "created_at": "2025-12-03T07:39:57.809263Z",
+      "updated_at": "2025-12-03T07:39:57.809263Z"
+    }
+  }
+]

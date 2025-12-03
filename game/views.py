@@ -38,7 +38,7 @@ def problem_set_questions(request, problem_set_pk):
         return Response({"error": "ProblemSet not found"}, status=status.HTTP_404_NOT_FOUND)
 
     # 2. 문제집 안의 문제들 가져오기
-    problems = problem_set.questions.all()  # 문제집에 연결된 모든 문제
+    problems = problem_set.problem.all()  # 문제집에 연결된 모든 문제
     # 3. 문제 10개만 랜덤으로 선택
     problems = problems.order_by('?')[:10]  # '?'는 랜덤 정렬
 
