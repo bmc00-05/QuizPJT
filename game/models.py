@@ -1,6 +1,7 @@
 from django.db import models
 from django.conf import settings
-
+from questions.models import Problem
+from django.utils import timezone
 # 문제집 테이블
 class ProblemSet(models.Model):
     title = models.CharField(max_length=255)
@@ -57,3 +58,101 @@ class Map(models.Model):
     )
     def __str__(self):
         return self.name
+
+# 플레이 세션 모델
+class PlaySession(models.Model):
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="play_sessions"
+    )
+
+    problem_set = models.ForeignKey(
+        ProblemSet,
+        on_delete=models.CASCADE,
+        related_name="play_sessions"
+    )
+
+    # 이번 세션에서 플레이할 문제들 (10개)
+    selected_problems = models.ManyToManyField(
+        Problem,
+        related_name="play_sessions",
+        blank=True
+    )
+
+    total_problems = models.PositiveIntegerField(default=10)  # 기본 10문제
+    solved_count = models.PositiveIntegerField(default=0)      # 유저가 푼 문제 수
+    is_completed = models.BooleanField(default=False)
+
+    # 세션 시간 정보
+    created_at = models.DateTimeField(auto_now_add=True)
+    completed_at = models.DateTimeField(null=True, blank=True)
+
+    # 사용자가 도중에 나가거나 만료(예: 30분 후) 처리 가능
+    expired = models.BooleanField(default=False)
+
+    def __str__(self):
+        return f"[PlaySession #{self.id}] {self.user.username} - {self.problem_set.title} ({self.solved_count}/{self.total_problems})"
+
+    @property
+    def is_last_question(self):
+        """다음 채점 시 세션이 완료되는지 여부"""
+        return self.solved_count + 1 == self.total_problems
+
+    def mark_completed(self):
+        """세션 완료 처리 함수"""
+        self.is_completed = True
+        self.completed_at = timezone.now()
+        self.save()
+
+# 세션 히스토리 로그 모델
+class SessionLog(models.Model):
+    """
+    플레이 중 사용자가 문제를 어떻게 풀었는지를 기록하는 모델
+    - 세션별 문제 풀이 히스토리
+    - AI 분석 및 오답 노트 기반 데이터
+    """
+    
+    # 해당 유저
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="problem_logs"
+    )
+
+    # 해당 세션
+    session = models.ForeignKey(
+        "PlaySession",
+        on_delete=models.CASCADE,
+        related_name="logs"
+    )
+
+    # 어떤 문제를 풀었는지
+    problem = models.ForeignKey(
+        Problem,
+        on_delete=models.CASCADE,
+        related_name="logs"
+    )
+
+    # 유저가 제출한 답(정수형)
+    selected_answer = models.IntegerField()
+
+    # 정답 여부
+    is_correct = models.BooleanField()
+
+    # 문제 푸는 데 걸린 시간 (optional, 추후 집중도 분석)
+    response_time_ms = models.PositiveIntegerField(null=True, blank=True)
+
+    # 제출 시각
+    solved_at = models.DateTimeField(default=timezone.now)
+
+    class Meta:
+        # 유저가 같은 세션에서 한 문제를 여러 번 기록하지 않도록
+        unique_together = ("session", "problem")
+
+        ordering = ["-solved_at"]
+        verbose_name = "문제 풀이 로그"
+        verbose_name_plural = "문제 풀이 로그들"
+
+    def __str__(self):
+        return f"{self.user.username} - {self.problem_id} - Correct:{self.is_correct}"
