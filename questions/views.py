@@ -65,7 +65,7 @@ def problemset_problems(request, set_pk):
 
     # 1) 문제 리스트 조회
     if request.method == 'GET':
-        problems = problemset.questions.all()
+        problems = problemset.problem.all()
         serializer = QuestionSerializer(problems, many=True)
         return Response(serializer.data)
 
@@ -77,7 +77,7 @@ def problemset_problems(request, set_pk):
             # 문제 생성 (유저 소유 문제)
             new_problem = serializer.save(created_by=request.user)
             # 문제집에 포함
-            problemset.questions.add(new_problem)
+            problemset.problem.add(new_problem)
 
             return Response({
                 "detail": "문제 생성 완료",
