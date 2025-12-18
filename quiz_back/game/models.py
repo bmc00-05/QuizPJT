@@ -95,9 +95,9 @@ class PlaySession(models.Model):
         return f"[PlaySession #{self.id}] {self.user.username} - {self.problem_set.title} ({self.solved_count}/{self.total_problems})"
 
     @property
-    def is_last_question(self):
-        """다음 채점 시 세션이 완료되는지 여부"""
-        return self.solved_count + 1 == self.total_problems
+    def is_completed_now(self):
+        answered_count = SessionLog.objects.filter(session=self).count()
+        return answered_count >= self.total_problems
 
     def mark_completed(self):
         """세션 완료 처리 함수"""

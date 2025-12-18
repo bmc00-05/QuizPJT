@@ -3,12 +3,14 @@
     <div class="h-32 flex items-center justify-center">
       <h1>TITLE IMAGE</h1>
     </div>
-    <div class="min-h-screen flex items-center justify-start flex-col">
+    <div class="min-h-screen flex items-center justify-center flex-col">
     <RouterView />
     </div>
-      <RouterLink v-if="!showMainButtons" :to="{ name: 'main' }" class="w-full justify-center">
+    <div class="absolute left-0 right-0 bottom-[25%] flex flex-col gap-4 px-6">
+      <RouterLink v-if="!showMainButtons" :to="{ name: 'main' }" class="flex w-full justify-center">
         Press to Start
       </RouterLink>
+    </div>
     <div v-if="showMainButtons" class="absolute left-0 right-0 bottom-[25%] flex flex-col gap-4 px-6">
       <RouterLink :to="{ name: 'login' }" class="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm/6 font-semibold text-white shadow-xs hover:bg-indigo-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
         로그인

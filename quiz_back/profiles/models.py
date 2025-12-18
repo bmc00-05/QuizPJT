@@ -16,6 +16,14 @@ class Profile(models.Model):
 
     def __str__(self):
         return f"{self.nickname} ({self.user.username})"
+    
+    def add_experience(self, amount):
+        self.experience += amount
 
-        
+        # 간단한 레벨업 규칙 (예: 레벨 * 100)
+        while self.experience >= self.level * 100:
+            self.experience -= self.level * 100
+            self.level += 1
+
+        self.save()
     

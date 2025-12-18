@@ -12,6 +12,7 @@ from .serializers import (
     ProblemSetSerializer,
     ProblemViewSerializer
 )
+from profiles.models import Profile
 from django.contrib.auth import get_user_model
 from django.db import transaction
 
@@ -111,9 +112,11 @@ def check_answer(request):
         question_id = request.data.get("question_id")
         selected = request.data.get("selected")
 
-        if not all([session_id, question_id, selected]):
-            return Response({"error": "session_id, question_id, selected는 필수값입니다."},
-                            status=status.HTTP_400_BAD_REQUEST)
+        if session_id is None or question_id is None or selected is None:
+            return Response(
+                {"error": "session_id, question_id, selected는 필수값입니다."},
+                status=400
+            )
 
         # 🔐 세션 조회 & 유저 확인
         session = PlaySession.objects.get(id=session_id, user=request.user)
@@ -140,13 +143,38 @@ def check_answer(request):
             is_correct=is_correct,
             solved_at=timezone.now()
         )
+        # 몇번째 응답?
+        answered_count = SessionLog.objects.filter(session=session).count()
 
         # 🔥 세션 상태 업데이트
         if is_correct:
             session.solved_count += 1
 
-        if session.is_last_question:
+        session_completed_result = None
+
+        if answered_count >= session.total_problems:
             session.mark_completed()
+
+            correct = session.solved_count
+            total = session.total_problems
+            score = correct * 20
+
+            profile, _ = Profile.objects.get_or_create(user=request.user)
+
+            before_level = profile.level
+            before_exp = profile.experience
+
+            profile.add_experience(score)
+
+            session_completed_result = {
+                "score": score,
+                "correct": correct,
+                "total": total,
+                "level_before": before_level,
+                "level_after": profile.level,
+                "experience": profile.experience,
+                "leveled_up": profile.level > before_level,
+            }
         else:
             session.save()
 
@@ -154,13 +182,17 @@ def check_answer(request):
         result = {
             "correct": is_correct,
             "correct_answer": question.answer,
+            "explanation": question.explanation,
             "is_completed": session.is_completed,
             "solved_count": session.solved_count,
             "total_problems": session.total_problems,
+
+            "session_result": session_completed_result
         }
 
         return Response(result, status=status.HTTP_200_OK)
 
+    
     except PlaySession.DoesNotExist:
         return Response({"error": "잘못된 session_id이거나 접근 권한이 없습니다."},
                         status=status.HTTP_404_NOT_FOUND)
@@ -169,9 +201,9 @@ def check_answer(request):
         return Response({"error": "해당 문제를 찾을 수 없습니다."},
                         status=status.HTTP_404_NOT_FOUND)
 
-    except Exception as e:
-        return Response({"error": f"서버 오류: {str(e)}"},
-                        status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    # except Exception as e:
+    #     return Response({"error": f"서버 오류: {str(e)}"},
+    #                     status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     
 
 # ==================================================================================================

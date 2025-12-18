@@ -9,6 +9,8 @@ import UserModePage from '@/views/UserModePage.vue'
 import MapProblemSetPage from '@/views/MapProblemSetPage.vue'
 import UserPage from '@/views/UserPage.vue'
 import AIPage from '@/views/AIPage.vue'
+import GameView from '@/views/GameView.vue'
+import CreateQuizSet from '@/components/CreateQuizSet.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -52,6 +54,16 @@ const router = createRouter({
     path: '/ai',
     name: 'ai',
     component: AIPage
+  },
+  {
+    path: '/game/:problemSetId',
+    name: 'game',
+    component: GameView
+  },
+  {
+    path: '/quiz/create-set/',
+    name: 'createQuizSet',
+    component: CreateQuizSet
   },
 
   ],
