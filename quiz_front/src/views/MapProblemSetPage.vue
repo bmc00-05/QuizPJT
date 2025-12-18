@@ -1,30 +1,34 @@
 <template>
   <div>
-    <h1>맵 페이지</h1>
+    <h1>맵 문제집 목록</h1>
     <ul>
-      <li v-for="map in maps" :key="map.id">
-        <RouterLink :to="{ name: 'mainproblemset', params: {'problemset':map.id}}">
-        {{ map.name }} - {{ map.description }}
-        </RouterLink>
+      <li v-for="problemSet in problemSets.problem_sets" :key="problemSet.id">
+        {{ problemSet.title}}
+        {{ problemSet.description}}
       </li>
     </ul>
   </div>
+  
 </template>
 
 <script setup>
 import { ref, onMounted } from 'vue'
 import { useAccountStore } from '@/stores/accounts'
+import { useRoute } from 'vue-router'
 import axios from 'axios'
 
 const accountStore = useAccountStore()
+const route = useRoute()
 
-const maps = ref([])
+const problemSetId = ref(route.params.problemset)
 
-const getMaps = async () => {
+const problemSets = ref([])
+
+const getProblemSets = async () => {
   try {
     
     const res = await axios.get(
-      'http://127.0.0.1:8000/api/v1/game/maps/',
+      `http://127.0.0.1:8000/api/v1/game/maps/${problemSetId.value}`,
       {
         headers: {
           Authorization: `Token ${accountStore.token}`
@@ -32,7 +36,7 @@ const getMaps = async () => {
       }
     )
 
-    maps.value = res.data
+    problemSets.value = res.data
 
   } catch (err) {
     console.error(err)
@@ -40,9 +44,8 @@ const getMaps = async () => {
 }
 
 onMounted(() => {
-  getMaps()
+  getProblemSets()
 })
-
 </script>
 
 <style scoped>

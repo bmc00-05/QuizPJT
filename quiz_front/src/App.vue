@@ -1,11 +1,13 @@
 <template>
-<h1>App</h1>
-<RouterView/>
+  <div class="min-h-screen flex justify-center bg-neutral-900">
+    <div class="w-full max-w-[420px] min-h-screen bg-amber-50">
+      <RouterView />
+    </div>
+  </div>
 </template>
 
 <script setup>
-import StartPage from '@/views/StartPage.vue';
-import { RouterLink, RouterView } from 'vue-router';
+import { RouterView } from 'vue-router'
 </script>
 
 <style scoped>

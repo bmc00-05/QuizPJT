@@ -7,7 +7,7 @@ class Profile(models.Model):
         on_delete=models.CASCADE,
         related_name='profile'
     )
-    nickname = models.CharField(max_length=50, unique=True)
+    username = models.CharField(max_length=50, unique=True)
     level = models.PositiveIntegerField(default=1)
     experience = models.PositiveIntegerField(default=0)
 

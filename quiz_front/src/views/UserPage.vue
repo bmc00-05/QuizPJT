@@ -1,8 +1,7 @@
 <template>
   <div>
-    <h1>맵 문제집 목록</h1>
+    <h1>유저 정보 페이지</h1>
   </div>
-  
 </template>
 
 <script setup>

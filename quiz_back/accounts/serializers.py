@@ -9,12 +9,12 @@ class UserSignupSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ('username', 'password', 'email', 'nickname')
+        fields = ('email', 'password','username')
         extra_kwargs = {'password': {'write_only': True}}
 
     def create(self, validated_data):
-        nickname = validated_data.pop('nickname')
+        username = validated_data.pop('username')
         user = User.objects.create_user(**validated_data)
         # 회원가입과 동시에 Profile 생성
-        Profile.objects.create(user=user, nickname=nickname)
+        Profile.objects.create(user=user, username=username)
         return user
