@@ -1,0 +1,58 @@
+@import "tailwindcss";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer components {
+  .input {
+  @apply block w-full rounded-md bg-white
+          px-3 py-1.5
+          text-base text-gray-900
+          outline outline-1 -outline-offset-1 outline-gray-300
+          placeholder:text-gray-400
+          focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600
+          sm:text-sm/6;
+}
+  .btn {
+  @apply bg-blue-500 text-white font-bold py-2 px-4 rounded-lg;
+  @apply hover:bg-blue-600 active:bg-blue-700;
+  @apply transition duration-300 ease-in-out;
+  }
+}
+
+@layer utilities {
+  @keyframes fade-blink {
+    0%, 100% {
+      opacity: 1;
+      transform: scale(1.00);
+    }
+    50% {
+      opacity: 0.05;
+      transform: scale(1.05);
+    }
+  }
+
+  .animate-fade-blink {
+    animation: fade-blink 2s ease-in-out infinite;
+  }
+}
+
+.modal-enter-from,
+.modal-leave-to {
+  opacity: 0;
+}
+
+.modal-enter-active,
+.modal-leave-active {
+  transition: opacity 0.3s ease-out;
+}
+
+.modal-enter-from > *,
+.modal-leave-to > * {
+  transform: scale(0.95);
+}
+
+.modal-enter-to > *,
+.modal-leave-from > * {
+  transform: scale(1);
+}
