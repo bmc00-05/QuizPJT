@@ -8,7 +8,6 @@ from questions.models import Problem
 from .serializers import (
     MapSerializer, 
     MapProblemSetSerializer, 
-    ProblemSetProblemSerializer, 
     ProblemSetSerializer,
     ProblemViewSerializer
 )
@@ -22,6 +21,7 @@ from django.db import transaction
 
 # 맵 목록 호출
 @api_view(['GET'])
+@permission_classes([IsAuthenticated])
 def map_list(request):
     maps = Map.objects.all()
     serializer = MapSerializer(maps, many=True)
@@ -29,28 +29,29 @@ def map_list(request):
 
 # 특정 맵 안에 존재하는 문제집 호출
 @api_view(['GET'])
+@permission_classes([IsAuthenticated])
 def map_detail(request, map_pk):
     maps = Map.objects.get(pk=map_pk)
     serializer = MapProblemSetSerializer(maps)
     return Response(serializer.data)
 
 # 문제집 안 문제중 10문제 조회
-@api_view(['GET'])
-def problem_set_questions(request, problem_set_pk):
-    # 1. 문제집 불러오기
-    try:
-        problem_set = ProblemSet.objects.get(pk=problem_set_pk)
-    except ProblemSet.DoesNotExist:
-        return Response({"error": "ProblemSet not found"}, status=status.HTTP_404_NOT_FOUND)
+# @api_view(['GET'])
+# def problem_set_questions(request, problem_set_pk):
+#     # 1. 문제집 불러오기
+#     try:
+#         problem_set = ProblemSet.objects.get(pk=problem_set_pk)
+#     except ProblemSet.DoesNotExist:
+#         return Response({"error": "ProblemSet not found"}, status=status.HTTP_404_NOT_FOUND)
 
-    # 2. 문제집 안의 문제들 가져오기
-    problems = problem_set.problem.all()  # 문제집에 연결된 모든 문제
-    # 3. 문제 10개만 랜덤으로 선택
-    problems = problems.order_by('?')[:10]  # '?'는 랜덤 정렬
+#     # 2. 문제집 안의 문제들 가져오기
+#     problems = problem_set.problem.all()  # 문제집에 연결된 모든 문제
+#     # 3. 문제 10개만 랜덤으로 선택
+#     problems = problems.order_by('?')[:10]  # '?'는 랜덤 정렬
 
-    # 4. 시리얼라이즈 후 반환
-    serializer = ProblemViewSerializer(problems, many=True)
-    return Response(serializer.data)
+#     # 4. 시리얼라이즈 후 반환
+#     serializer = ProblemViewSerializer(problems, many=True)
+#     return Response(serializer.data)
 
 # 게임 플레이 세션 생성 및 문제 조회
 @api_view(['POST'])

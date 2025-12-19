@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import ProblemSet, Map, ProblemSetQuestion, PlaySession
+from .models import ProblemSet, Map, ProblemSetQuestion, PlaySession, SessionLog
 
 # 문제집 문제 추가 관련 클래스
 class ProblemSetQuestionInline(admin.TabularInline):
@@ -17,3 +17,4 @@ class MapAdmin(admin.ModelAdmin):
 admin.site.register(ProblemSet, ProblemSetAdmin)
 admin.site.register(Map, MapAdmin)
 admin.site.register(PlaySession)
+admin.site.register(SessionLog)
