@@ -42,17 +42,22 @@
   <p>획득 경험치: {{ sessionResult.score }}</p>
   <p>레벨: {{ sessionResult.level_before }} → {{ sessionResult.level_after }}</p>
 </div>
+<div>
+  {{ sessionResult }}
+</div>
 </template>
 
 <script setup>
 import { ref, onMounted, computed } from 'vue'
 import { useAccountStore } from '@/stores/accounts'
+import { useUserStore } from '@/stores/user'
 import { useRoute } from 'vue-router'
 import axios from 'axios'
 
 // 
 const route = useRoute()
 const accountStore = useAccountStore()
+const userStore = useUserStore()
 
 const problemSetId = route.params.problemSetId
 
@@ -134,6 +139,8 @@ const checkQuiz = async () => {
       console.log("세션완성")
       isFinished.value = true
       sessionResult.value = res.data.session_result
+      // pinia 갱신
+      userStore.applySessionResult(res.data.session_result)
     }
 
   } catch (err) {

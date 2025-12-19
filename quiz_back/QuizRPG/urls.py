@@ -24,5 +24,6 @@ urlpatterns = [
     
     # path('api/v1/accounts/', include('accounts.urls')),
     path('api/v1/questions/', include('questions.urls')),
-    path('api/v1/game/', include('game.urls')),
+    path('api/v1/game/', include('game.urls')), 
+    path('api/v1/profile/', include('profiles.urls')), 
 ]

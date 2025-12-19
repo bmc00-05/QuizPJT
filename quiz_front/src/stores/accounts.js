@@ -10,7 +10,6 @@ export const useAccountStore = defineStore('account', () => {
 
   const router = useRouter()
 
-
   const signUp = async (payload) => {
     try {
       const res = await axios.post(
@@ -25,14 +24,15 @@ export const useAccountStore = defineStore('account', () => {
   }
 
   const logIn = async (payload) => {
+
     try {
-      const res = await axios.post(
-        `${API_URL}/accounts/login/`,
-        payload
-      )
-      console.log(res)
-      token.value = res.data.key   // 상태만 변경
-      return res
+    const res = await axios.post(
+      `${API_URL}/accounts/login/`,
+      payload
+    )
+    console.log(res)
+    token.value = res.data.key   // 상태만 변경
+    return res
 
     } catch (err) {
       throw err
@@ -43,6 +43,10 @@ export const useAccountStore = defineStore('account', () => {
     return token.value ? true : false
   })
 
+  const logOut = () => {
+    token.value = null
+    router.push({ name: 'start' })
+  }
 
-  return { token, signUp, logIn, isLogin }
+  return { token, signUp, logIn, logOut, isLogin }
 }, { persist: true }) 

@@ -172,6 +172,7 @@ def check_answer(request):
                 "total": total,
                 "level_before": before_level,
                 "level_after": profile.level,
+                "before_exp": before_exp,
                 "experience": profile.experience,
                 "leveled_up": profile.level > before_level,
             }

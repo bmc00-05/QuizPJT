@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import { useAccountStore } from '@/stores/accounts'
+import { useUserStore } from '@/stores/user'
 import StartPage from '@/views/StartPage.vue'
 import LoginPage from '@/components/LoginPage.vue'
 import SignUpPage from '@/components/SignUpPage.vue'
@@ -70,18 +71,31 @@ const router = createRouter({
 })
 
 
-router.beforeEach((to, from) => {
+router.beforeEach(async (to, from) => {
   const accountStore = useAccountStore()
+  const userStore = useUserStore()
 
   if (to.name === 'main' && !accountStore.isLogin) {
     window.alert('로그인이 필요합니다.')
-    return { name: 'LogInView' }
+    return { name: 'login' }
   }
 
   if ((to.name === 'signup' || to.name === 'login') && (accountStore.isLogin) ) {
     window.alert('이미 로그인 되어 있습니다.')
-    return { name: 'ArticleView' }
+    return { name: 'start' }
   }
+
+  if (accountStore.isLogin && !userStore.loaded) {
+      try {
+        await userStore.fetchUser()
+        
+      } catch (err) {
+        // 토큰 만료 / 인증 실패
+        accountStore.logOut?.()
+        return { name: 'login' }
+      }
+    }
+
 })
 
 export default router

@@ -1,4 +1,5 @@
 <template>
+
 <div class="relative justify-center w-full max-w-sm rounded-2xl bg-white p-6 shadow-xl">
       <!-- 닫기 버튼 -->
       <button
@@ -11,13 +12,8 @@
 
       <!-- 로고 & 타이틀 -->
       <div class="sm:mx-auto sm:w-full sm:max-w-sm">
-        <img
-          class="mx-auto h-10 w-auto"
-          src="https://tailwindcss.com/plus-assets/img/logos/mark.svg?color=indigo&shade=600"
-          alt="Your Company"
-        />
         <h2 class="mt-6 text-center text-2xl font-bold tracking-tight text-gray-900">
-          Sign in to your account
+          Create your account
         </h2>
       </div>
 
