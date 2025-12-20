@@ -1,7 +1,38 @@
-@import "tailwindcss";
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+/* 1) Tailwind v4는 이 한 줄로 시작 */
+@import "tailwindcss"; /* v4 방식 */
+
+
+
+/* 2) (선택) Tailwind v4의 CSS-first 테마 변수로 기본 폰트 지정
+   - 이렇게 해두면 `font-sans` 유틸도 자동으로 이 폰트를 사용하게 됨 */
+@theme {
+  --font-sans: "Galmuri14", system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans KR",
+    sans-serif;
+} /* v4의 @theme 흐름 */
+
+
+
+/* 3) 폰트 로드 (경로는 main.css 기준 상대경로 유지) */
+@font-face {
+  font-family: "Galmuri14";
+  src: url("./fonts/Galmuri14.woff2") format("woff2");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+
+
+
+
+/* 4) 전역 적용 (Tailwind preflight보다 “뒤”에 있으니 덮어씌워짐) */
+@layer base {
+  html,
+  body {
+    font-family: var(--font-sans);
+  }
+}
+
 
 @layer components {
   .input {
