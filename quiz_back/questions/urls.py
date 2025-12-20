@@ -6,4 +6,5 @@ urlpatterns = [
     path('problemsets/', views.problemset_create),
     path('problemsets/<int:set_pk>/', views.problemset_detail),
     path('problemsets/<int:set_pk>/problems/', views.problemset_problems),
+    path('problem/<int:problem_pk>/', views.problem_detail),
 ]

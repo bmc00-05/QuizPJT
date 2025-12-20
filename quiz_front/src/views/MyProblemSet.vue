@@ -44,6 +44,7 @@ import ProblemSetForm from '@/components/ProblemSetForm.vue'
 import ProblemSetCreate from '@/components/ProblemSetCreate.vue'
 import QuizCreate from '@/components/QuizCreate.vue'
 import ProblemSetDetail from '@/components/ProblemSetDetail.vue'
+import QuizDetail from '@/components/QuizDetail.vue'   // ✅ 추가
 
 const API_URL = import.meta.env.VITE_REST_API_URL
 const accountStore = useAccountStore()
@@ -56,30 +57,36 @@ const currentQuizsetId = ref(null)
 const modalView = shallowRef(ProblemSetForm)
 const modalProps = ref({})
 
-// ✅ 모달별 이벤트 라우팅
+// ✅ 모달별 이벤트 라우팅 (UserMode랑 동일하게)
 const extraListeners = computed(() => {
   const name = modalView.value?.__name
 
-  // 상세/수정 화면에서 문제추가(goCreateQuiz), 수정(edit) 받기
   if (name === 'ProblemSetCreate' || name === 'ProblemSetDetail') {
     return {
       updated: onUpdated,
       goCreateQuiz: onGoCreateQuiz,
       edit: onEditProblemSet,
+      openQuizDetail: onOpenQuizDetail, // ✅ 추가
     }
   }
 
-  // 퀴즈 생성 화면에서 완료(done) 받기
   if (name === 'QuizCreate') {
     return { done: backToProblemSetCreate }
+  }
+
+  if (name === 'QuizDetail') {
+    return {
+      back: backToProblemSetCreate,
+      saved: backToProblemSetCreate,
+      deleted: backToProblemSetCreate,
+      close: closeModal, // 선택: 닫기 버튼 처리용
+    }
   }
 
   return {}
 })
 
-// ✅ “내가 만든 문제집”만 가져오는 API로 바꿔줘야 함
-// 너가 지금 `${API_URL}/questions/problemsets/` 쓰고 있는데,
-// 이게 "내 것만"이 아니라 전체면, 백엔드에서 필터링 엔드포인트를 따로 두거나 쿼리로 구분해야 함.
+// ✅ 목록 조회
 const getQuizSets = async () => {
   try {
     const res = await axios.get(`${API_URL}/questions/problemsets/`, {
@@ -98,7 +105,7 @@ const openModal = () => {
   modal.open(1)
 }
 
-// ✅ 생성 완료 → 수정/관리 모달
+// ✅ 생성 완료 → 관리 모달
 const onCreated = (createdId) => {
   currentQuizsetId.value = createdId
   modalView.value = ProblemSetCreate
@@ -130,6 +137,13 @@ const onEditProblemSet = (quizsetId) => {
   currentQuizsetId.value = quizsetId
   modalView.value = ProblemSetCreate
   modalProps.value = { quizsetid: quizsetId }
+}
+
+// ✅ QuizList에서 quiz 클릭 → QuizDetail로 전환
+const onOpenQuizDetail = ({ quizId, quizSetId }) => {
+  currentQuizsetId.value = quizSetId
+  modalView.value = QuizDetail
+  modalProps.value = { quizid: quizId, quizsetid: quizSetId }
 }
 
 // ✅ 목록 클릭 → 상세 모달

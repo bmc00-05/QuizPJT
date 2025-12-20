@@ -45,6 +45,8 @@ import ProblemSetForm from '@/components/ProblemSetForm.vue'
 import ProblemSetCreate from '@/components/ProblemSetCreate.vue'
 import QuizCreate from '@/components/QuizCreate.vue'
 import ProblemSetDetail from '@/components/ProblemSetDetail.vue'
+import QuizDetail from '@/components/QuizDetail.vue'
+
 
 const API_URL = import.meta.env.VITE_REST_API_URL
 const modal = useModalStore()
@@ -62,12 +64,17 @@ const extraListeners = computed(() => {
   const name = modalView.value?.__name   // ✅ 컴포넌트 이름으로 판별
   ////나중에 문제 가능 표식/////////////////
   if (name === 'ProblemSetCreate' || name === 'ProblemSetDetail') {
-    return { updated: onUpdated, goCreateQuiz: onGoCreateQuiz, edit: onEditProblemSet }
+    return { updated: onUpdated, goCreateQuiz: onGoCreateQuiz, edit: onEditProblemSet, openQuizDetail: onOpenQuizDetail,  }
   }
   
   if (name === 'QuizCreate') {
     return { done: backToProblemSetCreate }
   }
+
+  if (name === 'QuizDetail') {
+    return { back: backToProblemSetCreate, saved: backToProblemSetCreate, deleted: backToProblemSetCreate }
+  }
+
   return {}
 })
   
@@ -76,6 +83,12 @@ const getProblemSets = async () => {
     headers: { Authorization: `Token ${accountStore.token}` },
   })
   quizsets.value = res.data
+}
+
+const onOpenQuizDetail = ({ quizId, quizSetId }) => {
+  currentQuizsetId.value = quizSetId
+  modalView.value = QuizDetail
+  modalProps.value = { quizid: quizId, quizsetid: quizSetId }
 }
 
 // ✅ 생성 버튼 → 생성 폼 모달

@@ -89,7 +89,10 @@ const goCreateQuiz = () => {
 
 // ✅ QuizList에서 퀴즈 클릭하면 여기로 들어옴
 const onSelectQuiz = (quizId) => {
-  emit('openQuizDetail', quizId)
+  emit('openQuizDetail', {
+    quizId,
+    quizSetId: quizSetId.value,   // computed로 갖고 있는 문제집 id
+  })
 }
 
 const refreshQuizSetProblems = () => {

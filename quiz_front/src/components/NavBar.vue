@@ -19,10 +19,10 @@
     <span>프로필</span>
   </RouterLink>
 
-  <!-- <RouterLink  class="nav-btn"> -->
+  <RouterLink :to="{ name: 'aimode'}" class="nav-btn">
     🤖
     <span>AI</span>
-  <!-- </RouterLink> -->
+  </RouterLink>
 </nav>
 </template>
 

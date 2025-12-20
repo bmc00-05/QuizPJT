@@ -1,4 +1,6 @@
 from django.utils import timezone
+from django.db.models import Count
+from datetime import timedelta
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated, AllowAny
@@ -9,7 +11,8 @@ from .serializers import (
     MapSerializer, 
     MapProblemSetSerializer, 
     ProblemSetSerializer,
-    ProblemViewSerializer
+    ProblemViewSerializer,
+    RecentWrongLogSerializer,
 )
 from profiles.models import Profile
 from django.contrib.auth import get_user_model
@@ -237,3 +240,54 @@ def user_created_problem_set(request):
     
     serializer = ProblemSetSerializer(problemsets, many=True)
     return Response(serializer.data)
+
+
+
+@api_view(["GET"])
+@permission_classes([IsAuthenticated])
+def recent_wrong_logs(request):
+    days = 7
+    limit = 30
+    since = timezone.now() - timedelta(days=days)
+
+    qs = (
+        SessionLog.objects
+        .filter(
+            user=request.user,
+            is_correct=False,
+            solved_at__gte=since,
+        )
+        .select_related("problem", "problem__category")  # ✅ 핵심
+        .order_by("-solved_at")[:limit]
+    )
+
+    items = RecentWrongLogSerializer(qs, many=True).data
+
+    # ✅ 난이도별 오답
+    wrong_by_difficulty = (
+        SessionLog.objects
+        .filter(user=request.user, is_correct=False, solved_at__gte=since)
+        .values("problem__difficulty")
+        .annotate(cnt=Count("id"))
+        .order_by("-cnt")
+    )
+
+    # ✅ 카테고리별 오답
+    wrong_by_category = (
+        SessionLog.objects
+        .filter(user=request.user, is_correct=False, solved_at__gte=since)
+        .values("problem__category_id", "problem__category__name")
+        .annotate(cnt=Count("id"))
+        .order_by("-cnt")
+    )
+
+    return Response({
+        "window_days": days,
+        "limit": limit,
+        "count": len(items),
+        "items": items,
+        "stats": {
+            "wrong_by_difficulty": list(wrong_by_difficulty),
+            "wrong_by_category": list(wrong_by_category),
+        }
+    })

@@ -13,6 +13,7 @@ import GameView from '@/views/GameView.vue'
 import UserMode from '@/views/UserMode.vue'
 import Profile from '@/views/Profile.vue'
 import MyProblemSet from '@/views/MyProblemSet.vue'
+import AIMode from '@/views/AIMode.vue'
 
 
 const router = createRouter({
@@ -33,14 +34,13 @@ const router = createRouter({
     name: 'main',
     component: MainPage,
     children: [
-      // 게임맵
       { path: 'map', name: 'map', component: Map },
       { path: 'map/:mapid', name: 'stage', component: Stage},
       { path: 'game/:id', name: 'game', component: GameView},
       { path: 'usermode', name: 'usermode', component: UserMode},
       { path: 'profile', name: 'profile', component: Profile},
       { path: 'profile/problemset', name: 'myproblemset', component: MyProblemSet},
-      // 게임 맵 내부 스테이지
+      { path: 'ai', name: 'aimode', component: AIMode},
     ]
   },
 
