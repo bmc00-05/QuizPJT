@@ -6,6 +6,8 @@ from .serializers import QuestionSerializer
 from .models import Problem
 from game.models import ProblemSet
 from game.serializers import ProblemSetSerializer
+from django.db.models import Count
+from django.shortcuts import get_object_or_404
 
 # Create your views here.
 # 개인 문제집 조회 및 문제집 프레임 생성
@@ -29,29 +31,26 @@ def problemset_create(request):
 @permission_classes([IsAuthenticated])
 def problemset_detail(request, set_pk):
 
-    # 문제집 선택
-    try:
-        problemset = ProblemSet.objects.get(pk=set_pk, created_by=request.user)
-    except ProblemSet.DoesNotExist:
-        return Response({"detail": "문제집을 찾을 수 없습니다."}, status=404)
+    # ✅ GET은 누구나 조회 가능 (로그인 유저 기준)
+    qs = ProblemSet.objects.annotate(problem_count=Count('problem', distinct=True))
+    problemset = get_object_or_404(qs, pk=set_pk)
 
-    # 조회
     if request.method == 'GET':
-        serializer = ProblemSetSerializer(problemset)
+        return Response(ProblemSetSerializer(problemset).data)
+
+    # ✅ 수정/삭제는 작성자만
+    if problemset.created_by != request.user:
+        return Response({"detail": "권한이 없습니다."}, status=status.HTTP_403_FORBIDDEN)
+
+    if request.method == 'PATCH':
+        serializer = ProblemSetSerializer(problemset, data=request.data, partial=True)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()  # created_by는 serializer에서 read_only로 막는 게 안전
         return Response(serializer.data)
 
-    # 부분 수정(PATCH) → 이름/설명 수정
-    elif request.method == 'PATCH':
-        serializer = ProblemSetSerializer(problemset, data=request.data, partial=True)
-        if serializer.is_valid():
-            serializer.save()  # created_by는 이미 존재하므로 갱신되지 않음
-            return Response(serializer.data)
-        return Response(serializer.errors, status=400)
-
-    # 삭제
-    elif request.method == 'DELETE':
+    if request.method == 'DELETE':
         problemset.delete()
-        return Response(status=204)
+        return Response(status=status.HTTP_204_NO_CONTENT)
     
 # 문제집 안 문제들에 대한 조회 및 수정 삭제
 @api_view(['GET', 'POST', 'DELETE'])

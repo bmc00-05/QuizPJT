@@ -12,11 +12,12 @@ class MapSerializer(serializers.ModelSerializer):
 class ProblemSetSerializer(serializers.ModelSerializer):
     like_count = serializers.SerializerMethodField()
     created_by_name = serializers.SerializerMethodField()
-
+    problem_count = serializers.IntegerField(read_only=True)  # ✅ 추가
+    
     class Meta:
         model = ProblemSet
-        fields = ('id', 'title', 'description', 'like_count', 'created_by_name', )
-
+        fields = ('id', 'title', 'description', 'like_count', 'created_by', 'created_by_name', 'problem_count', )
+        read_only_fields = ['id','problem_count']
     def get_like_count(self, obj):
         return obj.like_users.count()
     

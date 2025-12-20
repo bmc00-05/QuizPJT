@@ -3,7 +3,7 @@
     <h1>맵 페이지</h1>
     <ul>
       <li v-for="map in maps" :key="map.id">
-        <RouterLink :to="{ name: 'mainproblemset', params: {'problemset':map.id}}">
+        <RouterLink :to="{ name: 'stage', params: {'mapid':map.id}}" :map="map">
         {{ map.name }} - {{ map.description }}
         </RouterLink>
       </li>

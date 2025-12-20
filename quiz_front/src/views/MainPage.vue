@@ -1,35 +1,34 @@
 <template>
-  <div>
-    <h1>메인 페이지</h1>
-    <div>
-      <span>유저 정보 로드   </span> 
+  <div class="h-screen flex flex-col bg-gray-500 text-white">
+
+    <div class="flex-1 overflow-hidden flex flex-col">
+      <h1>메인 페이지</h1>
+
+      <div>
+        <span>유저 정보 로드 </span>
         <span>| {{ username }} |</span>
         <span>Lv: {{ level }} |</span>
         <span>Exp: {{ exp }} |</span>
+      </div>
+
+      <div class="flex-1 overflow-y-auto mt-4">
+        <RouterView />
+      </div>
     </div>
+
+
+    <NavBar />
   </div>
-  <div>
-    <RouterLink :to="{ name: 'map'}">
-      메인 모드
-    </RouterLink>
-    <RouterLink :to="{ name: 'usermode'}">
-      유저 모드
-    </RouterLink>
-    <RouterLink :to="{ name: 'profile', params: {'id':userId }}">
-      유저 프로필
-    </RouterLink>
-    <RouterLink :to="{ name: 'ai'}">
-      AI 코칭
-    </RouterLink>
-  </div>
-  <RouterView/>
 </template>
 
 <script setup>
 import { ref, onMounted } from 'vue'
 import { useUserStore } from '@/stores/user';
+import { useModalStore } from '@/stores/modal';
+import NavBar from '@/components/NavBar.vue';
 
 const userStore = useUserStore()
+const modal = useModalStore()
 
 const userId = ref(1)
 

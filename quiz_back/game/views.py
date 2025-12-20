@@ -58,17 +58,11 @@ def map_detail(request, map_pk):
 @permission_classes([IsAuthenticated])
 @transaction.atomic
 def start_play_session(request):
-    """
-    문제집 플레이 시작 시 호출되는 API
-    - PlaySession 생성
-    - 문제집에서 랜덤 10문제 추출
-    - session_id + 문제 리스트 반환
-    """
     problem_set_id = request.data.get("problem_set_id")
 
     if problem_set_id is None:
         return Response({"error": "problem_set_id는 필수값입니다."}, status=400)
-    
+
     # 🧹 기존 0문제 세션 정리
     PlaySession.objects.filter(
         user=request.user,
@@ -80,27 +74,34 @@ def start_play_session(request):
         problem_set = ProblemSet.objects.get(id=problem_set_id)
     except ProblemSet.DoesNotExist:
         return Response({"error": "해당 문제집이 존재하지 않습니다."}, status=404)
-    
-    # 1) PlaySession 생성
+
+    # ✅ 문제 수 체크
+    available_count = problem_set.problem.count()
+    if available_count == 0:
+        return Response({"error": "문제집에 문제가 없습니다."}, status=400)
+
+    pick_count = min(10, available_count)  # ✅ 기본은 10, 부족하면 있는 만큼
+
+    # 1) PlaySession 생성 (total_problems를 실제 뽑은 개수로)
     session = PlaySession.objects.create(
         user=request.user,
         problem_set=problem_set,
-        total_problems=10,  # 기본값
+        total_problems=pick_count,
     )
 
-    # 2) 문제집에서 문제 10개 랜덤 선택
-    # 추후 문제 선택 알고리즘 추가 예정
-    problems = problem_set.problem.order_by("?")[:10]
+    # 2) 문제집에서 문제 pick_count개 랜덤 선택
+    problems = problem_set.problem.order_by("?")[:pick_count]
 
     # 세션에 문제 저장
     session.selected_problems.set(problems)
-    session.save()
 
     # 3) 프론트에 반환할 데이터 구성
     serialized = ProblemViewSerializer(problems, many=True).data
 
     return Response({
         "session_id": session.id,
+        "total_problems": pick_count,        # ✅ 프론트가 이걸 기준으로 진행하게
+        "available_count": available_count,  # (선택) UI에 “현재 문제 수” 표시용
         "problems": serialized
     }, status=201)
 

@@ -1,0 +1,144 @@
+<template>
+  <div class="relative h-full">
+    <h1>내가 만든 문제집 목록</h1>
+
+    <ul>
+      <li
+        v-for="quizset in quizSets"
+        :key="quizset.id"
+        class="cursor-pointer hover:bg-gray-50"
+        @click="openDetail(quizset.id)"
+      >
+        {{ quizset.title }} like: {{ quizset.like_count }}
+        <hr />
+      </li>
+    </ul>
+
+    <button
+      @click="openModal"
+      class="mt-4 px-4 py-2 bg-blue-500 text-white rounded"
+    >
+      문제집 생성
+    </button>
+
+    <BaseModal v-if="modal.isOpen" @close="closeModal">
+      <component
+        :is="modalView"
+        v-bind="modalProps"
+        @created="onCreated"
+        @close="closeModal"
+        v-on="extraListeners"
+      />
+    </BaseModal>
+  </div>
+</template>
+
+<script setup>
+import { ref, onMounted, shallowRef, computed } from 'vue'
+import { useAccountStore } from '@/stores/accounts'
+import { useModalStore } from '@/stores/modal'
+import axios from 'axios'
+
+import BaseModal from '@/components/common/BaseModal.vue'
+import ProblemSetForm from '@/components/ProblemSetForm.vue'
+import ProblemSetCreate from '@/components/ProblemSetCreate.vue'
+import QuizCreate from '@/components/QuizCreate.vue'
+import ProblemSetDetail from '@/components/ProblemSetDetail.vue'
+
+const API_URL = import.meta.env.VITE_REST_API_URL
+const accountStore = useAccountStore()
+const modal = useModalStore()
+
+const quizSets = ref([])
+const currentQuizsetId = ref(null)
+
+// ✅ 모달 교체
+const modalView = shallowRef(ProblemSetForm)
+const modalProps = ref({})
+
+// ✅ 모달별 이벤트 라우팅
+const extraListeners = computed(() => {
+  const name = modalView.value?.__name
+
+  // 상세/수정 화면에서 문제추가(goCreateQuiz), 수정(edit) 받기
+  if (name === 'ProblemSetCreate' || name === 'ProblemSetDetail') {
+    return {
+      updated: onUpdated,
+      goCreateQuiz: onGoCreateQuiz,
+      edit: onEditProblemSet,
+    }
+  }
+
+  // 퀴즈 생성 화면에서 완료(done) 받기
+  if (name === 'QuizCreate') {
+    return { done: backToProblemSetCreate }
+  }
+
+  return {}
+})
+
+// ✅ “내가 만든 문제집”만 가져오는 API로 바꿔줘야 함
+// 너가 지금 `${API_URL}/questions/problemsets/` 쓰고 있는데,
+// 이게 "내 것만"이 아니라 전체면, 백엔드에서 필터링 엔드포인트를 따로 두거나 쿼리로 구분해야 함.
+const getQuizSets = async () => {
+  try {
+    const res = await axios.get(`${API_URL}/questions/problemsets/`, {
+      headers: { Authorization: `Token ${accountStore.token}` },
+    })
+    quizSets.value = res.data
+  } catch (err) {
+    console.error(err)
+  }
+}
+
+// ✅ 생성 모달
+const openModal = () => {
+  modalView.value = ProblemSetForm
+  modalProps.value = {}
+  modal.open(1)
+}
+
+// ✅ 생성 완료 → 수정/관리 모달
+const onCreated = (createdId) => {
+  currentQuizsetId.value = createdId
+  modalView.value = ProblemSetCreate
+  modalProps.value = { quizsetid: createdId }
+}
+
+// ✅ 수정 저장 완료 시 목록 갱신
+const onUpdated = () => {
+  getQuizSets()
+}
+
+const closeModal = () => modal.close()
+
+// ✅ 문제 추가로 이동
+const onGoCreateQuiz = (quizsetId) => {
+  currentQuizsetId.value = quizsetId
+  modalView.value = QuizCreate
+  modalProps.value = { quizsetid: quizsetId }
+}
+
+// ✅ 퀴즈 생성 완료 → 다시 문제집 관리로
+const backToProblemSetCreate = () => {
+  modalView.value = ProblemSetCreate
+  modalProps.value = { quizsetid: currentQuizsetId.value }
+}
+
+// ✅ 상세에서 수정 버튼 눌렀을 때 → 관리 화면으로
+const onEditProblemSet = (quizsetId) => {
+  currentQuizsetId.value = quizsetId
+  modalView.value = ProblemSetCreate
+  modalProps.value = { quizsetid: quizsetId }
+}
+
+// ✅ 목록 클릭 → 상세 모달
+const openDetail = (quizsetId) => {
+  currentQuizsetId.value = quizsetId
+  modalView.value = ProblemSetDetail
+  modalProps.value = { quizsetid: quizsetId }
+  modal.open(1)
+}
+
+onMounted(getQuizSets)
+</script>
