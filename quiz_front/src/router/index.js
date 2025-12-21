@@ -1,17 +1,20 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import { useAccountStore } from '@/stores/accounts'
 import { useUserStore } from '@/stores/user'
+
 import StartPage from '@/views/StartPage.vue'
 import LoginPage from '@/components/LoginPage.vue'
 import SignUpPage from '@/components/SignUpPage.vue'
 import MainPage from '@/views/MainPage.vue'
-import MapPage from '@/views/MapPage.vue'
-import UserModePage from '@/views/UserModePage.vue'
-import MapProblemSetPage from '@/views/MapProblemSetPage.vue'
-import UserPage from '@/views/UserPage.vue'
-import AIPage from '@/views/AIPage.vue'
+
+import Map from '@/views/Map.vue'
+import Stage from '@/views/Stage.vue'
 import GameView from '@/views/GameView.vue'
-import CreateQuizSet from '@/components/CreateQuizSet.vue'
+import UserMode from '@/views/UserMode.vue'
+import Profile from '@/views/Profile.vue'
+import MyProblemSet from '@/views/MyProblemSet.vue'
+import AIMode from '@/views/AIMode.vue'
+
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -21,50 +24,24 @@ const router = createRouter({
     name: 'start',
     component: StartPage,
     children: [
-        { path: '/login', name: 'login', component: LoginPage },
-        { path: '/signup', name: 'signup', component: SignUpPage },
+        { path: 'login', name: 'login', component: LoginPage },
+        { path: 'signup', name: 'signup', component: SignUpPage },
     ]
 
   },
   {
     path: '/main',
     name: 'main',
-    component: MainPage
-  },
-  {
-    path: '/map',
-    name: 'map',
-    component: MapPage
-  },
-  {
-    path: '/quiz/user',
-    name: 'usermode',
-    component: UserModePage
-  },
-  {
-    path: '/map/:problemset',
-    name: 'mainproblemset',
-    component: MapProblemSetPage
-  },
-  {
-    path: '/profile/:id',
-    name: 'profile',
-    component: UserPage
-  },
-  {
-    path: '/ai',
-    name: 'ai',
-    component: AIPage
-  },
-  {
-    path: '/game/:problemSetId',
-    name: 'game',
-    component: GameView
-  },
-  {
-    path: '/quiz/create-set/',
-    name: 'createQuizSet',
-    component: CreateQuizSet
+    component: MainPage,
+    children: [
+      { path: 'map', name: 'map', component: Map },
+      { path: 'map/:mapid', name: 'stage', component: Stage},
+      { path: 'game/:id', name: 'game', component: GameView},
+      { path: 'usermode', name: 'usermode', component: UserMode},
+      { path: 'profile', name: 'profile', component: Profile},
+      { path: 'profile/problemset', name: 'myproblemset', component: MyProblemSet},
+      { path: 'ai', name: 'aimode', component: AIMode},
+    ]
   },
 
   ],

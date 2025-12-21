@@ -147,12 +147,26 @@ class SessionLog(models.Model):
     solved_at = models.DateTimeField(default=timezone.now)
 
     class Meta:
-        # 유저가 같은 세션에서 한 문제를 여러 번 기록하지 않도록
         unique_together = ("session", "problem")
 
         ordering = ["-solved_at"]
         verbose_name = "문제 풀이 로그"
         verbose_name_plural = "문제 풀이 로그들"
+
+        # ✅ 인덱스 추가
+        indexes = [
+            # 유저의 최신 로그 조회 (프로필/히스토리)
+            models.Index(fields=["user", "-solved_at"], name="idx_log_user_time"),
+
+            # 최근 7일 오답 조회(너가 이미 쓰는 쿼리)
+            models.Index(fields=["user", "is_correct", "-solved_at"], name="idx_log_user_wrong_time"),
+
+            # 세션별 로그 조회 (세션 결과/리플레이)
+            models.Index(fields=["session"], name="idx_log_session"),
+
+            # 문제별 통계 집계/분석 (문제 단위 히트맵 같은 거 할 때)
+            models.Index(fields=["problem"], name="idx_log_problem"),
+        ]
 
     def __str__(self):
         return f"{self.user.username} - {self.problem_id} - Correct:{self.is_correct}"

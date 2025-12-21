@@ -7,6 +7,7 @@ class  QuestionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Problem
         fields = (
+            'id',
             'question',
             'choice1',
             'choice2',
