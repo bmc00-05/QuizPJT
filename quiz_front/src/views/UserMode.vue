@@ -1,27 +1,59 @@
 <template>
-  <div class="relative h-full">
-    <h1>유저 모드 페이지</h1>
-
-    <ul>
-        <li
-          v-for="quizset in quizsets"
-          :key="quizset.id"
-          class="cursor-pointer hover:bg-gray-50"
-          @click="openDetail(quizset.id)"
-        >
-        제목: {{ quizset.title }} <br/>
-        좋아요: {{ quizset.like_count }} |
-        작성자: {{ quizset.created_by_name }}
-        <hr/>
-      </li>
-    </ul>
-
-    <button
+  <div class="relative h-full text-black">
+    <div class="pixel-panel w-full max-w-[400px] mx-auto ">
+        <div class="flex justify-center tracking-wide mt-2 ">
+          <h1>유저 모드 페이지</h1>
+        </div>
+        <div class="flex justify-end mr-4">
+        <button
       @click="openModal"
-      class="mt-4 px-4 py-2 bg-blue-500 text-white rounded"
+      class="text-xs "
     >
       문제집 생성
     </button>
+    </div>
+
+
+      <div class="pixel-panel__content min-h-[60vh] overflow-y-auto ">
+        <ul>
+          <li
+            v-for="quizset in pagedQuizsets"
+            :key="quizset.id"
+            class="cursor-pointer hover:bg-gray-50"
+            @click="openDetail(quizset.id)"
+          >
+            제목: {{ quizset.title }} <br/>
+            좋아요: {{ quizset.like_count }} |
+            작성자: {{ quizset.created_by_name }}
+            <hr/>
+          </li>
+        </ul>
+      
+    </div>
+    <div v-if="totalPages > 1" class="flex items-center justify-between gap-2 px-2 py-2">
+      <button
+        class="px-3 py-1 border rounded disabled:opacity-40"
+        :disabled="page === 1"
+        @click="page--"
+      >
+        이전
+      </button>
+
+      <div class="text-sm">
+        {{ page }} / {{ totalPages }}
+      </div>
+
+      <button
+        class="px-3 py-1 border rounded disabled:opacity-40"
+        :disabled="page === totalPages"
+        @click="page++"
+      >
+        다음
+      </button>
+    </div>
+
+  </div>
+
 
     <BaseModal v-if="modal.isOpen" @close="closeModal">
     <component
@@ -83,6 +115,7 @@ const getProblemSets = async () => {
     headers: { Authorization: `Token ${accountStore.token}` },
   })
   quizsets.value = res.data
+  page.value = 1
 }
 
 const onOpenQuizDetail = ({ quizId, quizSetId }) => {
@@ -137,6 +170,20 @@ const openDetail = (quizsetId) => {
   modalProps.value = { quizsetid: quizsetId }
   modal.open(1)
 }
+
+const page = ref(1)
+const pageSize = 10
+
+const totalPages = computed(() => {
+  return Math.max(1, Math.ceil(quizsets.value.length / pageSize))
+})
+
+const pagedQuizsets = computed(() => {
+  const start = (page.value - 1) * pageSize
+  return quizsets.value.slice(start, start + pageSize)
+})
+
+
 
 onMounted(getProblemSets)
 </script>

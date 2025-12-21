@@ -16,8 +16,8 @@ from .serializers import (
 )
 from profiles.models import Profile
 from django.contrib.auth import get_user_model
-from django.db import transaction
-
+from django.db import transaction, IntegrityError
+from profiles.services.stats_service import update_stats_from_log
 # ==================================================================================================
 # 메인 모드 구현
 # ==================================================================================================
@@ -108,9 +108,13 @@ def start_play_session(request):
         "problems": serialized
     }, status=201)
 
+
+  # ✅ 추가
+
 # 퀴즈 정답 채점 함수
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
+@transaction.atomic  # ✅ 추가
 def check_answer(request):
     try:
         session_id = request.data.get("session_id")
@@ -140,15 +144,24 @@ def check_answer(request):
         is_correct = (question.answer == int(selected))
 
         # 📝 즉시 SessionLog 저장
-        SessionLog.objects.create(
-            user=request.user,
-            session=session,
-            problem=question,
-            selected_answer=int(selected),
-            is_correct=is_correct,
-            solved_at=timezone.now()
-        )
+        try:
+            log = SessionLog.objects.create(
+                user=request.user,
+                session=session,
+                problem=question,
+                selected_answer=int(selected),
+                is_correct=is_correct,
+                solved_at=timezone.now()
+            )
+        except IntegrityError:
+            # unique_together ("session","problem") 때문에 같은 문제 재제출이면 여기로 옴
+            return Response({"error": "이미 제출한 문제입니다."}, status=400)
+
+        # ✅ 통계 업데이트(핵심 1줄)
+        update_stats_from_log(log)
+
         # 몇번째 응답?
+        # (성능상 session.logs.count() 추천. related_name="logs"라면 아래처럼 가능)
         answered_count = SessionLog.objects.filter(session=session).count()
 
         # 🔥 세션 상태 업데이트
@@ -192,20 +205,23 @@ def check_answer(request):
             "is_completed": session.is_completed,
             "solved_count": session.solved_count,
             "total_problems": session.total_problems,
-
             "session_result": session_completed_result
         }
 
         return Response(result, status=status.HTTP_200_OK)
 
-    
     except PlaySession.DoesNotExist:
-        return Response({"error": "잘못된 session_id이거나 접근 권한이 없습니다."},
-                        status=status.HTTP_404_NOT_FOUND)
+        return Response(
+            {"error": "잘못된 session_id이거나 접근 권한이 없습니다."},
+            status=status.HTTP_404_NOT_FOUND
+        )
 
     except Problem.DoesNotExist:
-        return Response({"error": "해당 문제를 찾을 수 없습니다."},
-                        status=status.HTTP_404_NOT_FOUND)
+        return Response(
+            {"error": "해당 문제를 찾을 수 없습니다."},
+            status=status.HTTP_404_NOT_FOUND
+        )
+
 
     # except Exception as e:
     #     return Response({"error": f"서버 오류: {str(e)}"},

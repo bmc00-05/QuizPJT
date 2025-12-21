@@ -29,7 +29,7 @@ SECRET_KEY = 'django-insecure-r3)1p=g3r@!8sq^4p#37+*5^b1(0kpf)2nn2a4iy00+ux_%18x
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["*"]
 
 
 # Application definition
@@ -39,7 +39,7 @@ INSTALLED_APPS = [
     'questions',
     'accounts',
     'game',
-    'profiles',
+    "profiles.apps.ProfilesConfig",
     'rest_framework',
     'rest_framework.authtoken',
     'dj_rest_auth',

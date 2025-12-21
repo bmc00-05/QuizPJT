@@ -1,46 +1,71 @@
 <template>
-  <h1>게임화면</h1>
-
   <!-- 🟢 퀴즈 진행 화면 -->
   <div v-if="!isFinished && currentQuestion">
-    <h4>현재 진행: {{ currentIndex + 1 }} / {{ totalProblems }}</h4>
-    <h4>현재 선택: {{ selectedChoice }}</h4>
+    <!-- ✅ relative + 버튼 공간 확보 -->
+    <div class="relative border border-gray-400 rounded overflow-hidden pb-16">
 
-    <div>
-      <h2>문제: {{ currentQuestion.question }}</h2>
+      <!-- 문제 영역 -->
+      <div class="flex items-center justify-center text-center min-h-[100px] px-3">
+        {{ currentQuestion.question }}
+      </div>
+
+      <!-- 보기 2x2 -->
+      <ul class="grid grid-cols-2">
+        <li
+          v-for="n in 4"
+          :key="n"
+          class="p-3 text-black text-sm cursor-pointer
+                hover:bg-gray-100 active:scale-[0.99]
+                flex items-center justify-center text-center min-h-[64px]
+                border-gray-300
+                [&:nth-child(1)]:border-b [&:nth-child(1)]:border-r
+                [&:nth-child(2)]:border-b
+                [&:nth-child(3)]:border-r"
+          @click="!isAnswered && (selectedChoice = n)"
+          :class="[
+            isAnswered ? 'opacity-60 pointer-events-none' : '',
+            selectedChoice === n ? 'bg-blue-50' : 'bg-white'
+          ]"
+        >
+          {{ currentQuestion[`choice${n}`] }}
+        </li>
+      </ul>
+
+      <!-- 진행/선택 표시 -->
+      <div class="px-3 py-2 text-black text-sm">
+        <h4>현재 진행: {{ currentIndex + 1 }} / {{ totalProblems }}</h4>
+        <h4>현재 선택: {{ selectedChoice }}</h4>
+      </div>
+
+      <!-- ✅ 우측 하단 버튼 -->
+      <div class="absolute bottom-3 right-3 flex gap-2">
+        <button
+          v-if="!isAnswered"
+          class="btn px-4 py-2 disabled:opacity-50"
+          :disabled="selectedChoice === null || isChecking"
+          @click="checkQuiz"
+        >
+          채점
+        </button>
+
+        <button
+          v-else-if="!isFinished"
+          class="btn px-4 py-2"
+          @click="nextQuestion"
+        >
+          다음 문제
+        </button>
+      </div>
     </div>
-
-    <ul>
-      <li
-        v-for="n in 4"
-        :key="n"
-        class="cursor-pointer"
-        @click="!isAnswered && (selectedChoice = n)"
-        :style="isAnswered ? 'opacity:0.6; pointer-events:none;' : ''"
-      >
-        {{ currentQuestion[`choice${n}`] }}
-      </li>
-    </ul>
 
     <hr />
 
+    <!-- 결과 표시 -->
     <div v-if="result">
       <h3>결과: {{ result.correct }}</h3>
       <h3>정답: {{ result.correct_answer }}</h3>
       <h3>설명: {{ result.explanation }}</h3>
     </div>
-
-    <button
-      v-if="!isAnswered"
-      :disabled="selectedChoice === null || isChecking"
-      @click="checkQuiz"
-    >
-      채점
-    </button>
-
-    <button v-else-if="!isFinished" @click="nextQuestion">
-      다음 문제
-    </button>
   </div>
 
   <!-- ✅ 로딩/에러 상태(선택) -->
@@ -71,6 +96,7 @@
     </button>
   </BaseModal>
 </template>
+
 
 <script setup>
 import { ref, onMounted, computed } from 'vue'

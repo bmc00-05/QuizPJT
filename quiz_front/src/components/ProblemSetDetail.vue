@@ -100,6 +100,5 @@ const canEdit = computed(() => {
   }
   return false
 })
-console.log(canEdit.value)
-console.log(accountStore.userId)
+
 </script>
