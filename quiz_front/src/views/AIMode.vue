@@ -1,14 +1,30 @@
 <template>
-  <div class="p-4">
-    <h1 class="text-black text-lg font-bold mb-3">AI 모드</h1>
+  <div class="h-full w-full min-h-0 flex flex-col gap-2">
+    <!-- 상단 패널 -->
+    <div class="pixel-panel flex-[7] min-h-0">
+      <div class="pixel-panel__content h-full min-h-0 overflow-hidden">
+        <h1 class="text-black text-lg font-bold mb-3">AI 모드</h1>
+      </div>
+    </div>
 
-    <button
-      class="w-full bg-blue-600 text-white py-2 rounded"
-      @click="openCoachingIntro"
-    >
-      AI 코칭!
-    </button>
+    <!-- 하단 패널 -->
+    <div class="pixel-panel m-2 flex-[3] min-h-0">
+      <div class="pixel-panel__content h-full min-h-0 overflow-hidden">
+        <h1 class="text-black text-lg font-bold mb-3">대화창?</h1>
+      </div>
+    </div>
 
+    <!-- 버튼은 맨 아래 고정(줄어들지 않게) -->
+    <div class="m-2 shrink-0">
+      <button
+        class="w-full bg-blue-600 text-white py-2 rounded"
+        @click="openCoachingIntro"
+      >
+        AI 코칭!
+      </button>
+    </div>
+
+    <!-- 모달 -->
     <BaseModal v-if="modal.isOpen" @close="closeModal">
       <component
         :is="modalView"

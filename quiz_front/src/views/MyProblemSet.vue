@@ -1,27 +1,37 @@
 <template>
-  <div class="relative h-full">
-    
-    <h1>내가 만든 문제집 목록</h1>
+  <div class="w-full h-full min-h-0 flex flex-col text-black">
+    <!-- ✅ 패널(위쪽, 남은 공간) -->
+    <div class="pixel-panel flex-1 min-h-0 flex flex-col">
+      <div class="pixel-panel__content flex-1 min-h-0 overflow-auto flex flex-col items-center">
+        <div class="m-4 font-bold text-xl text-center">
+          내가 만든 문제집 목록
+        </div>
 
-    <ul>
-      <li
-        v-for="quizset in quizSets"
-        :key="quizset.id"
-        class="cursor-pointer hover:bg-gray-50"
-        @click="openDetail(quizset.id)"
+        <ul class="w-full max-w-[360px]">
+          <li
+            v-for="quizset in quizSets"
+            :key="quizset.id"
+            class="cursor-pointer hover:bg-gray-50 text-center"
+            @click="openDetail(quizset.id)"
+          >
+            {{ quizset.title }} like: {{ quizset.like_count }}
+            <hr />
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- ✅ 버튼(패널 밖, 맨 아래, 중앙 정렬) -->
+    <div class="shrink-0 w-full mt-4 flex justify-center pb-3">
+      <button
+        @click="openModal"
+        class="px-4 py-2 bg-blue-500 text-white rounded"
       >
-        {{ quizset.title }} like: {{ quizset.like_count }}
-        <hr />
-      </li>
-    </ul>
+        문제집 생성
+      </button>
+    </div>
 
-    <button
-      @click="openModal"
-      class="mt-4 px-4 py-2 bg-blue-500 text-white rounded"
-    >
-      문제집 생성
-    </button>
-
+    <!-- ✅ 모달 -->
     <BaseModal v-if="modal.isOpen" @close="closeModal">
       <component
         :is="modalView"

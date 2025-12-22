@@ -22,9 +22,11 @@ export const useUserStore = defineStore('user', {
     async fetchUser() {
       if (this.loaded) return
       
+
+      const API_URL = import.meta.env.VITE_REST_API_URL
       const accountStore = useAccountStore()
       
-      const res = await axios.get('http://127.0.0.1:8000/api/v1/profile/', {
+      const res = await axios.get(`${API_URL}/profile/`, {
         headers: {
             Authorization: `Token ${accountStore.token}`
           }

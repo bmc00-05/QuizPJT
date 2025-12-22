@@ -1,29 +1,28 @@
 <template>
-<nav
-  class="h-16 w-full
-        bg-gray-800 border-t border-gray-700
-        flex justify-around items-center"
->
-  <RouterLink :to="{ name: 'map'}" class="nav-btn">
-    🗺️
-    <span>메인</span>
-  </RouterLink>
+  <div class="nav-panel">
+    <nav
+      class="h-16 w-full pixel-panel__content flex"
+    >
+      <RouterLink :to="{ name: 'map'}" class="flex items-center justify-center flex-1">
+        🗺️메인
+      </RouterLink>
 
-  <RouterLink :to="{ name: 'usermode'}" class="nav-btn">
-    👤
-    <span>유저</span>
-  </RouterLink>
+      <RouterLink :to="{ name: 'usermode'}" class="flex items-center justify-center flex-1">
+        👤유저
+      </RouterLink>
 
-  <RouterLink :to="{ name: 'profile'}" class="nav-btn">
-    ⭐
-    <span>프로필</span>
-  </RouterLink>
+      <RouterLink :to="{ name: 'profile'}" class="flex items-center justify-center flex-1">
+        ⭐홈
+      </RouterLink>
 
-  <RouterLink :to="{ name: 'aimode'}" class="nav-btn">
-    🤖
-    <span>AI</span>
-  </RouterLink>
-</nav>
+      <RouterLink :to="{ name: 'aimode'}" class="flex items-center justify-center flex-1">
+        🤖AI
+      </RouterLink>
+      <RouterLink :to="{ name: 'ranking'}" class="flex items-center justify-center flex-1">
+        🤖랭킹
+      </RouterLink>
+    </nav>
+</div>
 </template>
 
 <script setup>
