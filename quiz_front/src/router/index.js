@@ -14,6 +14,7 @@ import UserMode from '@/views/UserMode.vue'
 import Profile from '@/views/Profile.vue'
 import MyProblemSet from '@/views/MyProblemSet.vue'
 import AIMode from '@/views/AIMode.vue'
+import Ranking from '@/views/Ranking.vue'
 
 
 const router = createRouter({
@@ -41,6 +42,7 @@ const router = createRouter({
       { path: 'profile', name: 'profile', component: Profile},
       { path: 'profile/problemset', name: 'myproblemset', component: MyProblemSet},
       { path: 'ai', name: 'aimode', component: AIMode},
+      { path: 'ranking', name: 'ranking', component: Ranking},
     ]
   },
 

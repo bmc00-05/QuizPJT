@@ -1,38 +1,34 @@
 <template>
-  <div class="h-screen flex flex-col bg-gray-500 text-white relative">
-    <div class="flex-1 overflow-hidden flex flex-col">
-      <h1>메인 페이지</h1>
-
+  <div class="h-screen flex flex-col bg-gray-500 text-white relative min-h-0">
+    <div class="flex-1 overflow-hidden flex flex-col min-h-0">
       <!-- ✅ 상단 유저 정보 바 -->
-      <div class="flex items-center justify-between">
-        <div>
-          <span>유저 정보 로드 </span>
-          <span>| {{ username }} |</span>
-          <span>Lv: {{ level }} |</span>
-          <span>Exp: {{ exp }} |</span>
-        </div>
+      <div class="nav-panel">
+        <div class="pixel-panel__content flex items-center justify-between">
+          <div>
+            <span class="bg-black">뱃지</span>
+            <span>| {{ username }} |</span>
+            <span>Lv: {{ level }} |</span>
+            <span>Exp: {{ exp }} |</span>
+          </div>
 
-        <!-- ✅ 오른쪽 끝 메뉴 버튼 -->
-        <button
-          class="px-3 py-1 border rounded bg-white/10 hover:bg-white/20"
-          @click="openMenu"
-        >
-          ☰
-        </button>
+          <!-- ✅ 오른쪽 끝 메뉴 버튼 -->
+          <button
+            class="px-3 py-1 border rounded bg-white/10 hover:bg-white/20"
+            @click="openMenu"
+          >
+            ☰
+          </button>
+        </div>
       </div>
 
       <!-- ✅ 여기 RouterView 영역에 전환 적용 -->
-      <div class="flex-1 mt-4 relative overflow-hidden">
+      <div class="flex flex-1 relative overflow-hidden p-2 min-h-0">
         <RouterView v-slot="{ Component, route }">
           <component :is="Component" :key="route.fullPath" />
         </RouterView>
 
-        <!-- ✅ 어두워졌다가 밝아지는 오버레이 -->
         <Transition name="route-dim">
-          <div
-            v-if="isTransitioning"
-            class="absolute inset-0 bg-black z-50 pointer-events-none"
-          />
+          <div v-if="isTransitioning" class="absolute inset-0 bg-black z-50 pointer-events-none" />
         </Transition>
       </div>
     </div>

@@ -5,7 +5,8 @@ import { useRouter } from 'vue-router'
 
 export const useAccountStore = defineStore('account', () => {
 
-  const API_URL = 'http://127.0.0.1:8000'
+  const API_URL = import.meta.env.VITE_AUTH_API_URL
+//   const API_URL = 'http://127.0.0.1:8000'
   const token = ref(null)
 
   const user = ref(null)

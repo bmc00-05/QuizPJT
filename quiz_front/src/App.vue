@@ -1,7 +1,7 @@
 <template>
-  <div class="min-h-screen flex justify-center bg-neutral-900">
-    <div class="w-full max-w-[420px] min-h-screen bg-amber-50">
-      <RouterView />
+  <div class="h-screen flex justify-center bg-neutral-900 overflow-x-auto">
+    <div class="w-full max-w-[420px] min-w-[420px] h-screen bg-amber-50 overflow-hidden">
+      <RouterView class="h-full" />
     </div>
   </div>
 </template>
