@@ -1,43 +1,52 @@
 <template>
+  <div class="flex-col w-full h-full">
   <!-- 🟢 퀴즈 진행 화면 -->
   <div v-if="!isFinished && currentQuestion">
     <!-- ✅ relative + 버튼 공간 확보 -->
-    <div class="relative border border-gray-400 rounded overflow-hidden pb-16">
+    <div class="relative rounded overflow-hidden">
 
       <!-- 문제 영역 -->
-      <div class="flex items-center justify-center text-center min-h-[100px] px-3">
-        {{ currentQuestion.question }}
+      <div class="quiz-panel text-black">
+
+          <p class="flex text-black text-xs justify-center">{{ currentIndex + 1 }} / {{ totalProblems }}</p>
+
+        <div v-if="result" class="">
+          <h3>결과: {{ result.correct }}</h3>
+          <h3>정답: {{ result.correct_answer }}</h3>
+          <h3>설명: {{ result.explanation }}</h3>
+        </div>
+
+        <div v-if="!result" class="flex pixel-panel__contentflex items-center justify-center text-center min-h-[100px] px-3">
+          {{ currentQuestion.question }}
+        </div>
+
       </div>
 
       <!-- 보기 2x2 -->
-      <ul class="grid grid-cols-2">
-        <li
-          v-for="n in 4"
-          :key="n"
-          class="p-3 text-black text-sm cursor-pointer
-                hover:bg-gray-100 active:scale-[0.99]
-                flex items-center justify-center text-center min-h-[64px]
-                border-gray-300
-                [&:nth-child(1)]:border-b [&:nth-child(1)]:border-r
-                [&:nth-child(2)]:border-b
-                [&:nth-child(3)]:border-r"
-          @click="!isAnswered && (selectedChoice = n)"
-          :class="[
-            isAnswered ? 'opacity-60 pointer-events-none' : '',
-            selectedChoice === n ? 'bg-blue-50' : 'bg-white'
-          ]"
-        >
-          {{ currentQuestion[`choice${n}`] }}
-        </li>
-      </ul>
-
-      <!-- 진행/선택 표시 -->
-      <div class="px-3 py-2 text-black text-sm">
-        <h4>현재 진행: {{ currentIndex + 1 }} / {{ totalProblems }}</h4>
-        <h4>현재 선택: {{ selectedChoice }}</h4>
+      <div class="text-black">
+        <ul class="grid grid-cols-2">
+          <li
+            v-for="n in 4"
+            :key="n"
+            class="flex items-center justify-center quiz-panel cursor-pointer active:scale-[]"
+            @click="!isAnswered && (selectedChoice = n)"
+            :class="[
+              isAnswered ? 'opacity-60 pointer-events-none' : '',
+              selectedChoice === n ? 'ring-2 ring-amber-50' : ''
+            ]"
+          >
+            <div class="pixel-panel__content text-black text-sm flex items-center justify-center text-center min-h-[64px]">
+              {{ currentQuestion[`choice${n}`] }}
+            </div>
+          </li>
+        </ul>
       </div>
 
-      <!-- ✅ 우측 하단 버튼 -->
+      <!-- 진행/선택 표시 -->
+    </div>
+
+
+          <!-- ✅ 우측 하단 버튼 -->
       <div class="absolute bottom-3 right-3 flex gap-2">
         <button
           v-if="!isAnswered"
@@ -56,24 +65,14 @@
           다음 문제
         </button>
       </div>
-    </div>
 
-    <hr />
+
+
+
+
 
     <!-- 결과 표시 -->
-    <div v-if="result">
-      <h3>결과: {{ result.correct }}</h3>
-      <h3>정답: {{ result.correct_answer }}</h3>
-      <h3>설명: {{ result.explanation }}</h3>
-    </div>
-  </div>
-
-  <!-- ✅ 로딩/에러 상태(선택) -->
-  <div v-else-if="isLoadingSession" class="text-black">
-    세션 준비 중...
-  </div>
-
-  <!-- 🟡 결과 모달 -->
+    <!-- 🟡 결과 모달 -->
   <BaseModal
     v-if="isFinished && sessionResult && modal.isOpen"
     @close="closeDetail"
@@ -95,6 +94,14 @@
       닫기
     </button>
   </BaseModal>
+
+  </div>
+
+  <!-- ✅ 로딩/에러 상태(선택) -->
+  <div v-else-if="isLoadingSession" class="text-black">
+    세션 준비 중...
+  </div>
+</div>
 </template>
 
 

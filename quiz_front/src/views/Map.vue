@@ -1,39 +1,42 @@
 <template>
-  <div class="h-full text-black">
-    <!-- ✅ 패널 프레임(9-slice) -->
-    <div class="pixel-panel m-2">
-      <!-- ✅ 패널 안쪽 내용 영역 -->
+  <div class="h-full w-full min-h-0 flex flex-col text-black gap-2">
+    <!-- 위 패널 -->
+    <div class="pixel-panel flex-[11] min-h-0">
       <div
         ref="viewportRef"
-        class="relative mx-auto w-full max-w-[420px] max-h-[420px] aspect-[3/4]
+        class="relative w-full h-full p-0
               pixel-panel__content
-              overflow-hidden select-none touch-none"
+              overflow-hidden select-none touch-none
+              flex items-center justify-center"
         @pointerdown="onPointerDown"
         @pointermove="onPointerMove"
         @pointerup="onPointerUp"
         @pointercancel="onPointerUp"
         @wheel.prevent="onWheel"
       >
-        <div class="absolute inset-0 will-change-transform" :style="mapTransformStyle">
-          <div
-            class="absolute inset-0 bg-center bg-cover"
-            :style="{ backgroundImage: `url(${mapBgUrl})` }"
-          />
-          <div class="absolute inset-0 bg-black/20" />
+        <!-- ✅ viewport 안에서 비율 유지: aspect box -->
+        <div class="relative w-full h-full">
+          <div class="absolute inset-0 will-change-transform" :style="mapTransformStyle">
+            <div
+              class="absolute inset-0 bg-center bg-cover"
+              :style="{ backgroundImage: `url(${mapBgUrl})` }"
+            />
+            <div class="absolute inset-0 bg-black/20" />
 
-          <button
-            v-for="(map, idx) in maps"
-            :key="map.id"
-            class="absolute px-3 py-2 min-w-[90px]
-                  bg-white/80 hover:bg-white
-                  border border-gray-400 rounded
-                  text-sm font-semibold shadow"
-            :style="pinStyle(idx)"
-            @click.stop="selectMap(map)"
-            @pointerdown.stop
-          >
-            {{ map.name }}
-          </button>
+            <button
+              v-for="(map, idx) in maps"
+              :key="map.id"
+              class="absolute px-3 py-2 min-w-[90px]
+                    bg-white/80 hover:bg-white
+                    border border-gray-400 rounded
+                    text-sm font-semibold shadow"
+              :style="pinStyle(idx)"
+              @click.stop="selectMap(map)"
+              @pointerdown.stop
+            >
+              {{ map.name }}
+            </button>
+          </div>
         </div>
 
         <div class="absolute top-2 left-2 z-20 flex gap-2">
@@ -47,61 +50,111 @@
       </div>
     </div>
 
-    <div class="pixel-panel mx-2 min-h-[250px]">
-      <div class="pixel-panel__content">
-        <template v-if="mapData">
-          <div class="text-lg font-bold">{{ mapData.name }}</div>
-          <div class="mt-2 whitespace-pre-wrap text-sm text-gray-800">
-            {{ mapData.description }}
-            <!-- {{ mapData }} -->
-            <!-- {{ problemSets[0] }} -->
-            <button @click="selectProblemSet('easy')">
+    <!-- 아래 패널 -->
+    <div class="pixel-panel flex-[9] min-h-0">
+  <div class="pixel-panel__content h-full min-h-0 overflow-hidden flex flex-col">
+
+    <!-- ✅ 스크롤 되는 본문 영역 -->
+    <div class="flex-1 min-h-0 overflow-hidden">
+      <template v-if="mapData">
+        <div class="text-lg font-bold">
+          {{ mapData.name }}
+        </div>
+
+        <!-- ✅ 좌(2) : 우(1) = 2:1 -->
+        <div class="mt-2 grid grid-cols-3 gap-3">
+          <!-- ✅ 왼쪽(2칸): 이미지 + 텍스트 -->
+          <div class="col-span-2 min-w-0">
+            <!-- 이미지 영역(원하면 실제 이미지로 교체) -->
+            <div class="w-full h-28 bg-black/10 rounded mb-2"></div>
+
+            <div class="whitespace-pre-wrap text-sm text-gray-800">
+              {{ mapData.description }}
+            </div>
+
+            <div v-if="problemSetData" class="mt-2 text-sm text-gray-800">
+              {{ problemSetData.title }}
+            </div>
+          </div>
+
+          <!-- ✅ 오른쪽(1칸): 버튼 3개 세로 + 오른쪽 정렬 -->
+          <div class="col-span-1 flex flex-col items-end gap-2">
+            <button
+              class="bg-white/50 rounded border px-3 py-2 w-full max-w-[140px]"
+              @click="selectProblemSet('easy')"
+            >
               EASY
             </button>
-            <button @click="selectProblemSet('normal')">
-              Normal
+            <button
+              class="bg-white/50 rounded border px-3 py-2 w-full max-w-[140px]"
+              @click="selectProblemSet('normal')"
+            >
+              NORMAL
             </button>
-            <button @click="selectProblemSet('hard')">
-              Hard
+            <button
+              class="bg-white/50 rounded border px-3 py-2 w-full max-w-[140px]"
+              @click="selectProblemSet('hard')"
+            >
+              HARD
             </button>
-            <br/>
-            <div v-if="problemSetData">
-            {{ problemSetData.title }}
-            </div>
-            <br/>
-            <RouterLink
-            v-if="problemSetData"
-            :to="{ name: 'game', params: { id: problemSetData.id } }"
-            class="inline-block mt-2 px-3 py-2 bg-blue-600 text-white rounded"
-          >
-            Start
-          </RouterLink>
 
-          <div v-else class="mt-2 text-sm text-gray-500">
-            난이도를 선택하면 Start가 활성화됩니다.
+            <button
+              v-if="problemSetData"
+              @click="openModal()"
+              class="mt-2 w-full max-w-[140px] text-center px-3 py-2 bg-blue-600 text-white rounded"
+            >
+              Start
+            </button>
           </div>
-          </div>
-        </template>
+        </div>
+      </template>
 
-        <template v-else>
-          <div class="text-sm text-gray-500">
-            위 지도에서 맵을 선택하면 정보가 표시됩니다.
-          </div>
-        </template>
-      </div>
+      <template v-else>
+        <div class="text-sm text-gray-500">
+          위 지도에서 맵을 선택하면 정보가 표시됩니다.
+        </div>
+      </template>
+    </div>
+
+    <!-- ✅ 회색 안내문: 맨 아래 한 줄(고정) -->
+    <div v-if="mapData && !problemSetData" class="shrink-0 pt-2 text-sm text-gray-500">
+      난이도를 선택하면 Start가 활성화됩니다.
     </div>
 
   </div>
+</div>
+    
+
+    <BaseModal v-if="modal.isOpen && problemSetData" @close="closeModal">
+      <div class="text-black">
+        모달
+        {{ problemSetData.title }} <br/>
+        {{ problemSetData.description }}<br/>
+        <RouterLink
+          :to="{ name: 'game', params: { id: problemSetData.id } }"
+          @click="closeModal"
+        >
+          START
+        </RouterLink>
+      </div>
+    </BaseModal>
+  </div>
+
 </template>
 
 
+
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, watch } from 'vue'
 import { useAccountStore } from '@/stores/accounts'
+import { useModalStore } from '@/stores/modal'
+import { useRoute } from 'vue-router'
 import axios from 'axios'
 import mapBgUrl from '@/assets/background/game_map.png'
+import BaseModal from '@/components/common/BaseModal.vue'
 
 const API_URL = import.meta.env.VITE_REST_API_URL
+const modal = useModalStore()
 const accountStore = useAccountStore()
 const maps = ref([])
 
@@ -111,6 +164,22 @@ const mapData = ref(null)
 const problemSetData = ref(null)
 const isLoadingSets = ref(false)   
 const setsError = ref('')          
+
+const route = useRoute()
+
+watch(
+  () => route.fullPath,
+  () => {
+    modal.close() // modal.isOpen=false
+  }
+)
+
+const openModal = () => {
+  modal.open(1)
+}
+
+const closeModal = () => { modal.close() }
+
 
 const selectMap = async (map) => {
   mapData.value = map

@@ -1,20 +1,24 @@
 <template>
-  <div class="relative h-full text-black">
-    <div class="pixel-panel w-full max-w-[400px] mx-auto ">
-        <div class="flex justify-center tracking-wide mt-2 ">
+  <div class="h-full w-full min-h-0 flex flex-col text-black">
+    <!-- 전체 패널(카드) -->
+    <div class="flex h-full">
+    <div class="pixel-panel w-full mx-auto flex-1 min-h-0 flex flex-col">
+    <!-- <div class="pixel-panel m-2 w-full max-w-[420px] flex-1 min-h-0 flex flex-col"> -->
+      <!-- 헤더(고정) -->
+      <div class="shrink-0">
+        <div class="flex justify-center tracking-wide mt-2">
           <h1>유저 모드 페이지</h1>
         </div>
+
         <div class="flex justify-end mr-4">
-        <button
-      @click="openModal"
-      class="text-xs "
-    >
-      문제집 생성
-    </button>
-    </div>
+          <button @click="openModal" class="text-xs">
+            문제집 생성
+          </button>
+        </div>
+      </div>
 
-
-      <div class="pixel-panel__content min-h-[60vh] overflow-y-auto ">
+      <!-- 리스트(남은 영역 전부 + 여기만 스크롤) -->
+      <div class="pixel-panel__content flex-1 min-h-0 overflow-y-auto">
         <ul>
           <li
             v-for="quizset in pagedQuizsets"
@@ -22,50 +26,51 @@
             class="cursor-pointer hover:bg-gray-50"
             @click="openDetail(quizset.id)"
           >
-            제목: {{ quizset.title }} <br/>
-            좋아요: {{ quizset.like_count }} |
-            작성자: {{ quizset.created_by_name }}
-            <hr/>
+            제목: {{ quizset.title }} <br />
+            좋아요: {{ quizset.like_count }} | 작성자: {{ quizset.created_by_name }}
+            <hr />
           </li>
         </ul>
-      
-    </div>
-    <div v-if="totalPages > 1" class="flex items-center justify-between gap-2 px-2 py-2">
-      <button
-        class="px-3 py-1 border rounded disabled:opacity-40"
-        :disabled="page === 1"
-        @click="page--"
-      >
-        이전
-      </button>
-
-      <div class="text-sm">
-        {{ page }} / {{ totalPages }}
       </div>
 
-      <button
-        class="px-3 py-1 border rounded disabled:opacity-40"
-        :disabled="page === totalPages"
-        @click="page++"
-      >
-        다음
-      </button>
+      <!-- 페이지네이션(고정) -->
+      <div v-if="totalPages > 1" class="shrink-0 flex items-center justify-between gap-2 px-2 py-2">
+        <button
+          class="px-3 py-1 border rounded disabled:opacity-40"
+          :disabled="page === 1"
+          @click="page--"
+        >
+          이전
+        </button>
+
+        <div class="text-sm">
+          {{ page }} / {{ totalPages }}
+        </div>
+
+        <button
+          class="px-3 py-1 border rounded disabled:opacity-40"
+          :disabled="page === totalPages"
+          @click="page++"
+        >
+          다음
+        </button>
+      </div>
+    </div>
     </div>
 
-  </div>
-
-
+    <!-- 모달 -->
     <BaseModal v-if="modal.isOpen" @close="closeModal">
-    <component
-      :is="modalView"
-      v-bind="modalProps"
-      @created="onCreated"
-      @close="closeModal"
-      v-on="extraListeners"
-    />
+      <component
+        :is="modalView"
+        v-bind="modalProps"
+        @created="onCreated"
+        @close="closeModal"
+        v-on="extraListeners"
+      />
     </BaseModal>
   </div>
 </template>
+
 
 <script setup>
 import { ref, onMounted, shallowRef, computed } from 'vue'
@@ -172,7 +177,7 @@ const openDetail = (quizsetId) => {
 }
 
 const page = ref(1)
-const pageSize = 10
+const pageSize = 8
 
 const totalPages = computed(() => {
   return Math.max(1, Math.ceil(quizsets.value.length / pageSize))

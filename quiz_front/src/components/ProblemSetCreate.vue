@@ -12,6 +12,9 @@
 
         <button type="submit" class="mt-4">저장</button>
       </form>
+      <button type="button" class="mt-4" @click="deleteQuizSet">
+        삭제
+      </button>
 
       <hr class="my-3" />
 
@@ -26,6 +29,8 @@
       <button class="mt-4 border px-3 py-2" @click="goCreateQuiz">
         문제 추가
       </button>
+
+
     </template>
   </div>
 </template>
@@ -42,7 +47,7 @@ const accountStore = useAccountStore()
 const route = useRoute()
 
 // ✅ openQuizDetail 추가 (퀴즈 상세도 모달로 띄울 거면)
-const emit = defineEmits(['updated', 'goCreateQuiz', 'openQuizDetail'])
+const emit = defineEmits(['updated', 'goCreateQuiz', 'openQuizDetail', 'deleted', 'close'])
 
 const props = defineProps({
   quizsetid: { type: [String, Number], default: null },
@@ -83,6 +88,31 @@ const updateQuizSet = async () => {
   }
 }
 
+const deleteQuizSet = async () => {
+  if (!quizSetId.value) return
+
+  const ok = confirm("정말 이 문제집을 삭제할까요? (복구 불가)")
+  if (!ok) return
+
+  try {
+    await axios.delete(`${API_URL}/questions/problemsets/${quizSetId.value}/`, {
+      headers: { Authorization: `Token ${accountStore.token}` },
+    })
+
+    alert("문제집 삭제 완료")
+
+    // ✅ 부모에서 목록 다시 불러오게
+    emit("deleted", quizSetId.value)
+    emit("updated")
+
+    // ✅ 모달로 띄우는 구조라면 닫기 이벤트도 보내기
+    emit("close")
+  } catch (err) {
+    console.error(err)
+    alert("문제집 삭제 실패")
+  }
+}
+
 const goCreateQuiz = () => {
   emit('goCreateQuiz', quizSet.value.id)
 }
@@ -101,3 +131,6 @@ const refreshQuizSetProblems = () => {
 
 watch(quizSetId, (id) => getQuizSet(id), { immediate: true })
 </script>
+<style scoped>
+
+</style>

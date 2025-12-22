@@ -1,5 +1,9 @@
 <template>
-  <div class="sprite" :style="style" />
+  <div class="nav-panel">
+    <div class="pixel-panel__content">
+      <div class="sprite" :style="style" />
+    </div>
+  </div>
 </template>
 
 <script setup>
