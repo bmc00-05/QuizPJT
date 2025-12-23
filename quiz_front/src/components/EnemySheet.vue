@@ -1,4 +1,5 @@
 <template>
+  <!-- 부모가 absolute 중앙정렬을 하든, 그냥 inline으로 두든 문제 없게 block -->
   <canvas ref="canvasRef" class="block" />
 </template>
 
@@ -8,35 +9,42 @@ import { ref, onMounted, onBeforeUnmount, watch } from "vue"
 const props = defineProps({
   src: { type: String, required: true },
 
+  // 한 프레임 크기
   frameWidth: { type: Number, required: true },
   frameHeight: { type: Number, required: true },
 
+  // 스프라이트 시트에서 "한 줄에 몇 프레임(열)"인지
   cols: { type: Number, required: true },
 
-  row: { type: Number, default: 0 },
-  start: { type: Number, default: 0 },
-  frames: { type: Number, default: 1 },
+  // 현재 재생할 클립 정보
+  row: { type: Number, default: 0 },     // 0-based row
+  start: { type: Number, default: 0 },   // row 안에서 시작 프레임(0-based)
+  frames: { type: Number, default: 1 },  // 재생 프레임 수
 
   fps: { type: Number, default: 8 },
   loop: { type: Boolean, default: true },
   play: { type: Boolean, default: true },
 
+  // 렌더링 스케일
   scale: { type: Number, default: 1 },
 
+  // ✅ (선택) 중앙 기준 미세 보정 (캐릭터 피벗 맞추기)
   offsetX: { type: Number, default: 0 },
   offsetY: { type: Number, default: 0 },
 
-  // ✅ 추가: 좌우 반전
+  // ✅ 좌우/상하 반전
   flipX: { type: Boolean, default: false },
+  flipY: { type: Boolean, default: false },
 })
 
 const emit = defineEmits(["finished"])
+
 const canvasRef = ref(null)
 
 let img = null
 let rafId = null
 let lastTick = 0
-let localFrame = 0
+let localFrame = 0 // 0..frames-1
 
 function stop() {
   if (rafId) {
@@ -96,7 +104,10 @@ function draw() {
   ctx.imageSmoothingEnabled = false
   ctx.clearRect(0, 0, canvas.width, canvas.height)
 
+  // ✅ 클립 기준 실제 프레임 인덱스
   const absoluteFrame = props.start + localFrame
+
+  // ✅ 현재 구현은 "한 row 안에서 cols 기준"으로만 순환
   const col = absoluteFrame % props.cols
 
   const sx = col * props.frameWidth
@@ -106,35 +117,63 @@ function draw() {
   const dh = props.frameHeight * props.scale
 
   // ✅ 캔버스 중앙 배치 + offset
-  const x = (canvas.width - dw) / 2 + props.offsetX
-  const y = (canvas.height - dh) / 2 + props.offsetY
+  // flip일 때 offset이 직관적으로 느껴지도록 X/Y는 반전 시 부호 반대로 적용
+  const ox = props.flipX ? -props.offsetX : props.offsetX
+  const oy = props.flipY ? -props.offsetY : props.offsetY
+
+  const x = (canvas.width - dw) / 2 + ox
+  const y = (canvas.height - dh) / 2 + oy
 
   ctx.save()
 
-  // ✅ flipX면 (x + dw) 기준으로 좌우 반전해서 그리기
-  if (props.flipX) {
-    ctx.translate(x + dw, y)
-    ctx.scale(-1, 1)
-    ctx.drawImage(img, sx, sy, props.frameWidth, props.frameHeight, 0, 0, dw, dh)
-  } else {
-    ctx.drawImage(img, sx, sy, props.frameWidth, props.frameHeight, x, y, dw, dh)
-  }
+  // ✅ flip 적용: 좌표계를 뒤집고 그리기
+  // flipX면 (x+dw)로 이동 후 scaleX(-1)
+  // flipY면 (y+dh)로 이동 후 scaleY(-1)
+  const tx = props.flipX ? x + dw : x
+  const ty = props.flipY ? y + dh : y
+  ctx.translate(tx, ty)
+  ctx.scale(props.flipX ? -1 : 1, props.flipY ? -1 : 1)
+
+  ctx.drawImage(
+    img,
+    sx,
+    sy,
+    props.frameWidth,
+    props.frameHeight,
+    0,
+    0,
+    dw,
+    dh
+  )
 
   ctx.restore()
 }
 
-onMounted(() => {
+function resizeCanvas() {
   const canvas = canvasRef.value
+  if (!canvas) return
   canvas.width = props.frameWidth * props.scale
   canvas.height = props.frameHeight * props.scale
+}
+
+function loadImageIfNeeded() {
+  if (img && img.src === props.src) return
 
   img = new Image()
   img.onload = () => reset()
   img.src = props.src
+}
+
+onMounted(() => {
+  resizeCanvas()
+  loadImageIfNeeded()
 })
 
-onBeforeUnmount(() => stop())
+onBeforeUnmount(() => {
+  stop()
+})
 
+// ✅ props 변경 시 재시작(클립/속도/재생상태 변경 대응)
 watch(
   () => [
     props.src,
@@ -150,23 +189,18 @@ watch(
     props.play,
     props.offsetX,
     props.offsetY,
-    props.flipX, // ✅ flip 변경도 즉시 반영
+    props.flipX,
+    props.flipY,
   ],
   () => {
-    const canvas = canvasRef.value
-    if (!canvas) return
+    resizeCanvas()
+    loadImageIfNeeded()
 
-    canvas.width = props.frameWidth * props.scale
-    canvas.height = props.frameHeight * props.scale
-
-    if (img && img.src !== props.src) {
-      img = new Image()
-      img.onload = () => reset()
-      img.src = props.src
-      return
+    // src가 같고 이미지 로딩이 끝난 상태라면 바로 reset
+    // (src가 바뀐 경우는 onload에서 reset됨)
+    if (img && img.src === props.src && img.complete) {
+      reset()
     }
-
-    reset()
   }
 )
 </script>

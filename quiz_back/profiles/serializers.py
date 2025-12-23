@@ -9,14 +9,13 @@ class EquippedBadgeSerializer(serializers.ModelSerializer):
         fields = ["id", "code", "name", "icon"]
 
 class UserProfileSerializer(serializers.ModelSerializer):
-    # ✅ Profile에 username 필드가 없으니 user.username을 내려주기
     username = serializers.CharField(source="user.username", read_only=True)
-
-    # ✅ 프론트에서 exp로 쓰는 키 유지
     exp = serializers.IntegerField(source="experience", read_only=True)
-
     max_exp = serializers.SerializerMethodField()
-    equipped_badge = EquippedBadgeSerializer(read_only=True)
+
+    # ✅ 대표 뱃지(선택): FK면 PK만 내려도 되고, 상세도 가능
+    equipped_badge_id = serializers.IntegerField(source="equipped_badge.id", read_only=True)
+    equipped_badge = serializers.SerializerMethodField()
 
     class Meta:
         model = Profile
@@ -25,10 +24,23 @@ class UserProfileSerializer(serializers.ModelSerializer):
             "level",
             "exp",
             "max_exp",
+            "equipped_badge_id",
+            "equipped_badge",   # ✅ 반드시 포함
         ]
 
     def get_max_exp(self, obj):
         return obj.level * 100
+
+    def get_equipped_badge(self, obj):
+        b = getattr(obj, "equipped_badge", None)
+        if not b:
+            return None
+        return {
+            "id": b.id,
+            "code": b.code,
+            "name": b.name,
+            "icon": b.icon,
+        }
     
 class UserStatsSerializer(serializers.ModelSerializer):
     accuracy = serializers.SerializerMethodField()
@@ -103,7 +115,7 @@ class RankingItemSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = Profile
-        fields = ["user_id", "username", "level", "experience", "total_experience"]
+        fields = ["user_id", "username", "level", "experience", "total_experience", "equipped_badge"]
 
 
 

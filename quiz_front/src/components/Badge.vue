@@ -1,6 +1,6 @@
 <template>
-  <div class="pixel-panel mx-2">
-    <div class="pixel-panel__content text-black">
+  <div class=" mx-2">
+    <div class=" text-black">
       <div class="flex items-center justify-between mb-2">
         <h2 class="font-bold">뱃지 도감</h2>
         <div class="text-xs text-gray-600">
@@ -106,7 +106,7 @@ const fetchDex = async () => {
   loading.value = true
   error.value = ''
   try {
-    const res = await axios.get(`${API_URL}/profiles/me/badges/`, {
+    const res = await axios.get(`${API_URL}/profile/badges/`, {
       headers: { Authorization: `Token ${accountStore.token}` }
     })
     badges.value = res.data
@@ -129,7 +129,7 @@ const equipSelected = async () => {
   if (!selected.value) return
   equipping.value = true
   try {
-    await axios.post(`${API_URL}/profiles/me/equip-badge/`,
+    await axios.post(`${API_URL}/profile/equip-badge/`,
       { badge_id: selected.value.id },
       { headers: { Authorization: `Token ${accountStore.token}` } }
     )
@@ -144,7 +144,7 @@ const equipSelected = async () => {
 const unequip = async () => {
   equipping.value = true
   try {
-    await axios.post(`${API_URL}/profiles/me/unequip-badge/`, {},
+    await axios.post(`${API_URL}/profile/unequip-badge/`, {},
       { headers: { Authorization: `Token ${accountStore.token}` } }
     )
     await fetchDex()

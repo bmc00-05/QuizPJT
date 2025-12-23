@@ -2,7 +2,6 @@
 @import "tailwindcss"; /* v4 방식 */
 
 
-
 /* 2) (선택) Tailwind v4의 CSS-first 테마 변수로 기본 폰트 지정
    - 이렇게 해두면 `font-sans` 유틸도 자동으로 이 폰트를 사용하게 됨 */
 @theme {

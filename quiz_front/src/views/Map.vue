@@ -66,13 +66,13 @@
           <span v-if="problemSetData" class="mt-2 text-sm text-gray-800">
               {{ problemSetData.title }}  
           </span>
-          <p class="text-xs font-normal"> {{ mapData.description }} </p>
+          <p v-if="problemSetData" class="font-normal text-sm"> {{ problemSetData.description }} </p>
         </div>
             <div class="w-50 h-28 bg-black/10 rounded mb-2"></div>
 
 
 
-            <p v-if="problemSetData">{{ problemSetData.description }}</p>
+            <p class="text-xs font-normal">{{ mapData.description }}</p>
           </div>
 
           <!-- 오른쪽(1칸) -->

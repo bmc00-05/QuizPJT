@@ -119,11 +119,22 @@ class Badge(models.Model):
 
 
 class UserBadge(models.Model):
-    profile = models.ForeignKey("Profile", on_delete=models.CASCADE, related_name="user_badges")
-    badge = models.ForeignKey("Badge", on_delete=models.CASCADE, related_name="owners")
+    profile = models.ForeignKey(
+        Profile,
+        on_delete=models.CASCADE,
+        related_name="user_badges",
+    )
+    badge = models.ForeignKey(
+        Badge,
+        on_delete=models.CASCADE,
+        related_name="user_badges",
+    )
     earned_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
         constraints = [
             models.UniqueConstraint(fields=["profile", "badge"], name="uniq_profile_badge")
         ]
+
+    def __str__(self):
+        return f"{self.profile_id}-{self.badge.code}"

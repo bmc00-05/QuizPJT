@@ -1,6 +1,7 @@
 # profiles/signals.py
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+from django.db import transaction
 from django.contrib.auth import get_user_model
 
 from questions.models import Category
@@ -71,18 +72,20 @@ def create_profile_and_default_badge(sender, instance, created, **kwargs):
     if not created:
         return
 
-    # ✅ Profile 자동 생성 (이미 다른 곳에서 만들고 있으면 이 줄은 중복될 수 있음)
-    profile, _ = Profile.objects.get_or_create(user=instance)
+    with transaction.atomic():
+        profile, _ = Profile.objects.get_or_create(user=instance)
 
-    # ✅ 기본 뱃지(없으면 생성)
-    badge, _ = Badge.objects.get_or_create(
-        code=DEFAULT_BADGE["code"],
-        defaults={
-            "name": DEFAULT_BADGE["name"],
-            "description": DEFAULT_BADGE["description"],
-            "icon": DEFAULT_BADGE["icon"],
-        }
-    )
+        badge, _ = Badge.objects.get_or_create(
+            code="default",
+            defaults={
+                "name": "초심자",
+                "description": "기본 제공 뱃지",
+                "icon": "badges/default.png",
+            },
+        )
 
-    # ✅ 기본 뱃지 지급(중복 방지)
-    UserBadge.objects.get_or_create(user=instance, badge=badge)
+        UserBadge.objects.get_or_create(profile=profile, badge=badge)
+
+        # (선택) 대표 뱃지까지 자동 장착하고 싶으면:
+        # profile.equipped_badge = badge
+        # profile.save(update_fields=["equipped_badge"])
