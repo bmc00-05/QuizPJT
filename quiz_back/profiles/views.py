@@ -1,4 +1,5 @@
 from django.db.models import Q
+from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
@@ -6,8 +7,8 @@ from django.contrib.auth import get_user_model
 
 
 from questions.models import Category
-from .models import Profile, UserStats, UserCategoryStats
-from .serializers import UserProfileSerializer, UserStatsSerializer, UserCategoryStatsSerializer, RankingItemSerializer
+from .models import Profile, UserStats, UserCategoryStats, UserBadge, Badge
+from .serializers import UserProfileSerializer, UserStatsSerializer, UserCategoryStatsSerializer, RankingItemSerializer, BadgeDexSerializer
 
 
 User = get_user_model()
@@ -26,6 +27,9 @@ def get_profile(request):
 
 def _build_payload(target_user):
     profile, _ = Profile.objects.get_or_create(user=target_user)
+    
+    profile = Profile.objects.select_related("equipped_badge", "user").get(pk=profile.pk)
+    
     stats, _ = UserStats.objects.get_or_create(user=target_user)
 
     # ✅ 유저가 가진 카테고리 통계를 dict로
@@ -149,3 +153,65 @@ def ranking(request):
         "items": items,
         "me": me_payload,
     })
+
+
+@api_view(["GET"])
+@permission_classes([IsAuthenticated])
+def my_badge_dex(request):
+    profile, _ = Profile.objects.get_or_create(user=request.user)
+
+    badges = list(Badge.objects.all().order_by("id"))
+    owned_map = {
+        ub.badge_id: ub.earned_at
+        for ub in UserBadge.objects.filter(user=request.user).select_related("badge")
+    }
+
+    equipped_id = profile.equipped_badge_id
+
+    data = []
+    for b in badges:
+        earned_at = owned_map.get(b.id)
+        item = {
+            "id": b.id,
+            "code": b.code,
+            "name": b.name,
+            "description": b.description,
+            "icon": b.icon,
+            "owned": earned_at is not None,
+            "earned_at": earned_at,
+            "equipped": (b.id == equipped_id),
+        }
+        data.append(item)
+
+    # BadgeDexSerializer를 꼭 쓰고 싶으면 owned/equipped 필드가 모델에 없어서
+    # 위처럼 dict로 내려주는 게 편함.
+    return Response(data, status=200)
+
+
+@api_view(["POST"])
+@permission_classes([IsAuthenticated])
+def equip_badge(request):
+    badge_id = request.data.get("badge_id")
+    if not badge_id:
+        return Response({"detail": "badge_id is required"}, status=400)
+
+    profile, _ = Profile.objects.get_or_create(user=request.user)
+
+    # ✅ 보유 여부 검사
+    owned = UserBadge.objects.filter(user=request.user, badge_id=badge_id).exists()
+    if not owned:
+        return Response({"detail": "You don't own this badge"}, status=403)
+
+    profile.equipped_badge_id = badge_id
+    profile.save(update_fields=["equipped_badge", "updated_at"])
+
+    return Response({"detail": "equipped", "badge_id": int(badge_id)}, status=200)
+
+
+@api_view(["POST"])
+@permission_classes([IsAuthenticated])
+def unequip_badge(request):
+    profile, _ = Profile.objects.get_or_create(user=request.user)
+    profile.equipped_badge = None
+    profile.save(update_fields=["equipped_badge", "updated_at"])
+    return Response({"detail": "unequipped"}, status=200)

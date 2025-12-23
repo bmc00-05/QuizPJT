@@ -7,7 +7,9 @@
       <span class="font-bold flex justify-center">
         LV. {{ stats.profile.level }}  {{ stats.profile.username }} 
       </span><br/>
+      <span>
       EXP {{ stats.profile.exp }} / {{ stats.profile.max_exp }}
+      </span>
       <br/> <hr/>
       <!-- {{ stats.stats }} -->
       <span class="m-1 font-bold flex justify-center">

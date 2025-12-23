@@ -6,8 +6,8 @@
     <!-- <div class="pixel-panel m-2 w-full max-w-[420px] flex-1 min-h-0 flex flex-col"> -->
       <!-- 헤더(고정) -->
       <div class="shrink-0">
-        <div class="flex justify-center tracking-wide mt-2">
-          <h1>유저 모드 페이지</h1>
+        <div class="flex justify-center tracking-wide">
+          <h1 class="text-xl font-bold mt-2">유저 문제집</h1>
         </div>
 
         <div class="flex justify-end mr-4">
@@ -18,16 +18,18 @@
       </div>
 
       <!-- 리스트(남은 영역 전부 + 여기만 스크롤) -->
-      <div class="pixel-panel__content flex-1 min-h-0 overflow-y-auto">
+      <div class=" shadow-2xl pixel-panel__content flex-1 min-h-0 overflow-y-auto">
         <ul>
           <li
             v-for="quizset in pagedQuizsets"
             :key="quizset.id"
-            class="cursor-pointer hover:bg-gray-50"
+            class="cursor-pointer hover:bg-gray-50 paper-panel"
             @click="openDetail(quizset.id)"
           >
-            제목: {{ quizset.title }} <br />
-            좋아요: {{ quizset.like_count }} | 작성자: {{ quizset.created_by_name }}
+            <div class="pixel-panel__content p-0 m-0.5">
+              제목: {{ quizset.title }} <br />
+              좋아요: {{ quizset.like_count }} | 작성자: {{ quizset.created_by_name }}
+            </div>
             <hr />
           </li>
         </ul>
@@ -177,7 +179,7 @@ const openDetail = (quizsetId) => {
 }
 
 const page = ref(1)
-const pageSize = 8
+const pageSize = 5
 
 const totalPages = computed(() => {
   return Math.max(1, Math.ceil(quizsets.value.length / pageSize))

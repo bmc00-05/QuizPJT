@@ -19,6 +19,13 @@ class Profile(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     total_experience = models.PositiveIntegerField(default=0, db_index=True)
+    greeting = models.CharField(max_length=300, blank=True, default="") 
+    equipped_badge = models.ForeignKey(
+        "Badge",
+        null=True, blank=True,
+        on_delete=models.SET_NULL,
+        related_name="equipped_profiles"
+    )
 
     def __str__(self):
         # nickname이 있으면 nickname, 없으면 user.username
@@ -95,3 +102,28 @@ class UserCategoryStats(models.Model):
 
     def __str__(self):
         return f"CatStats(u={self.user_id}, c={self.category_id})"
+
+
+
+class Badge(models.Model):
+    code = models.SlugField(max_length=50, unique=True)   # 예: "first_clear"
+    name = models.CharField(max_length=50)                # 표시 이름
+    description = models.CharField(max_length=200, blank=True, default="")
+    icon = models.CharField(max_length=200, blank=True, default="")  # 아이콘 url/파일경로(선택)
+
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.name
+    
+
+
+class UserBadge(models.Model):
+    profile = models.ForeignKey("Profile", on_delete=models.CASCADE, related_name="user_badges")
+    badge = models.ForeignKey("Badge", on_delete=models.CASCADE, related_name="owners")
+    earned_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=["profile", "badge"], name="uniq_profile_badge")
+        ]

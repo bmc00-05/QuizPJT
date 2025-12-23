@@ -7,17 +7,19 @@
         <!-- ✅ 위/아래 1:1 분할 -->
         <div class="flex-1 min-h-0 grid grid-cols-2 gap-2">
           <!-- ✅ 위쪽 왼쪽: 스프라이트 (패널 X) -->
-          <div class="relative min-h-0 overflow-hidden flex items-center justify-center bg-black/5 rounded">
-            <SpriteSheet
-              :src="idleSheet"
-              :frameWidth="128"
-              :frameHeight="128"
-              :frames="8"
-              :fps="8"
-              :scale="2"
-              class="[image-rendering:pixelated]"
-            />
-          </div>
+<div class="relative min-h-0 overflow-hidden bg-black/5 rounded">
+  <div class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+    <SpriteSheet
+      :src="idleSheet"
+      :frameWidth="256"
+      :frameHeight="256"
+      :frames="8"
+      :fps="8"
+      :scale="1"
+      class="block [image-rendering:pixelated]"
+    />
+  </div>
+</div>
 
           <!-- ✅ 위쪽 오른쪽: 스테이터스 (패널 X) -->
             <Status />
@@ -38,7 +40,7 @@
 
 <script setup>
 import { onMounted } from "vue"
-import idleSheet from "@/assets/character/Test_animation-Sheet.png";
+import idleSheet from "@/assets/character/test_sheet.png";
 import SpriteSheet from "@/components/SpriteSheet.vue";
 import Status from "@/components/Status.vue"
 import { useAccountStore } from "@/stores/accounts"

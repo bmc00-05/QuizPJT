@@ -6,4 +6,7 @@ urlpatterns = [
     path("status/", views.my_profile_stats),
     path("status/<int:user_id>/", views.user_profile_stats),
     path("ranking/", views.ranking, name="ranking"),
+    path("badges/", views.my_badge_dex),
+    path("equip-badge/", views.equip_badge),
+    path("unequip-badge/", views.unequip_badge),
 ]

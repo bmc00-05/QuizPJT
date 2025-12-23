@@ -9,9 +9,6 @@
           오답 {{ meta?.count ?? 0 }}개 · 최근 {{ meta?.from_days ?? 7 }}일 · {{ meta?.model ?? '' }}
         </p>
       </div>
-      <button class="px-3 py-1.5 border rounded text-sm" @click="emit('close')">
-        닫기
-      </button>
     </div>
 
     <!-- ✅ 본문(스크롤) -->
@@ -25,9 +22,6 @@
     <div class="flex gap-2 mt-3 shrink-0">
       <button class="flex-1 bg-blue-600 text-white py-2 rounded" @click="emit('retry')">
         다시 생성
-      </button>
-      <button class="px-4 border rounded" @click="emit('close')">
-        닫기
       </button>
     </div>
 

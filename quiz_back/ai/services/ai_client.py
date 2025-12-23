@@ -15,7 +15,7 @@ def call_chat_completions(messages, model=None, timeout=30):
         raise RuntimeError("GMS_KEY is not configured")
 
     # 기본 모델: settings.OPENAI_MODEL 있으면 그걸 쓰고, 없으면 gpt-5-mini
-    model_name = model or getattr(settings, "OPENAI_MODEL", "gpt-5-mini")
+    model_name = model or getattr(settings, "gpt-5-mini", "OPENAI_MODEL" )
 
     payload = {
         "model": model_name,

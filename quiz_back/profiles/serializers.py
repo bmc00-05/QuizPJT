@@ -1,6 +1,12 @@
 import math
 from rest_framework import serializers
-from .models import Profile, UserCategoryStats, UserStats
+from .models import Profile, UserCategoryStats, UserStats, Badge
+
+
+class EquippedBadgeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Badge
+        fields = ["id", "code", "name", "icon"]
 
 class UserProfileSerializer(serializers.ModelSerializer):
     # ✅ Profile에 username 필드가 없으니 user.username을 내려주기
@@ -10,6 +16,7 @@ class UserProfileSerializer(serializers.ModelSerializer):
     exp = serializers.IntegerField(source="experience", read_only=True)
 
     max_exp = serializers.SerializerMethodField()
+    equipped_badge = EquippedBadgeSerializer(read_only=True)
 
     class Meta:
         model = Profile
@@ -92,7 +99,21 @@ class UserCategoryStatsSerializer(serializers.ModelSerializer):
 class RankingItemSerializer(serializers.ModelSerializer):
     username = serializers.CharField(source="user.username", read_only=True)
     user_id = serializers.IntegerField(source="user.id", read_only=True)
-
+    equipped_badge = EquippedBadgeSerializer(read_only=True)
+    
     class Meta:
         model = Profile
         fields = ["user_id", "username", "level", "experience", "total_experience"]
+
+
+
+
+class BadgeDexSerializer(serializers.ModelSerializer):
+    owned = serializers.BooleanField(read_only=True)
+    earned_at = serializers.DateTimeField(read_only=True, allow_null=True)
+    equipped = serializers.BooleanField(read_only=True)
+
+    class Meta:
+        model = Badge
+        fields = ["id", "code", "name", "description", "icon", "owned", "earned_at", "equipped"]
+

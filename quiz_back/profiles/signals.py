@@ -4,7 +4,7 @@ from django.dispatch import receiver
 from django.contrib.auth import get_user_model
 
 from questions.models import Category
-from .models import Profile, UserStats, UserCategoryStats
+from .models import Profile, UserStats, UserCategoryStats, Badge, UserBadge
 
 User = get_user_model()
 
@@ -59,3 +59,30 @@ def create_category_stats_for_all_users(sender, instance, created, **kwargs):
     if to_create:
         UserCategoryStats.objects.bulk_create(to_create, ignore_conflicts=True)
 
+DEFAULT_BADGE = {
+    "code": "default",
+    "name": "기본 뱃지",
+    "description": "가입을 환영합니다!",
+    "icon": "",  # 선택
+}
+
+@receiver(post_save, sender=User)
+def create_profile_and_default_badge(sender, instance, created, **kwargs):
+    if not created:
+        return
+
+    # ✅ Profile 자동 생성 (이미 다른 곳에서 만들고 있으면 이 줄은 중복될 수 있음)
+    profile, _ = Profile.objects.get_or_create(user=instance)
+
+    # ✅ 기본 뱃지(없으면 생성)
+    badge, _ = Badge.objects.get_or_create(
+        code=DEFAULT_BADGE["code"],
+        defaults={
+            "name": DEFAULT_BADGE["name"],
+            "description": DEFAULT_BADGE["description"],
+            "icon": DEFAULT_BADGE["icon"],
+        }
+    )
+
+    # ✅ 기본 뱃지 지급(중복 방지)
+    UserBadge.objects.get_or_create(user=instance, badge=badge)
