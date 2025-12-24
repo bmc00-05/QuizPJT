@@ -49,62 +49,76 @@
         </div>
       </div>
     </div>
+<!-- 아래 패널 (스크롤 버전) -->
+<div class="pixel-panel flex-[9] min-h-0">
+  <div class="pixel-panel__content p-3 h-full min-h-0 flex flex-col">
 
-    <!-- 아래 패널 -->
-    <div class="pixel-panel flex-[9] min-h-0">
-  <div class="pixel-panel__content h-full min-h-0 overflow-hidden flex flex-col">
-
-    <!-- ✅ 스크롤 되는 본문 영역 -->
-    <div class="flex-1 min-h-0 overflow-hidden">
+    <!-- ✅ 본문만 스크롤 -->
+    <div class="flex-1 min-h-0 overflow-auto">
       <template v-if="mapData">
-        <div class="text-lg font-bold">
-          {{ mapData.name }}
-        </div>
 
-        <!-- ✅ 좌(2) : 우(1) = 2:1 -->
-        <div class="mt-2 grid grid-cols-3 gap-3">
-          <!-- ✅ 왼쪽(2칸): 이미지 + 텍스트 -->
+
+        <div class="grid grid-cols-3 gap-2">
+          <!-- 왼쪽(2칸) -->
           <div class="col-span-2 min-w-0">
-            <!-- 이미지 영역(원하면 실제 이미지로 교체) -->
-            <div class="w-full h-28 bg-black/10 rounded mb-2"></div>
+                    <div class="text-lg font-bold">
+          {{ mapData.name }}                         
+          <span v-if="problemSetData" class="mt-2 text-sm text-gray-800">
+              {{ problemSetData.title }}  
+          </span>
+          <p v-if="problemSetData" class="font-normal text-sm"> {{ problemSetData.description }} </p>
+        </div>
+            <div class="w-50 h-28 bg-black/10 rounded mb-2"></div>
 
-            <div class="whitespace-pre-wrap text-sm text-gray-800">
-              {{ mapData.description }}
-            </div>
 
-            <div v-if="problemSetData" class="mt-2 text-sm text-gray-800">
-              {{ problemSetData.title }}
-            </div>
+
+            <p class="text-xs font-normal">{{ mapData.description }}</p>
           </div>
 
-          <!-- ✅ 오른쪽(1칸): 버튼 3개 세로 + 오른쪽 정렬 -->
-          <div class="col-span-1 flex flex-col items-end gap-2">
-            <button
-              class="bg-white/50 rounded border px-3 py-2 w-full max-w-[140px]"
-              @click="selectProblemSet('easy')"
-            >
-              EASY
-            </button>
-            <button
-              class="bg-white/50 rounded border px-3 py-2 w-full max-w-[140px]"
-              @click="selectProblemSet('normal')"
-            >
-              NORMAL
-            </button>
-            <button
-              class="bg-white/50 rounded border px-3 py-2 w-full max-w-[140px]"
-              @click="selectProblemSet('hard')"
-            >
-              HARD
-            </button>
+          <!-- 오른쪽(1칸) -->
+          <div class="col-span-1 flex flex-col items-end">
+            
+<button
+  :class="[
+    activeBtn === 'easy' ? 'button-panel_click' : 'button-panel',
+    'w-full max-w-[100px]'
+  ]"
+  @click="selectProblemSet('easy'); setActiveBtn('easy')"
+>
+  <div class="pixel-panel__content p-2 font-bold">EASY</div>
+</button>
 
-            <button
-              v-if="problemSetData"
-              @click="openModal()"
-              class="mt-2 w-full max-w-[140px] text-center px-3 py-2 bg-blue-600 text-white rounded"
-            >
-              Start
-            </button>
+<button
+  :class="[
+    activeBtn === 'normal' ? 'button-panel_click' : 'button-panel',
+    'w-full max-w-[100px]'
+  ]"
+  @click="selectProblemSet('normal'); setActiveBtn('normal')"
+>
+  <div class="pixel-panel__content p-2 font-bold">NORMAL</div>
+</button>
+
+<button
+  :class="[
+    activeBtn === 'hard' ? 'button-panel_click' : 'button-panel',
+    'w-full max-w-[100px]'
+  ]"
+  @click="selectProblemSet('hard'); setActiveBtn('hard')"
+>
+  <div class="pixel-panel__content p-2 font-bold">HARD</div>
+</button>
+
+<button
+  v-if="problemSetData"
+  :class="[
+    activeBtn === 'go' ? 'button-panel_click' : 'button-panel',
+    'w-full max-w-[100px]'
+  ]"
+  @click="openModal(); setActiveBtn('go')"
+>
+  <div class="pixel-panel__content p-2 font-bold">GO!</div>
+</button>
+
           </div>
         </div>
       </template>
@@ -116,13 +130,14 @@
       </template>
     </div>
 
-    <!-- ✅ 회색 안내문: 맨 아래 한 줄(고정) -->
+    <!-- ✅ 안내문은 고정(스크롤 안 됨) -->
     <div v-if="mapData && !problemSetData" class="shrink-0 pt-2 text-sm text-gray-500">
       난이도를 선택하면 Start가 활성화됩니다.
     </div>
 
   </div>
 </div>
+
     
 
     <BaseModal v-if="modal.isOpen && problemSetData" @close="closeModal">
@@ -174,6 +189,13 @@ watch(
   }
 )
 
+
+const activeBtn = ref(null) // 'easy' | 'normal' | 'hard' | 'go'
+
+const setActiveBtn = (key) => {
+  activeBtn.value = key
+}
+
 const openModal = () => {
   modal.open(1)
 }
@@ -183,6 +205,8 @@ const closeModal = () => { modal.close() }
 
 const selectMap = async (map) => {
   mapData.value = map
+  problemSetData.value = null
+  activeBtn.value = null 
   await getProblemSets(map.id)
 }
 

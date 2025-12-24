@@ -1,58 +1,155 @@
 <template>
-  <div class="h-full w-full min-h-0 text-black flex flex-col">
-    <!-- ✅ 전체를 감싸는 패널은 딱 1개 -->
-    <div class="flex-1 min-h-0">
-      <div class=" flex flex-col h-full min-h-0 gap-2">
+  <div class="h-full w-full min-h-0 text-black flex flex-col gap-2">
+    <div class="flex-1 min-h-0 flex flex-col gap-2">
 
-        <!-- ✅ 위/아래 1:1 분할 -->
-        <div class="flex-1 min-h-0 grid grid-cols-2 gap-2">
-          <!-- ✅ 위쪽 왼쪽: 스프라이트 (패널 X) -->
-          <div class="relative min-h-0 overflow-hidden flex items-center justify-center bg-black/5 rounded">
+      <!-- ✅ 위 50%: 스프라이트/스테이터스 2등분 -->
+      <div class="flex-1 min-h-0 grid grid-cols-2 gap-2">
+        <!-- 스프라이트 -->
+        <div class="relative min-h-0 overflow-hidden bg-black/5 rounded">
+          <div class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
             <SpriteSheet
               :src="idleSheet"
-              :frameWidth="128"
-              :frameHeight="128"
+              :frameWidth="256"
+              :frameHeight="256"
               :frames="8"
               :fps="8"
-              :scale="2"
-              class="[image-rendering:pixelated]"
+              :scale="1"
+              class="block [image-rendering:pixelated]"
             />
           </div>
-
-          <!-- ✅ 위쪽 오른쪽: 스테이터스 (패널 X) -->
-            <Status />
-
         </div>
 
-        <!-- ✅ 아래쪽 1/2 영역 -->
-        <div class="flex-1 min-h-0 flex flex-col justify-center items-center gap-2 bg-black/5 rounded p-2">
-          <RouterLink :to="{ name: 'myproblemset' }" class="underline">
-            내 문제 관리
-          </RouterLink>
+      <!-- 스테이터스 -->
+    <div class="pixel-panel min-h-0 overflow-hidden">
+      <div class="pixel-panel__content min-h-0 h-full overflow-hidden">
+        <!-- ✅ 여기에서 스크롤 처리 -->
+        <div class="h-full min-h-0 overflow-auto">
+          <Status />
         </div>
-
       </div>
+</div>
+      </div>
+
+      <!-- ✅ 아래 50%: 메모장(전체) -->
+      <div class="flex-1 min-h-0">
+        <div class="pixel-panel h-full min-h-0">
+          <div class="pixel-panel__content h-full min-h-0 p-2">
+            <MemoPadInline
+              :apiUrl="API_URL"
+              :token="accountStore.token"
+              @openMyProblemSet="openMyProblem"
+              @openHistory="openHistory"
+              @openBadge="openBadge"
+            />
+          </div>
+        </div>
+      </div>
+
     </div>
+
+    <!-- ✅ AI 히스토리 모달 -->
+    <BaseModal v-if="historyOpen" @close="closeHistory">
+      <AIHistory
+        :apiUrl="API_URL"
+        :token="accountStore.token"
+        :endpoint="`/ai/feedback/history/`"
+        @close="closeHistory"
+        @select="onSelectCoaching"
+      />
+    </BaseModal>
+
+    <!-- ✅ 뱃지 모달 -->
+    <BaseModal v-if="badgeOpen" @close="closeBadge">
+      <Badge
+        :apiUrl="API_URL"
+        :token="accountStore.token"
+        @close="closeBadge"
+        @select="onSelectBadge"
+      />
+    </BaseModal>
+
+    <!-- ✅ 내 문제집 모달 -->
+    <BaseModal v-if="myProblemOpen" @close="closeMyProblem">
+      <MyProblemSetManager :showClose="true" @close="closeMyProblem" />
+    </BaseModal>
   </div>
 </template>
 
 <script setup>
-import { onMounted } from "vue"
-import idleSheet from "@/assets/character/Test_animation-Sheet.png";
-import SpriteSheet from "@/components/SpriteSheet.vue";
-import Status from "@/components/Status.vue"
+import { ref, onMounted } from "vue"
+import { useRouter } from "vue-router"
 import { useAccountStore } from "@/stores/accounts"
 
+import idleSheet from "@/assets/character/test_sheet.png"
+import SpriteSheet from "@/components/SpriteSheet.vue"
+import Status from "@/components/Status.vue"
+
+import MemoPadInline from "@/components/MemoPadInline.vue"
+import BaseModal from "@/components/common/BaseModal.vue"
+import AIHistory from "@/components/AIHistory.vue"
+import Badge from "@/components/Badge.vue"
+import MyProblemSetManager from "@/components/MyProblemSetManager.vue"
+
+const router = useRouter()
+const API_URL = import.meta.env.VITE_REST_API_URL
 const accountStore = useAccountStore()
 
+// ✅ 모달 상태
+const historyOpen = ref(false)
+const badgeOpen = ref(false)
+const myProblemOpen = ref(false)
+
+// (선택) 선택된 데이터
+const selectedCoaching = ref(null)
+const selectedBadge = ref(null)
+
+// ✅ 유저 보장
+const ensureUser = async () => {
+  if (!accountStore.user) await accountStore.fetchMe?.()
+}
+
+// ✅ 내 문제집 모달
+const openMyProblem = async () => {
+  await ensureUser()
+  myProblemOpen.value = true
+}
+const closeMyProblem = () => {
+  myProblemOpen.value = false
+}
+
+// ✅ 히스토리
+const openHistory = async () => {
+  await ensureUser()
+  historyOpen.value = true
+}
+const closeHistory = () => {
+  historyOpen.value = false
+}
+const onSelectCoaching = (item) => {
+  selectedCoaching.value = item
+  historyOpen.value = false
+}
+
+// ✅ 뱃지
+const openBadge = async () => {
+  await ensureUser()
+  badgeOpen.value = true
+}
+const closeBadge = () => {
+  badgeOpen.value = false
+}
+const onSelectBadge = (item) => {
+  selectedBadge.value = item
+  badgeOpen.value = false
+}
+
+// (선택) 라우팅으로 내 문제집 페이지로 가는 버튼이 필요하면 사용
+const goMyProblemSet = async () => {
+  await ensureUser()
+  router.push({ name: "myproblemset" })
+}
+
 onMounted(async () => {
-  // ✅ 로그인한 상태인데 user가 비어있으면 서버에서 가져오기
-  if (!accountStore.user) {
-    await accountStore.fetchMe?.() // 너 스토어 함수명이 fetchMe가 아니면 그걸로 변경
-  }
+  await ensureUser()
 })
 </script>
-
-<style scoped>
-
-</style>

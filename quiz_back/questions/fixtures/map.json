@@ -4,7 +4,7 @@
     "pk": 1,
     "fields": {
       "name": "네트워크",
-      "description": "네트워크 게임맵 입니다.",
+      "description": "수면 위로 짙은 안개가 깔려 있어 바닥을 알 수 없으며, 기묘할 정도로 물결 하나 없이 잔잔하다.",
       "created_at": "2025-12-01T10:00:00Z",
       "updated_at": "2025-12-01T10:00:00Z",
       "problem_sets": []
@@ -15,7 +15,7 @@
     "pk": 2,
     "fields": {
       "name": "OS",
-      "description": "OS 게임맵 입니다.",
+      "description": "수백 년 된 고목들이 하늘을 가려 낮에도 밤처럼 어두우며, 짙은 흙 내음 사이로 야수의 기운이 감돈다.",
       "created_at": "2025-12-01T11:00:00Z",
       "updated_at": "2025-12-01T11:00:00Z",
       "problem_sets": []
@@ -26,7 +26,7 @@
     "pk": 3,
     "fields": {
       "name": "DB",
-      "description": "DB 게임맵 입니다.",
+      "description": "벽면의 붉은 광석이 횃불 빛을 반사해 피처럼 일렁이며, 동굴 깊은 곳에선 정체 모를 메아리가 들린다.",
       "created_at": "2025-12-01T12:00:00Z",
       "updated_at": "2025-12-01T12:00:00Z",
       "problem_sets": []
@@ -37,7 +37,7 @@
     "pk": 4,
     "fields": {
       "name": "자료구조",
-      "description": "자료구조 게임맵 입니다.",
+      "description": "오래된 붉은 벽돌로 쌓아 올린 성벽은 곳곳이 무너졌으며, 빛바랜 버건디색 깃발이 힘없이 휘날린다.",
       "created_at": "2025-12-01T13:00:00Z",
       "updated_at": "2025-12-01T13:00:00Z",
       "problem_sets": []
@@ -48,7 +48,7 @@
     "pk": 5,
     "fields": {
       "name": "알고리즘",
-      "description": "알고리즘 게임맵 입니다.",
+      "description": "거대한 바위와 깎아지른 절벽으로 이루어져 있으며, 메마른 바람 소리만이 골짜기를 타고 흐른다.",
       "created_at": "2025-12-01T14:00:00Z",
       "updated_at": "2025-12-01T14:00:00Z",
       "problem_sets": []
