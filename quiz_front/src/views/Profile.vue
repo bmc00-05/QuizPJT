@@ -34,13 +34,19 @@
       <div class="flex-1 min-h-0">
         <div class="pixel-panel h-full min-h-0">
           <div class="pixel-panel__content h-full min-h-0 p-2">
-            <MemoPadInline
-              :apiUrl="API_URL"
-              :token="accountStore.token"
-              @openMyProblemSet="openMyProblem"
-              @openHistory="openHistory"
-              @openBadge="openBadge"
-            />
+          <MemoPadInline
+            v-if="accountStore.token"
+            :apiUrl="API_URL"
+            :token="accountStore.token"
+            @openMyProblemSet="openMyProblem"
+            @openHistory="openHistory"
+            @openBadge="openBadge"
+          />
+
+          <!-- 토큰 없으면 안내/비활성 UI -->
+          <div v-else class="text-xs text-black/60">
+            로그인 후 사용 가능합니다.
+          </div>
           </div>
         </div>
       </div>
