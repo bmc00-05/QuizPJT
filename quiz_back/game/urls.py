@@ -13,6 +13,8 @@ urlpatterns = [
     # 자유 모드
     path('users/<int:user_pk>/problemsets/', views.user_problem_set),   # 특정 유저 문제집
     path('users/problemsets/', views.user_created_problem_set),   # 유저 문제집 목록 조회
+    path("problemsets/<int:problem_set_pk>/like/", views.problemset_like),
+    path("problemsets/", views.problemset_list),
     # ai
     path('history/', views.recent_wrong_logs),
 ]

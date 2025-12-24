@@ -1,55 +1,75 @@
 from rest_framework import serializers
-from .models import Map, ProblemSet
+from .models import Map, ProblemSet, SessionLog
 from questions.models import Problem
-from .models import SessionLog
+
 
 # 맵 목록 시리얼라이저
 class MapSerializer(serializers.ModelSerializer):
     class Meta:
         model = Map
-        fields = ('id', 'name', 'description',)
+        fields = ("id", "name", "description")
 
-# 문제집 시리얼라이저
+
 class ProblemSetSerializer(serializers.ModelSerializer):
     like_count = serializers.SerializerMethodField()
     created_by_name = serializers.SerializerMethodField()
-    problem_count = serializers.IntegerField(read_only=True)  # ✅ 추가
-    
+    problem_count = serializers.IntegerField(read_only=True)  # annotate로 채움
+    is_liked = serializers.SerializerMethodField()
+
     class Meta:
         model = ProblemSet
-        fields = ('id', 'title', 'description', 'like_count', 'created_by', 'created_by_name', 'problem_count', )
-        read_only_fields = ['id','problem_count']
+        fields = (
+            "id",
+            "title",
+            "description",
+            "like_count",
+            "created_by",
+            "created_by_name",
+            "problem_count",
+            "is_liked",
+        )
+        read_only_fields = ("id", "problem_count", "like_count", "created_by_name", "is_liked")
+
     def get_like_count(self, obj):
+        annotated = getattr(obj, "like_count", None)
+        if annotated is not None:
+            return annotated
         return obj.like_users.count()
-    
+
     def get_created_by_name(self, obj):
-        if obj.created_by:
-            return obj.created_by.username  # 또는 이름 필드
-        return None
+        return obj.created_by.username if obj.created_by else None
 
-# 맵 문제집 시리얼라이저
+    def get_is_liked(self, obj):
+        request = self.context.get("request")
+        user = getattr(request, "user", None)
+        if not user or not user.is_authenticated:
+            return False
+        return obj.like_users.filter(pk=user.pk).exists()
+
+
+# 맵 문제집 시리얼라이저 (✅ 올바른 nested)
 class MapProblemSetSerializer(serializers.ModelSerializer):
-
     problem_sets = ProblemSetSerializer(many=True, read_only=True)
-    
+
     class Meta:
         model = Map
-        fields = ('id', 'name', 'description', 'problem_sets',)
+        fields = ("id", "name", "description", "problem_sets")
+
 
 # 문제 보기용 시리얼라이저
 class ProblemViewSerializer(serializers.ModelSerializer):
     class Meta:
         model = Problem
-        fields = ('id', 'question', 'choice1', 'choice2', 'choice3', 'choice4',)
+        fields = ("id", "question", "choice1", "choice2", "choice3", "choice4")
+
 
 # 문제집 문제 시리얼라이저 (보기용)
 class ProblemSetProblemSerializer(serializers.ModelSerializer):
-
-    questions = ProblemViewSerializer(many=True, read_only=True)
+    problem = ProblemViewSerializer(many=True, read_only=True)
 
     class Meta:
         model = ProblemSet
-        fields = ('id', 'title', 'description', 'problem',)
+        fields = ("id", "title", "description", "problem")
 
 
 class RecentWrongLogSerializer(serializers.ModelSerializer):
