@@ -307,3 +307,5 @@ def recent_wrong_logs(request):
             "wrong_by_category": list(wrong_by_category),
         }
     })
+
+

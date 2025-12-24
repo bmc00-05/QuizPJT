@@ -1,6 +1,6 @@
 <template>
-  <div class="nav-panel">
-    <div class="pixel-panel__content">
+  <div class=" w-full h-full">
+    <div >
       <div class="sprite" :style="style" />
     </div>
   </div>
@@ -15,7 +15,7 @@ const props = defineProps({
   frameHeight: { type: Number, required: true },  // 예: 128
   frames: { type: Number, required: true },       // 예: 8
   fps: { type: Number, default: 8 },              // 초당 프레임
-  scale: { type: Number, default: 2 },            // 픽셀 확대 배율
+  scale: { type: Number, default: 1 },            // 픽셀 확대 배율
   row: { type: Number, default: 0 },              // 여러 행이면 row로 동작 선택
 });
 

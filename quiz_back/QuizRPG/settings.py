@@ -19,7 +19,7 @@ env = environ.Env()
 environ.Env.read_env(BASE_DIR / ".env")  # ✅ 루트 .env 읽기
 
 OPENAI_API_KEY = env("OPENAI_API_KEY", default="")
-OPENAI_MODEL = env("OPENAI_MODEL", default="gpt-4.1")
+OPENAI_MODEL = env("OPENAI_MODEL", default="gpt-5-mini")
 GMS_KEY = env("GMS_KEY", default="")
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/

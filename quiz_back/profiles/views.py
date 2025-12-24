@@ -1,13 +1,14 @@
 from django.db.models import Q
+from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
 from django.contrib.auth import get_user_model
-
+from game.models import ProblemSet
 
 from questions.models import Category
-from .models import Profile, UserStats, UserCategoryStats
-from .serializers import UserProfileSerializer, UserStatsSerializer, UserCategoryStatsSerializer, RankingItemSerializer
+from .models import Profile, UserStats, UserCategoryStats, UserBadge, Badge
+from .serializers import UserProfileSerializer, UserStatsSerializer, UserCategoryStatsSerializer, RankingItemSerializer, BadgeDexSerializer, ProfileMemoSerializer
 
 
 User = get_user_model()
@@ -26,6 +27,9 @@ def get_profile(request):
 
 def _build_payload(target_user):
     profile, _ = Profile.objects.get_or_create(user=target_user)
+    
+    profile = Profile.objects.select_related("equipped_badge", "user").get(pk=profile.pk)
+    
     stats, _ = UserStats.objects.get_or_create(user=target_user)
 
     # ✅ 유저가 가진 카테고리 통계를 dict로
@@ -149,3 +153,105 @@ def ranking(request):
         "items": items,
         "me": me_payload,
     })
+
+
+@api_view(["GET"])
+@permission_classes([IsAuthenticated])
+def my_badge_dex(request):
+    profile, _ = Profile.objects.get_or_create(user=request.user)
+
+    badges = list(Badge.objects.all().order_by("id"))
+
+    # ✅ UserBadge는 user가 아니라 profile로 필터링
+    owned_map = {
+        ub.badge_id: ub.earned_at
+        for ub in UserBadge.objects.filter(profile=profile).select_related("badge")
+    }
+
+    equipped_id = profile.equipped_badge_id
+
+    data = []
+    for b in badges:
+        earned_at = owned_map.get(b.id)
+        data.append({
+            "id": b.id,
+            "code": b.code,
+            "name": b.name,
+            "description": b.description,
+            "icon": b.icon,
+            "owned": earned_at is not None,
+            "earned_at": earned_at,
+            "equipped": (b.id == equipped_id),
+        })
+
+    return Response(data, status=200)
+
+
+@api_view(["POST"])
+@permission_classes([IsAuthenticated])
+def equip_badge(request):
+    badge_id = request.data.get("badge_id")
+    if not badge_id:
+        return Response({"detail": "badge_id is required"}, status=400)
+
+    profile, _ = Profile.objects.get_or_create(user=request.user)
+
+    # ✅ 보유 여부 검사도 profile 기준으로
+    owned = UserBadge.objects.filter(profile=profile, badge_id=badge_id).exists()
+    if not owned:
+        return Response({"detail": "You don't own this badge"}, status=403)
+
+    profile.equipped_badge_id = badge_id
+    # ✅ auto_now(updated_at)까지 확실히 갱신하고 싶으면 update_fields 쓰지 말고 save()
+    profile.save()
+
+    return Response({"detail": "equipped", "badge_id": int(badge_id)}, status=200)
+
+
+@api_view(["POST"])
+@permission_classes([IsAuthenticated])
+def unequip_badge(request):
+    profile, _ = Profile.objects.get_or_create(user=request.user)
+    profile.equipped_badge = None
+    profile.save()
+    return Response({"detail": "unequipped"}, status=200)
+
+
+@api_view(["POST"])
+@permission_classes([IsAuthenticated])
+def toggle_problemset_like(request, set_id: int):
+    try:
+        ps = ProblemSet.objects.get(id=set_id)
+    except ProblemSet.DoesNotExist:
+        return Response({"detail": "ProblemSet not found"}, status=404)
+
+    user = request.user
+
+    # ✅ 토글
+    if ps.like_users.filter(id=user.id).exists():
+        ps.like_users.remove(user)
+        liked = False
+    else:
+        ps.like_users.add(user)
+        liked = True
+
+    return Response({
+        "id": ps.id,
+        "liked": liked,
+        "like_count": ps.like_users.count(),
+    }, status=200)
+
+
+@api_view(["GET", "PATCH"])
+@permission_classes([IsAuthenticated])
+def my_memo(request):
+    profile, _ = Profile.objects.get_or_create(user=request.user)
+
+    if request.method == "GET":
+        return Response(ProfileMemoSerializer(profile).data, status=200)
+
+    # PATCH
+    serializer = ProfileMemoSerializer(profile, data=request.data, partial=True)
+    serializer.is_valid(raise_exception=True)
+    serializer.save()  # updated_at 자동 갱신(auto_now=True)
+    return Response(serializer.data, status=200)

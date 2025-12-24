@@ -1,15 +1,21 @@
 import math
 from rest_framework import serializers
-from .models import Profile, UserCategoryStats, UserStats
+from .models import Profile, UserCategoryStats, UserStats, Badge
+
+
+class EquippedBadgeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Badge
+        fields = ["id", "code", "name", "icon"]
 
 class UserProfileSerializer(serializers.ModelSerializer):
-    # ✅ Profile에 username 필드가 없으니 user.username을 내려주기
     username = serializers.CharField(source="user.username", read_only=True)
-
-    # ✅ 프론트에서 exp로 쓰는 키 유지
     exp = serializers.IntegerField(source="experience", read_only=True)
-
     max_exp = serializers.SerializerMethodField()
+
+    # ✅ 대표 뱃지(선택): FK면 PK만 내려도 되고, 상세도 가능
+    equipped_badge_id = serializers.IntegerField(source="equipped_badge.id", read_only=True)
+    equipped_badge = serializers.SerializerMethodField()
 
     class Meta:
         model = Profile
@@ -18,10 +24,23 @@ class UserProfileSerializer(serializers.ModelSerializer):
             "level",
             "exp",
             "max_exp",
+            "equipped_badge_id",
+            "equipped_badge",   # ✅ 반드시 포함
         ]
 
     def get_max_exp(self, obj):
         return obj.level * 100
+
+    def get_equipped_badge(self, obj):
+        b = getattr(obj, "equipped_badge", None)
+        if not b:
+            return None
+        return {
+            "id": b.id,
+            "code": b.code,
+            "name": b.name,
+            "icon": b.icon,
+        }
     
 class UserStatsSerializer(serializers.ModelSerializer):
     accuracy = serializers.SerializerMethodField()
@@ -92,7 +111,34 @@ class UserCategoryStatsSerializer(serializers.ModelSerializer):
 class RankingItemSerializer(serializers.ModelSerializer):
     username = serializers.CharField(source="user.username", read_only=True)
     user_id = serializers.IntegerField(source="user.id", read_only=True)
-
+    equipped_badge = EquippedBadgeSerializer(read_only=True)
+    
     class Meta:
         model = Profile
-        fields = ["user_id", "username", "level", "experience", "total_experience"]
+        fields = ["user_id", "username", "level", "experience", "total_experience", "equipped_badge"]
+
+
+
+
+class BadgeDexSerializer(serializers.ModelSerializer):
+    owned = serializers.BooleanField(read_only=True)
+    earned_at = serializers.DateTimeField(read_only=True, allow_null=True)
+    equipped = serializers.BooleanField(read_only=True)
+
+    class Meta:
+        model = Badge
+        fields = ["id", "code", "name", "description", "icon", "owned", "earned_at", "equipped"]
+
+
+class ProfileMemoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Profile
+        fields = ("memo", "updated_at")
+
+    # (선택) 길이 제한하고 싶으면
+    def validate_memo(self, value):
+        if value is None:
+            return ""
+        if len(value) > 5000:
+            raise serializers.ValidationError("메모는 5000자 이내로 작성해주세요.")
+        return value

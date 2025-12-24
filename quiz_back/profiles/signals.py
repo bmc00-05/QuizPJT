@@ -1,10 +1,11 @@
 # profiles/signals.py
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+from django.db import transaction
 from django.contrib.auth import get_user_model
 
 from questions.models import Category
-from .models import Profile, UserStats, UserCategoryStats
+from .models import Profile, UserStats, UserCategoryStats, Badge, UserBadge
 
 User = get_user_model()
 
@@ -59,3 +60,32 @@ def create_category_stats_for_all_users(sender, instance, created, **kwargs):
     if to_create:
         UserCategoryStats.objects.bulk_create(to_create, ignore_conflicts=True)
 
+DEFAULT_BADGE = {
+    "code": "default",
+    "name": "기본 뱃지",
+    "description": "가입을 환영합니다!",
+    "icon": "",  # 선택
+}
+
+@receiver(post_save, sender=User)
+def create_profile_and_default_badge(sender, instance, created, **kwargs):
+    if not created:
+        return
+
+    with transaction.atomic():
+        profile, _ = Profile.objects.get_or_create(user=instance)
+
+        badge, _ = Badge.objects.get_or_create(
+            code="default",
+            defaults={
+                "name": "초심자",
+                "description": "기본 제공 뱃지",
+                "icon": "badges/default.png",
+            },
+        )
+
+        UserBadge.objects.get_or_create(profile=profile, badge=badge)
+
+        # (선택) 대표 뱃지까지 자동 장착하고 싶으면:
+        # profile.equipped_badge = badge
+        # profile.save(update_fields=["equipped_badge"])

@@ -29,7 +29,7 @@
       <!-- Press to Start -->
       <div
         v-if="showStartButton"
-        @click="$router.push({ name: 'main' })"
+        @click="$router.push({ name: 'profile' })"
         class="fixed inset-0 z-10 flex items-end justify-center pb-[25%] cursor-pointer"
       >
         <span class="text-lg font-semibold animate-fade-blink">

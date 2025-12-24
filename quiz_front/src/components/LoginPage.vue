@@ -3,7 +3,8 @@
 
 
     <!-- 카드 -->
-    <div class="relative justify-center w-full max-w-sm rounded-2xl bg-white p-6 shadow-xl ">
+    <div class="relative justify-center w-full max-w-sm pixel-panel">
+      <div class="pixel-panel__content">
       <!-- 닫기 버튼 -->
       <button
         @click="close"
@@ -22,6 +23,8 @@
 
       <!-- 로그인 폼 -->
       <div class="mt-8">
+                  <!-- ✅ 에러 메시지 -->
+ 
         <form @submit.prevent="login" class="space-y-6">
           <div>
             <label for="username" class="block text-sm font-medium text-gray-900">
@@ -54,6 +57,12 @@
               />
             </div>
           </div>
+          <div
+            v-if="errorMsg"
+            class="mb-4 text-xs text-red-700"
+          >
+            {{ errorMsg }}
+          </div>
 
           <button
             type="submit"
@@ -73,15 +82,15 @@
           </RouterLink>
         </p>
       </div>
-
+    </div>
     </div>
 
 </template>
 
 <script setup>
-import { ref } from 'vue'
-import { useAccountStore } from '@/stores/accounts';
-import { useRouter } from 'vue-router';
+import { ref, watch } from 'vue'
+import { useAccountStore } from '@/stores/accounts'
+import { useRouter } from 'vue-router'
 
 const router = useRouter()
 
@@ -90,7 +99,12 @@ const password = ref(null)
 
 const accountStore = useAccountStore()
 
+// ✅ 화면에 표시할 에러 메시지
+const errorMsg = ref('')
+
 const login = async () => {
+  errorMsg.value = ''
+
   const payload = {
     username: username.value,
     password: password.value,
@@ -98,11 +112,35 @@ const login = async () => {
 
   try {
     await accountStore.logIn(payload)
-    console.log(payload)
-    router.push({ name: 'start' })   // ✅ 화면 제어는 여기서
+    router.push({ name: 'start' })
   } catch (err) {
-    console.log('login error status:', err.response?.status)
-    console.log('login error data:', err.response?.data)
+    const status = err?.response?.status
+    const data = err?.response?.data
+
+    if (status === 400) {
+      const nonField = data?.non_field_errors?.[0]
+      const userErr = data?.username?.[0]
+      const passErr = data?.password?.[0]
+      const detail = data?.detail
+
+      // ✅ 핵심: 서버 영문(non_field_errors / detail)은 화면에 그대로 뿌리지 말고 한글로 통일
+      if (nonField || detail) {
+        errorMsg.value = '아이디 또는 비밀번호가 올바르지 않습니다.'
+      } else if (userErr) {
+        errorMsg.value = '아이디를 확인해주세요.'
+      } else if (passErr) {
+        errorMsg.value = '비밀번호를 확인해주세요.'
+      } else {
+        errorMsg.value = '입력값이 올바르지 않습니다.'
+      }
+
+    } else if (status === 401) {
+      errorMsg.value = '아이디 또는 비밀번호가 올바르지 않습니다.'
+    } else if (!err?.response) {
+      errorMsg.value = '서버에 연결할 수 없습니다. 네트워크 상태를 확인해주세요.'
+    } else {
+      errorMsg.value = '로그인 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.'
+    }
   }
 }
 
@@ -110,7 +148,11 @@ const close = () => {
   router.push({ name: 'start' })
 }
 
+watch([username, password], () => {
+  errorMsg.value = ''
+})
 </script>
+
 
 <style scoped>
 

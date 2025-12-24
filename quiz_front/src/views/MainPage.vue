@@ -1,5 +1,5 @@
 <template>
-  <div class="h-screen flex flex-col bg-gray-500 text-white relative min-h-0">
+  <div class="h-screen flex flex-col bg-gray-500   text-white relative min-h-0">
     <div class="flex-1 overflow-hidden flex flex-col min-h-0">
       <!-- ✅ 상단 유저 정보 바 -->
       <div class="nav-panel">
