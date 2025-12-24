@@ -104,7 +104,7 @@
                   <!-- 적 -->
                   <div class="absolute right-[-20%] top-1/2 -translate-y-1/2 z-10">
                     <ActionSheet
-                      v-if="enemyDef"
+                      v-if="enemyDef && enemyVisible"
                       :src="enemyDef.sheet"
                       :frameWidth="enemyDef.frameWidth"
                       :frameHeight="enemyDef.frameHeight"
@@ -331,6 +331,7 @@ function tryCommitFinish() {
   if (!pendingFinish.value || !pendingFinishResult.value) return
   if (pendingAfterOnceKey.value) return
   if (enemyAfterOnceKey.value) return
+  if (enemyBusy.value) return
 
   const finalResult = pendingFinishResult.value
   pendingFinish.value = false
@@ -393,11 +394,36 @@ const playPlayerHit = () => {
 }
 
 // -----------------------------
-// 적(Enemy) 애니
+// 적(Enemy) : 맵별 스폰 + hit→death→respawn
 // -----------------------------
-const enemyId = ref("slime")
-const enemyDef = computed(() => ENEMIES[enemyId.value])
+const mapId = computed(() => {
+  const ps = Number(problemSetId.value)
+  if (!Number.isFinite(ps) || ps <= 0) return 1
+  return Math.min(5, Math.max(1, Math.ceil(ps / 3))) // 1~3=1, 4~6=2, ...
+})
 
+const MAP_ENEMY_POOLS = {
+  1: ["slime", "skeleton", "skeleton_archer"],
+  2: ["orc", "armored_orc", "axeman"],
+  3: ["armored_skeleton", "greatsword_skeleton", "knight"],
+  4: ["lancer", "swordman", "soldier"],
+  5: ["elite_orc", "orc_rider", "werewolf", "werebear"],
+}
+
+const enemyPool = computed(() => MAP_ENEMY_POOLS[mapId.value] ?? ["slime"])
+
+// ✅ 현재 적
+const enemyId = ref(null)
+const enemyDef = computed(() => (enemyId.value ? ENEMIES[enemyId.value] : null))
+
+// ✅ 렌더/상태
+const enemyVisible = ref(true)
+const enemyBusy = ref(false)              // hit/death 등 “한 번 재생” 중
+const enemyChain = ref(null)              // 'hit_then_death' | 'death_then_respawn' | null
+const enemyLastOnce = ref(null)
+const lastEnemyId = ref(null)
+
+// ✅ enemy anim state
 const enemyAnim = reactive({ row: 0, start: 0, frames: 1, fps: 8, loop: true })
 const enemyAfterOnceKey = ref(null)
 
@@ -413,30 +439,115 @@ function applyEnemy(key) {
   enemyAnim.loop = clip.loop
 }
 
-function playOnceEnemy(onceKey, afterKey) {
+function playOnceEnemy(onceKey, afterKey = null) {
   const def = enemyDef.value
   const clip = def?.anims?.[onceKey]
   if (!clip) return
 
+  enemyBusy.value = true
+  enemyLastOnce.value = onceKey
   applyEnemy(onceKey)
 
   if (clip.loop) {
-    applyEnemy(afterKey)
+    if (afterKey) applyEnemy(afterKey)
     enemyAfterOnceKey.value = null
+    enemyBusy.value = false
   } else {
-    enemyAfterOnceKey.value = afterKey
+    enemyAfterOnceKey.value = afterKey // null 가능
   }
 }
 
+// ✅ 새 적 스폰
+const spawnEnemy = () => {
+  const pool = enemyPool.value
+  if (!pool?.length) return
+
+  enemyVisible.value = false
+
+  setTimeout(() => {
+    let next = pool[Math.floor(Math.random() * pool.length)]
+
+    // 같은 적 연속 방지(가능하면)
+    if (pool.length > 1 && next === lastEnemyId.value) {
+      const idx = pool.indexOf(next)
+      next = pool[(idx + 1) % pool.length]
+    }
+
+    lastEnemyId.value = next
+    enemyId.value = next
+    enemyVisible.value = true
+  }, 120)
+}
+
+// ✅ 정답 시: hit→death→respawn
+const defeatEnemy = () => {
+  const def = enemyDef.value
+  if (!def) return
+  if (enemyBusy.value) return
+
+  const hasHit = !!def.anims?.hit
+  const hasDeath = !!def.anims?.death
+
+  if (hasHit && hasDeath) {
+    enemyChain.value = "hit_then_death"
+    playOnceEnemy("hit")
+    return
+  }
+  if (hasDeath) {
+    enemyChain.value = "death_then_respawn"
+    playOnceEnemy("death")
+    return
+  }
+
+  // fallback
+  enemyBusy.value = false
+  spawnEnemy()
+}
+
+// ✅ 적 바뀌면 기본 idle 세팅
 watch(
   enemyDef,
   (def) => {
     if (!def?.anims?.idle) return
     enemyAfterOnceKey.value = null
+    enemyBusy.value = false
+    enemyChain.value = null
     applyEnemy("idle")
   },
   { immediate: true }
 )
+
+// ✅ finished 핸들러(체인 핵심)
+function onEnemyAnimFinished() {
+  // 1) hit 끝나면 death로
+  if (enemyChain.value === "hit_then_death" && enemyLastOnce.value === "hit") {
+    enemyChain.value = "death_then_respawn"
+    playOnceEnemy("death")
+    return
+  }
+
+  // 2) death 끝나면 숨김 → 새 적
+  if (enemyChain.value === "death_then_respawn" && enemyLastOnce.value === "death") {
+    enemyChain.value = null
+    enemyAfterOnceKey.value = null
+    enemyBusy.value = false
+    enemyVisible.value = false
+
+    setTimeout(() => spawnEnemy(), 120)
+
+    tryCommitFinish()
+    return
+  }
+
+  // 3) 기본 after 처리
+  if (enemyAfterOnceKey.value) {
+    applyEnemy(enemyAfterOnceKey.value)
+    enemyAfterOnceKey.value = null
+  }
+
+  enemyBusy.value = false
+  tryCommitFinish()
+}
 
 // -----------------------------
 // finished 핸들러
@@ -449,13 +560,7 @@ function onAnimFinished() {
   tryCommitFinish()
 }
 
-function onEnemyAnimFinished() {
-  if (enemyAfterOnceKey.value) {
-    applyEnemy(enemyAfterOnceKey.value)
-    enemyAfterOnceKey.value = null
-  }
-  tryCommitFinish()
-}
+
 
 // -----------------------------
 // UI 이벤트
@@ -487,8 +592,8 @@ const nextQuestion = () => {
   currentIdleKey.value = "idle_0"
   applyAnim("idle_0")
 
-  enemyAfterOnceKey.value = null
-  applyEnemy("idle")
+enemyAfterOnceKey.value = null
+if (enemyDef.value && enemyVisible.value) applyEnemy("idle")
 
   if (currentIndex.value + 1 >= quizList.value.length) return
   currentIndex.value++
@@ -524,6 +629,8 @@ const createSession = async () => {
       router.back()
       return
     }
+    spawnEnemy()
+    
   } catch (err) {
     console.error(err)
     alert("게임을 시작할 수 없습니다. (문제집에 문제가 없거나 서버 오류)")
@@ -532,6 +639,8 @@ const createSession = async () => {
     isLoadingSession.value = false
   }
 }
+
+
 
 const checkQuiz = async () => {
   if (isGameOver.value) return
@@ -557,7 +666,7 @@ const checkQuiz = async () => {
   if (res.data.correct === true) {
     const rule = PICK_RULES[selectedChoice.value]
     if (rule?.attackOnce) playOnce(rule.attackOnce, currentIdleKey.value || rule.idle || "idle_0")
-    if (enemyDef.value?.anims?.hit) playOnceEnemy("hit", "idle")
+    defeatEnemy()
   }
 
   // ✅ 오답일 때: 적 공격 + 하트 감소
