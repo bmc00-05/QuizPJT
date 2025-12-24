@@ -23,6 +23,7 @@ const SLIME_ANIMS = {
   hit:    { row: 4, start: 0, frames: 4, fps: 12, loop: false },
   attack: { row: 3, start: 0, frames: 12, fps: 14, loop: false },
   death: { row: 5, start: 0, frames: 4, fps: 14, loop: false },
+  walk: { row: 1, start: 0, frames: 8, fps: 14, loop: true },
 }
 
 const AXEMAN_ANIMS = {
@@ -30,6 +31,7 @@ const AXEMAN_ANIMS = {
   hit:    { row: 5, start: 0, frames: 4, fps: 14, loop: false },
   attack: { row: 4, start: 0, frames: 12, fps: 16, loop: false },
   death: { row: 6, start: 0, frames: 4, fps: 16, loop: false },
+  walk: { row: 1, start: 0, frames: 8, fps: 14, loop: true },
 }
 
 const ARMOREDORC_ANIMS = {
@@ -37,6 +39,7 @@ const ARMOREDORC_ANIMS = {
   hit:    { row: 6, start: 0, frames: 4, fps: 14, loop: false },
   attack: { row: 3, start: 0, frames: 8, fps: 16, loop: false },
   death: { row: 7, start: 0, frames: 4, fps: 16, loop: false },
+  walk: { row: 1, start: 0, frames: 8, fps: 14, loop: true },
 }
 
 const ORC_ANIMS = {
@@ -44,6 +47,7 @@ const ORC_ANIMS = {
   hit:    { row: 4, start: 0, frames: 4, fps: 14, loop: false },
   attack: { row: 3, start: 0, frames: 6, fps: 16, loop: false },
   death: { row: 5, start: 0, frames: 4, fps: 16, loop: false },
+  walk: { row: 1, start: 0, frames: 8, fps: 14, loop: true },
 }
 
 const ELETEORC_ANIMS = {
@@ -51,6 +55,7 @@ const ELETEORC_ANIMS = {
   attack: { row: 4, start: 0, frames: 9, fps: 16, loop: false },
   hit:   { row: 5, start: 0, frames: 4, fps: 14, loop: false },
   death: { row: 6, start: 0, frames: 4, fps: 16, loop: false },
+  walk: { row: 1, start: 0, frames: 8, fps: 14, loop: true },
 }
 
 const ARMOREDSKELETON_ANIMS = {
@@ -58,6 +63,7 @@ const ARMOREDSKELETON_ANIMS = {
   hit:    { row: 4, start: 0, frames: 4, fps: 14, loop: false },
   attack: { row: 3, start: 0, frames: 9, fps: 16, loop: false },
   death: { row: 5, start: 0, frames: 4, fps: 16, loop: false },
+  walk: { row: 1, start: 0, frames: 8, fps: 14, loop: true },
 }
 
 const SKELETON_ANIMS = {
@@ -65,6 +71,7 @@ const SKELETON_ANIMS = {
   hit:    { row: 5, start: 0, frames: 4, fps: 14, loop: false },
   attack: { row: 3, start: 0, frames: 7, fps: 16, loop: false },
   death: { row: 6, start: 0, frames: 4, fps: 16, loop: false },
+  walk: { row: 1, start: 0, frames: 8, fps: 14, loop: true },
 }
 
 const SKELETONARCHER_ANIMS = {
@@ -72,6 +79,7 @@ const SKELETONARCHER_ANIMS = {
   hit:    { row: 3, start: 0, frames: 4, fps: 14, loop: false },
   attack: { row: 2, start: 0, frames: 9, fps: 16, loop: false },
   death: { row: 4, start: 0, frames: 4, fps: 16, loop: false },
+  walk: { row: 1, start: 0, frames: 8, fps: 14, loop: true },
 }
 
 const SWORDSKELETON_ANIMS = {
@@ -79,12 +87,14 @@ const SWORDSKELETON_ANIMS = {
   hit:    { row: 5, start: 0, frames: 4, fps: 14, loop: false },
   attack: { row: 3, start: 0, frames: 12, fps: 16, loop: false },
   death:  { row: 6, start: 0, frames: 4, fps: 16, loop: false },
+  walk: { row: 1, start: 0, frames: 8, fps: 14, loop: true },
 }
 const SOLDIER_ANIMS = {
   idle:   { row: 0, start: 0, frames: 6, fps: 10, loop: true },
   hit:    { row: 5, start: 0, frames: 4, fps: 14, loop: false },
   attack: { row: 2, start: 0, frames: 6, fps: 16, loop: false },
   death:  { row: 6, start: 0, frames: 4, fps: 16, loop: false },
+  walk: { row: 1, start: 0, frames: 8, fps: 14, loop: true },
 }
 
 const TEMPLER_ANIMS = {
@@ -92,6 +102,7 @@ const TEMPLER_ANIMS = {
   hit:    { row: 7, start: 0, frames: 4, fps: 14, loop: false },
   attack: { row: 5, start: 0, frames: 12, fps: 16, loop: false },
   death:  { row: 8, start: 0, frames: 4, fps: 16, loop: false },
+  walk: { row: 1, start: 0, frames: 8, fps: 14, loop: true },
 }
 
 const KNIGHT_ANIMS = {
@@ -99,6 +110,7 @@ const KNIGHT_ANIMS = {
   hit:    { row: 6, start: 0, frames: 4, fps: 14, loop: false },
   attack: { row: 4, start: 0, frames: 11, fps: 16, loop: false },
   death:  { row: 7, start: 0, frames: 4, fps: 16, loop: false },
+  walk: { row: 1, start: 0, frames: 8, fps: 14, loop: true },
 }
 
 const LANCER_ANIMS = {
@@ -106,6 +118,7 @@ const LANCER_ANIMS = {
   hit:    { row: 6, start: 0, frames: 4, fps: 14, loop: false },
   attack: { row: 4, start: 0, frames: 9, fps: 16, loop: false },
   death:  { row: 7, start: 0, frames: 4, fps: 16, loop: false },
+  walk: { row: 1, start: 0, frames: 8, fps: 14, loop: true },
 }
 
 const ORCRIDER_ANIMS = {
@@ -113,6 +126,7 @@ const ORCRIDER_ANIMS = {
   hit:    { row: 6, start: 0, frames: 4, fps: 14, loop: false },
   attack: { row: 4, start: 0, frames: 11, fps: 16, loop: false },
   death:  { row: 7, start: 0, frames: 4, fps: 16, loop: false },
+  walk: { row: 1, start: 0, frames: 8, fps: 14, loop: true },
 }
 
 const SWORDMAN_ANIMS  = {
@@ -120,6 +134,7 @@ const SWORDMAN_ANIMS  = {
   hit:    { row: 5, start: 0, frames: 4, fps: 14, loop: false },
   attack: { row: 3, start: 0, frames: 15, fps: 16, loop: false },
   death:  { row: 6, start: 0, frames: 4, fps: 16, loop: false },
+  walk: { row: 1, start: 0, frames: 8, fps: 14, loop: true },
 }
 
 const WEREBERE_ANIMS  = {
@@ -127,6 +142,7 @@ const WEREBERE_ANIMS  = {
   hit:    { row: 5, start: 0, frames: 4, fps: 14, loop: false },
   attack: { row: 3, start: 0, frames: 13, fps: 16, loop: false },
   death:  { row: 6, start: 0, frames: 4, fps: 16, loop: false },
+  walk: { row: 1, start: 0, frames: 8, fps: 14, loop: true },
 }
 
 const WEREWOLF_ANIMS  = {
@@ -134,6 +150,7 @@ const WEREWOLF_ANIMS  = {
   hit:    { row: 4, start: 0, frames: 4, fps: 14, loop: false },
   attack: { row: 3, start: 0, frames: 13, fps: 16, loop: false },
   death:  { row: 5, start: 0, frames: 4, fps: 16, loop: false },
+  walk: { row: 1, start: 0, frames: 8, fps: 14, loop: true },
 }
 
 
@@ -146,7 +163,7 @@ export const ENEMIES = {
     cols: 12,
     scale: 3,
     flipX: true,
-    offsetX: -10,
+    offsetX: -30,
     offsetY: 30,
     anims: SLIME_ANIMS,
   },
@@ -159,8 +176,8 @@ export const ENEMIES = {
     cols: 12,
     scale: 2.8,
     flipX: true,
-    offsetX: -20,
-    offsetY: 40,
+    offsetX: -30,
+    offsetY: 30,
     anims: AXEMAN_ANIMS,
   },
 
@@ -172,8 +189,8 @@ export const ENEMIES = {
     cols: 12,
     scale: 2.8,
     flipX: true,
-    offsetX: -20,
-    offsetY: 40,
+    offsetX: -30,
+    offsetY: 30,
     anims: ARMOREDORC_ANIMS,
   },
 
@@ -185,8 +202,8 @@ export const ENEMIES = {
     cols: 12,
     scale: 2.8,
     flipX: true,
-    offsetX: -20,
-    offsetY: 40,
+    offsetX: -10,
+    offsetY: 30,
     anims: ORC_ANIMS,
   },
 
@@ -198,8 +215,8 @@ export const ENEMIES = {
     cols: 12,
     scale: 3.0,
     flipX: true,
-    offsetX: -20,
-    offsetY: 45,
+    offsetX: -30,
+    offsetY: 30,
     anims: ELETEORC_ANIMS,
   },
 
@@ -211,8 +228,8 @@ export const ENEMIES = {
     cols: 12,
     scale: 2.8,
     flipX: true,
-    offsetX: -10,
-    offsetY: 40,
+    offsetX: -30,
+    offsetY: 30,
     anims: ARMOREDSKELETON_ANIMS,
   },
 
@@ -224,8 +241,8 @@ export const ENEMIES = {
     cols: 12,
     scale: 2.8,
     flipX: true,
-    offsetX: -10,
-    offsetY: 40,
+    offsetX: -30,
+    offsetY: 30,
     anims: SKELETON_ANIMS,
   },
 
@@ -237,8 +254,8 @@ export const ENEMIES = {
     cols: 12,
     scale: 2.8,
     flipX: true,
-    offsetX: -10,
-    offsetY: 40,
+    offsetX: -30,
+    offsetY: 30,
     anims: SKELETONARCHER_ANIMS,
   },
 
@@ -250,8 +267,8 @@ export const ENEMIES = {
     cols: 12,
     scale: 3.0,
     flipX: true,
-    offsetX: -10,
-    offsetY: 45,
+    offsetX: -30,
+    offsetY: 30,
     anims: SWORDSKELETON_ANIMS,
   },
 
@@ -263,8 +280,8 @@ export const ENEMIES = {
     cols: 12,
     scale: 3.0,
     flipX: true,
-    offsetX: -15,
-    offsetY: 45,
+    offsetX: -30,
+    offsetY: 30,
     anims: TEMPLER_ANIMS,
   },
 
@@ -276,8 +293,8 @@ export const ENEMIES = {
     cols: 12,
     scale: 3.0,
     flipX: true,
-    offsetX: -15,
-    offsetY: 45,
+    offsetX: -30,
+    offsetY: 30,
     anims: KNIGHT_ANIMS,
   },
 
@@ -289,8 +306,8 @@ export const ENEMIES = {
     cols: 12,
     scale: 3.0,
     flipX: true,
-    offsetX: -15,
-    offsetY: 45,
+    offsetX: -30,
+    offsetY: 30,
     anims: LANCER_ANIMS,
   },
 
@@ -302,8 +319,8 @@ export const ENEMIES = {
     cols: 12,
     scale: 3.2,
     flipX: true,
-    offsetX: -25,
-    offsetY: 50,
+    offsetX: -30,
+    offsetY: 30,
     anims: ORCRIDER_ANIMS ,
   },
 
@@ -315,8 +332,8 @@ export const ENEMIES = {
     cols: 12,
     scale: 3.0,
     flipX: true,
-    offsetX: -15,
-    offsetY: 45,
+    offsetX: -30,
+    offsetY: 30,
     anims: SWORDMAN_ANIMS ,
   },
 
@@ -328,8 +345,8 @@ export const ENEMIES = {
     cols: 12,
     scale: 3.0,
     flipX: true,
-    offsetX: -15,
-    offsetY: 45,
+    offsetX: -30,
+    offsetY: 30,
     // ✅ soldier는 애님 정의가 없어서 일단 swordman 애님 재사용(나중에 교체)
     anims: SOLDIER_ANIMS,
   },
@@ -342,8 +359,8 @@ export const ENEMIES = {
     cols: 12,
     scale: 3.2,
     flipX: true,
-    offsetX: -20,
-    offsetY: 55,
+    offsetX: -30,
+    offsetY: 30,
     anims: WEREBERE_ANIMS ,
   },
 
@@ -355,8 +372,8 @@ export const ENEMIES = {
     cols: 12,
     scale: 3.2,
     flipX: true,
-    offsetX: -20,
-    offsetY: 55,
+    offsetX: -30,
+    offsetY: 30,
     anims: WEREWOLF_ANIMS ,
   },
 }
