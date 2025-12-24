@@ -8,7 +8,7 @@
     </div>
 
     <div v-else-if="stats">
-      <div class=" max-w-[250px] text-sm">
+      <div class=" m-4 max-w-[250px] text-sm">
     
           <span class="font-bold flex justify-center">
             LV. {{ stats.profile.level }} {{ stats.profile.username }}
@@ -16,7 +16,7 @@
           </span>
           <br />
 
-          <span>
+          <span class="text-sm">
             EXP {{ stats.profile.exp }} / {{ stats.profile.max_exp }}
           </span>
 

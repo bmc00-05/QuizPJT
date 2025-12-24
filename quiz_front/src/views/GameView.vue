@@ -21,59 +21,85 @@
       <div class="relative rounded overflow-hidden flex flex-col h-full min-h-0">
 
         <!-- 문제 영역(고정) -->
-        <div class="quiz-panel text-black shrink-0">
-<div class="flex items-center justify-between px-2 py-1 text-xs">
-  <span>{{ currentIndex + 1 }} / {{ totalProblems }}</span>
+<!-- 문제 영역(고정) -->
+<div class="quiz-panel text-black shrink-0 flex flex-col h-[140px] min-h-[140px] max-h-[140px] overflow-hidden">
+  <!-- ✅ 채점 결과: 해설 -> 정답 (위아래) + 중앙정렬 -->
+  <div
+    v-if="result"
+    class="h-full px-3 py-3 flex flex-col items-center justify-center text-center gap-2 min-h-0"
+  >
+    <!-- 해설이 길면 여기만 스크롤 -->
+    <div class="text-sm text-black/90 w-full max-h-[72px] overflow-y-auto">
+      {{ result.explanation }}
+    </div>
 
-  <!-- ❤️ 하트 3개 -->
-  <div class="flex items-center gap-1">
-    <span
-      v-for="i in 3"
-      :key="i"
-      class="text-base leading-none"
-      :class="i <= hearts ? 'opacity-100' : 'opacity-20'"
-    >
-      ❤️
-    </span>
+    <div class="text-sm font-black shrink-0">
+      정답: {{ result.correct_answer }}
+    </div>
+  </div>
+
+  <!-- ✅ 문제 표시: 패널 제일 하단 중앙 -->
+  <div v-else class="h-full px-3 py-3 flex flex-col items-center justify-center min-h-0">
+    <div class="w-full max-h-[96px] overflow-y-auto text-center">
+      {{ currentQuestion.question }}
+    </div>
   </div>
 </div>
 
-          <div v-if="result">
-            <h3>결과: {{ result.correct }}</h3>
-            <h3>정답: {{ result.correct_answer }}</h3>
-            <h3>설명: {{ result.explanation }}</h3>
-          </div>
-
-          <div v-else class="flex items-center justify-center text-center min-h-[100px] px-3">
-            {{ currentQuestion.question }}
-          </div>
-        </div>
-
-        <!-- 보기 2x2(고정) -->
-        <div class="text-black shrink-0">
-          <ul class="grid grid-cols-2">
-            <li
-              v-for="n in 4"
-              :key="n"
-              class="flex items-center justify-center quiz-panel"
-              @click="onPick(n)"
-              :class="[
-                isAnswered ? 'opacity-60 pointer-events-none' : '',
-                selectedChoice === n ? 'ring-2 ring-amber-50' : ''
-              ]"
-            >
-              <div class="pixel-panel__content text-black text-sm flex items-center justify-center text-center min-h-[64px]">
-                {{ currentQuestion[`choice${n}`] }}
-              </div>
-            </li>
-          </ul>
-        </div>
+<!-- 보기 2x2(고정) -->
+<div class="text-black shrink-0">
+  <ul class="grid grid-cols-2 grid-rows-2 h-[176px]">
+    <li
+      v-for="n in 4"
+      :key="n"
+      class="flex items-center justify-center quiz-panel h-full"
+      @click="onPick(n)"
+      :class="[
+        isAnswered ? 'opacity-60 pointer-events-none' : '',
+        selectedChoice === n ? 'ring-2 ring-amber-50' : ''
+      ]"
+    >
+      <div class="pixel-panel__content text-black text-sm flex items-center justify-center text-center h-full w-full p-2">
+        <!-- 선택지 텍스트는 2줄까지만 보이게(아래 style 추가) -->
+        <span class="clamp-2 break-words leading-tight">
+          {{ currentQuestion[`choice${n}`] }}
+        </span>
+      </div>
+    </li>
+  </ul>
+</div>
 
         <!-- ✅ 액션 패널 -->
         <div class="flex-1 min-h-0 overflow-hidden">
           <div class="pixel-panel h-full min-h-0">
             <div class="pixel-panel__content p-0 h-full min-h-0 overflow-hidden">
               <div class="relative h-full w-full overflow-hidden bg-black/5 rounded">
+
+
+  <!-- ✅ HUD: 상단 중앙 라운드 + 하트 -->
+  <div class="absolute top-2 left-1/2 -translate-x-1/2 z-40 flex flex-col items-center gap-1 pointer-events-none">
+    <div class="text-xs px-2 py-1 rounded bg-black/40 text-white">
+      {{ currentIndex + 1 }} / {{ totalProblems }}
+    </div>
+
+    <div class="flex items-center gap-1">
+      <span
+        v-for="i in 3"
+            :key="i"
+            class="text-base leading-none"
+            :class="i <= hearts ? 'opacity-100' : 'opacity-20'"
+          >
+                      ❤️
+                    </span>
+                  </div>
+                </div>
+
+                <!-- ✅ 겹치는 레이어 -->
+                <div class="absolute inset-0 pointer-events-none">
+                  ...
+                </div>
+
+
                 <!-- ✅ 겹치는 레이어 -->
                 <div class="absolute inset-0 pointer-events-none">
                     <div
@@ -101,28 +127,36 @@
                     />
                   </div>
 
-                  <!-- 적 -->
-                  <div class="absolute right-[-20%] top-1/2 -translate-y-1/2 z-10">
-                    <ActionSheet
-                      v-if="enemyDef && enemyVisible"
-                      :src="enemyDef.sheet"
-                      :frameWidth="enemyDef.frameWidth"
-                      :frameHeight="enemyDef.frameHeight"
-                      :cols="enemyDef.cols"
-                      :row="enemyAnim.row"
-                      :start="enemyAnim.start"
-                      :frames="enemyAnim.frames"
-                      :fps="enemyAnim.fps"
-                      :loop="enemyAnim.loop"
-                      :play="true"
-                      :scale="enemyDef.scale"
-                      :offsetX="enemyDef.offsetX ?? 0"
-                      :offsetY="enemyDef.offsetY ?? 0"
-                      :flipX="enemyDef.flipX ?? false"
-                      @finished="onEnemyAnimFinished"
-                      class="block [image-rendering:pixelated]"
-                    />
-                  </div>
+<!-- 적 -->
+<div
+  v-if="enemyDef && enemyVisible"
+  class="absolute top-1/2 z-10 transition-[left] ease-out will-change-[left]"
+  :style="{
+    left: `${enemyLeftPct}%`,
+    transitionDuration: `${enemyTransitionMs}ms`,
+  }"
+>
+  <div class="-translate-x-1/2 -translate-y-1/2">
+    <ActionSheet
+      :src="enemyDef.sheet"
+      :frameWidth="enemyDef.frameWidth"
+      :frameHeight="enemyDef.frameHeight"
+      :cols="enemyDef.cols"
+      :row="enemyAnim.row"
+      :start="enemyAnim.start"
+      :frames="enemyAnim.frames"
+      :fps="enemyAnim.fps"
+      :loop="enemyAnim.loop"
+      :play="true"
+      :scale="enemyDef.scale"
+      :offsetX="enemyDef.offsetX ?? 0"
+      :offsetY="enemyDef.offsetY ?? 0"
+      :flipX="enemyDef.flipX ?? false"
+      @finished="onEnemyAnimFinished"
+      class="block [image-rendering:pixelated]"
+    />
+  </div>
+</div>
                 </div>
               </div>
 
@@ -184,7 +218,7 @@
 
 <script setup>
 import ActionSheet from "@/components/ActionSheet.vue"
-import { reactive, ref, onMounted, onBeforeUnmount, computed, watch } from "vue"
+import { reactive, ref, onMounted, onBeforeUnmount, computed, watch, nextTick } from "vue"
 import { useAccountStore } from "@/stores/accounts"
 import { useUserStore } from "@/stores/user"
 import { useRoute, useRouter, onBeforeRouteLeave } from "vue-router"
@@ -396,11 +430,16 @@ const playPlayerHit = () => {
 // -----------------------------
 // 적(Enemy) : 맵별 스폰 + hit→death→respawn
 // -----------------------------
+const spawnOnNext = ref(false) // ✅ 다음 문제로 넘어갈 때 적 스폰
+
 const mapId = computed(() => {
   const ps = Number(problemSetId.value)
   if (!Number.isFinite(ps) || ps <= 0) return 1
   return Math.min(5, Math.max(1, Math.ceil(ps / 3))) // 1~3=1, 4~6=2, ...
 })
+
+const raf = () => new Promise((r) => requestAnimationFrame(r))
+const enemyTransitionMs = ref(0) // ✅ 첫 프레임 0ms로 순간이동 후, 다음 프레임에 ENEMY_ENTER_MS로 변경
 
 const MAP_ENEMY_POOLS = {
   1: ["slime", "skeleton", "skeleton_archer"],
@@ -457,25 +496,30 @@ function playOnceEnemy(onceKey, afterKey = null) {
   }
 }
 
-// ✅ 새 적 스폰
 const spawnEnemy = () => {
   const pool = enemyPool.value
   if (!pool?.length) return
 
   enemyVisible.value = false
 
-  setTimeout(() => {
+  setTimeout(async () => {
     let next = pool[Math.floor(Math.random() * pool.length)]
-
-    // 같은 적 연속 방지(가능하면)
     if (pool.length > 1 && next === lastEnemyId.value) {
       const idx = pool.indexOf(next)
       next = pool[(idx + 1) % pool.length]
     }
 
     lastEnemyId.value = next
+
+    // ✅ "보이기 전에" 시작 위치 + transition 0
+    enemyTransitionMs.value = 0
+    enemyLeftPct.value = ENEMY_START_LEFT
+
     enemyId.value = next
     enemyVisible.value = true
+
+    await nextTick()
+    startEnemyEnter()
   }, 120)
 }
 
@@ -499,12 +543,59 @@ const defeatEnemy = () => {
     return
   }
 
-  // fallback
+   // ✅ fallback: 즉시 숨기고 다음 문제에서 스폰
+  enemyVisible.value = false
   enemyBusy.value = false
-  spawnEnemy()
+  enemyChain.value = null
+
+  if (!pendingFinish.value) spawnOnNext.value = true
+  tryCommitFinish()
 }
 
-// ✅ 적 바뀌면 기본 idle 세팅
+const ENEMY_START_LEFT = 130   // 화면 오른쪽 밖(%) 110~130 사이로 조절
+const ENEMY_TARGET_LEFT = 78   // 최종 도착 위치(%) 65~80 사이로 조절
+const enemyLeftPct = ref(ENEMY_START_LEFT)
+
+// ✅ 적 등장(패널 밖 -> 안) 이동 연출
+const enemyEnterOffset = ref(false)        // true면 바깥(오른쪽)으로 밀려있음
+const enemyEnterInProgress = ref(false)
+const ENEMY_ENTER_MS = 1100
+let enemyEnterTimer = null
+
+const startEnemyEnter = async () => {
+  const def = enemyDef.value
+  if (!def) return
+
+  enemyEnterInProgress.value = true
+
+  // 1) transition 끄고 시작 위치로 순간이동
+  enemyTransitionMs.value = 0
+  enemyLeftPct.value = ENEMY_START_LEFT
+
+  await nextTick()
+  await raf() // ✅ 여기서 "시작 위치"가 실제로 한 프레임 그려짐(페인트)
+
+  // 2) 걷기 애니
+  if (def.anims?.walk) applyEnemy("walk")
+  else if (def.anims?.idle) applyEnemy("idle")
+
+  // 3) 이제 transition 켜고 목표 위치로 이동
+  enemyTransitionMs.value = ENEMY_ENTER_MS
+  enemyLeftPct.value = ENEMY_TARGET_LEFT
+
+  if (enemyEnterTimer) clearTimeout(enemyEnterTimer)
+  enemyEnterTimer = setTimeout(() => {
+    enemyEnterInProgress.value = false
+    if (enemyDef.value?.anims?.idle) applyEnemy("idle")
+  }, ENEMY_ENTER_MS)
+}
+
+
+onBeforeUnmount(() => {
+  if (enemyEnterTimer) clearTimeout(enemyEnterTimer)
+})
+
+
 watch(
   enemyDef,
   (def) => {
@@ -512,7 +603,11 @@ watch(
     enemyAfterOnceKey.value = null
     enemyBusy.value = false
     enemyChain.value = null
-    applyEnemy("idle")
+
+    // ✅ 등장 연출 중이면 idle로 덮어쓰지 않기
+    if (!enemyEnterInProgress.value) {
+      applyEnemy("idle")
+    }
   },
   { immediate: true }
 )
@@ -533,7 +628,9 @@ function onEnemyAnimFinished() {
     enemyBusy.value = false
     enemyVisible.value = false
 
-    setTimeout(() => spawnEnemy(), 120)
+    if (!pendingFinish.value) {
+      spawnOnNext.value = true
+    }
 
     tryCommitFinish()
     return
@@ -581,6 +678,7 @@ function onPick(n) {
 
 const nextQuestion = () => {
   if (isGameOver.value) return
+
   result.value = null
   isAnswered.value = false
   selectedChoice.value = null
@@ -592,11 +690,22 @@ const nextQuestion = () => {
   currentIdleKey.value = "idle_0"
   applyAnim("idle_0")
 
-enemyAfterOnceKey.value = null
-if (enemyDef.value && enemyVisible.value) applyEnemy("idle")
+  enemyAfterOnceKey.value = null
+  enemyBusy.value = false
+  enemyChain.value = null
 
+  // ✅ 다음 문제 없으면 종료(스폰도 안 함)
   if (currentIndex.value + 1 >= quizList.value.length) return
   currentIndex.value++
+
+  // ✅ 여기서만 새 적 등장
+  if (spawnOnNext.value) {
+    spawnOnNext.value = false
+    spawnEnemy()
+  } else {
+    // 오답 등으로 적이 그대로면 idle 유지
+    if (enemyDef.value && enemyVisible.value) applyEnemy("idle")
+  }
 }
 
 // -----------------------------

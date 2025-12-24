@@ -19,14 +19,18 @@
           </div>
         </div>
 
-      <!-- 스테이터스 -->
-    <div class="pixel-panel min-h-0 overflow-hidden">
-      <div class="pixel-panel__content min-h-0 h-full overflow-hidden">
-        <!-- ✅ 여기에서 스크롤 처리 -->
-        <div class="h-full min-h-0 overflow-auto">
-          <Status />
-        </div>
+
+<!-- 스테이터스 -->
+<div class="pixel-panel min-h-0 overflow-hidden">
+  <div class="pixel-panel__content h-full min-h-0 p-0 overflow-hidden">
+    <!-- ✅ Status가 패널 높이를 꽉 쓰도록 -->
+    <div class="h-full min-h-0 flex flex-col">
+      <!-- ✅ Status 자체가 커져도 여기만 스크롤 -->
+      <div class="flex-1 min-h-0 overflow-auto">
+        <Status class="h-full min-h-0" />
       </div>
+    </div>
+  </div>
 </div>
       </div>
 
@@ -34,13 +38,19 @@
       <div class="flex-1 min-h-0">
         <div class="pixel-panel h-full min-h-0">
           <div class="pixel-panel__content h-full min-h-0 p-2">
-            <MemoPadInline
-              :apiUrl="API_URL"
-              :token="accountStore.token"
-              @openMyProblemSet="openMyProblem"
-              @openHistory="openHistory"
-              @openBadge="openBadge"
-            />
+          <MemoPadInline
+            v-if="accountStore.token"
+            :apiUrl="API_URL"
+            :token="accountStore.token"
+            @openMyProblemSet="openMyProblem"
+            @openHistory="openHistory"
+            @openBadge="openBadge"
+          />
+
+          <!-- 토큰 없으면 안내/비활성 UI -->
+          <div v-else class="text-xs text-black/60">
+            로그인 후 사용 가능합니다.
+          </div>
           </div>
         </div>
       </div>

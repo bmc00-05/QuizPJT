@@ -23,10 +23,21 @@
           <div class="text-xs text-gray-500">작성자</div>
           <div class="font-medium">{{ quizSet.created_by_name ?? '-' }}</div>
         </div>
-        <div class="border rounded p-2">
-          <div class="text-xs text-gray-500">좋아요</div>
-          <div class="font-medium">{{ quizSet.like_count ?? 0 }}</div>
-        </div>
+<div class="border rounded p-2">
+  <div class="text-xs text-gray-500">좋아요</div>
+
+  <div class="flex items-center justify-between gap-2">
+    <div class="font-medium">{{ quizSet.like_count ?? 0 }}</div>
+
+    <button
+      class="px-2 py-1 border rounded text-xs disabled:opacity-40"
+      :disabled="liking"
+      @click.stop="toggleLike"
+    >
+      {{ quizSet.is_liked ? '♥ 취소' : '♡ 좋아요' }}
+    </button>
+  </div>
+</div>
       </div>
 
       <!-- (선택) 미리보기 -->
@@ -101,4 +112,26 @@ const canEdit = computed(() => {
   return false
 })
 
+const liking = ref(false)
+
+const toggleLike = async () => {
+  if (!quizSet.value || liking.value) return
+  liking.value = true
+  try {
+    const res = await axios.post(
+      `${API_URL}/game/problemsets/${quizSet.value.id}/like/`,
+      {},
+      { headers: { Authorization: `Token ${accountStore.token}` } }
+    )
+
+    // 응답: { liked, like_count, problemset_id }
+    quizSet.value.is_liked = res.data.liked
+    quizSet.value.like_count = res.data.like_count
+  } catch (err) {
+    console.error(err)
+    error.value = '좋아요 처리에 실패했습니다.'
+  } finally {
+    liking.value = false
+  }
+}
 </script>
