@@ -23,19 +23,31 @@
             />
             <div class="absolute inset-0 bg-black/20" />
 
-            <button
-              v-for="(map, idx) in maps"
-              :key="map.id"
-              class="absolute px-3 py-2 min-w-[90px]
-                    bg-white/80 hover:bg-white
-                    border border-gray-400 rounded
-                    text-sm font-semibold shadow"
-              :style="pinStyle(idx)"
-              @click.stop="selectMap(map)"
-              @pointerdown.stop
-            >
-              {{ map.name }}
-            </button>
+<button
+  v-for="(map, idx) in maps"
+  :key="map.id"
+  class="absolute z-10"
+  :style="pinStyle(idx)"
+  @click.stop="selectMap(map)"
+  @pointerdown.stop
+  @mouseenter="hoverId = map.id"
+  @mouseleave="hoverId = null"
+>
+  <div class="flex flex-col items-center gap-0">
+    <img
+      :src="getMapIcon(map)"
+      alt=""
+      class="w-[56px] h-[56px] [image-rendering:pixelated]
+             drop-shadow-md transition-transform
+             hover:scale-110 active:scale-95"
+      draggable="false"
+    />
+    <span class="text-[11px] font-bold text-white drop-shadow">
+      {{ map.name }}
+    </span>
+  </div>
+</button>
+
           </div>
         </div>
 
@@ -61,14 +73,30 @@
         <div class="grid grid-cols-3 gap-2">
           <!-- 왼쪽(2칸) -->
           <div class="col-span-2 min-w-0">
-                    <div class="text-lg font-bold">
-          {{ mapData.name }}                         
-          <span v-if="problemSetData" class="mt-2 text-sm text-gray-800">
-              {{ problemSetData.title }}  
-          </span>
-          <p v-if="problemSetData" class="font-normal text-sm"> {{ problemSetData.description }} </p>
+      <div class="ml-2 mb-1 text-lg font-bold">
+          {{ mapData.name }}
+        <!-- 난이도 -->
+        <span v-if="problemSetData" class="mt-2 text-sm text-gray-800">
+            {{ problemSetData.title }}  
+        </span>                     
+          <!-- 지역명 -->
+          <div class="font-bold text-sm min-h-[20px]">
+              {{ problemSetData?.description ?? '' }}
+          </div>
+
         </div>
-            <div class="w-50 h-28 bg-black/10 rounded mb-2"></div>
+
+
+
+<!-- 썸네일/배너 -->
+<div class="w-full h-28 rounded mb-2 overflow-hidden bg-black/10">
+  <img
+    :src="getMapBanner(mapData)"
+    alt=""
+    class="w-full h-full object-cover [image-rendering:pixelated]"
+    draggable="false"
+  />
+</div>
 
 
 
@@ -129,12 +157,6 @@
         </div>
       </template>
     </div>
-
-    <!-- ✅ 안내문은 고정(스크롤 안 됨) -->
-    <div v-if="mapData && !problemSetData" class="shrink-0 pt-2 text-sm text-gray-500">
-      난이도를 선택하면 Start가 활성화됩니다.
-    </div>
-
   </div>
 </div>
 
@@ -167,11 +189,38 @@ import { useRoute } from 'vue-router'
 import axios from 'axios'
 import mapBgUrl from '@/assets/background/game_map.png'
 import BaseModal from '@/components/common/BaseModal.vue'
+import iconDefault from "@/assets/mapicons/default.png"
+
+import lake_normal from "@/assets/mapicons/lake_normal.png"
+import lake_hover from "@/assets/mapicons/lake_hover.png"
+import forest_normal from "@/assets/mapicons/forest_normal.png"
+import forest_hover from "@/assets/mapicons/forest_hover.png"
+import cave_normal from "@/assets/mapicons/cave_normal.png"
+import cave_hover from "@/assets/mapicons/cave_hover.png"
+import castle_normal from "@/assets/mapicons/castle_normal.png"
+import castle_hover from "@/assets/mapicons/castle_hover.png"
+import mountain_normal from "@/assets/mapicons/mountain_normal.png"
+import mountain_hover from "@/assets/mapicons/mountain_hover.png"
+import bannerDefault from "@/assets/background/camp.png"
+
+
+
+const MAP_BANNER = {
+
+}
+
+
+const getMapBanner = (map) => {
+  if (!map) return bannerDefault
+  return MAP_BANNER[map.id] ?? bannerDefault
+}
 
 const API_URL = import.meta.env.VITE_REST_API_URL
 const modal = useModalStore()
 const accountStore = useAccountStore()
 const maps = ref([])
+
+const hoverId = ref(null)
 
 const problemSets = ref([])
 
@@ -188,6 +237,26 @@ watch(
     modal.close() // modal.isOpen=false
   }
 )
+
+// ✅ map.id 기준 매핑 (네 maps 데이터의 id에 맞게)
+const MAP_ICON = {
+  1: { normal: lake_normal, selected: lake_hover },
+  2: { normal: forest_normal, selected: forest_hover },
+  3: { normal: cave_normal, selected: cave_hover },
+  4: { normal: castle_normal, selected: castle_hover },
+  5: { normal: mountain_normal, selected: mountain_hover },
+  // ...
+}
+
+const getMapIcon = (map) => {
+  const pack = MAP_ICON[map.id]
+  if (!pack) return iconDefault
+
+  const isHovered = hoverId.value === map.id
+  const isSelected = mapData.value?.id === map.id
+
+  return (isHovered || isSelected) ? pack.selected : pack.normal
+}
 
 
 const activeBtn = ref(null) // 'easy' | 'normal' | 'hard' | 'go'
@@ -278,11 +347,11 @@ onMounted(getMaps)
 /** ✅ 임시 버튼 배치(퍼센트 좌표) */
 const pinStyle = (idx) => {
   const positions = [
-    { top: '18%', left: '12%' },
-    { top: '30%', left: '55%' },
-    { top: '48%', left: '20%' },
-    { top: '60%', left: '60%' },
-    { top: '75%', left: '35%' },
+    { top: '25%', left: '38%' },
+    { top: '57%', left: '35%' },
+    { top: '40%', left: '52%' },
+    { top: '85%', left: '77%' },
+    { top: '88%', left: '53%' },
   ]
   const p = positions[idx % positions.length]
   return {

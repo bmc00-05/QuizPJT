@@ -1,5 +1,5 @@
 <template>
-  <div class="nav-panel">
+  <div class="nav-panel bg-black">
     <nav class="h-16 w-full p-0 pixel-panel__content flex items-center">
       <!-- 메인(아이콘) -->
       <RouterLink :to="{ name: 'map' }" class="nav-item">
