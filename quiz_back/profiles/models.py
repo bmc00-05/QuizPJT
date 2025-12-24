@@ -19,7 +19,7 @@ class Profile(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     total_experience = models.PositiveIntegerField(default=0, db_index=True)
-    greeting = models.CharField(max_length=300, blank=True, default="") 
+    memo = models.TextField(blank=True, default="") 
     equipped_badge = models.ForeignKey(
         "Badge",
         null=True, blank=True,

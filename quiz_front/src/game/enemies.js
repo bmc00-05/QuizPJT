@@ -7,13 +7,58 @@ const SLIME_ANIMS = {
   idle:   { row: 0, start: 0, frames: 6, fps: 8, loop: true },
   hit:    { row: 4, start: 0, frames: 4, fps: 12, loop: false },
   attack: { row: 3, start: 0, frames: 12, fps: 14, loop: false },
+  death: { row: 5, start: 0, frames: 4, fps: 14, loop: false },
 }
 
-const BAT_ANIMS = {
+const AXEMAN_ANIMS = {
   idle:   { row: 0, start: 0, frames: 8, fps: 10, loop: true },
-  hit:    { row: 1, start: 0, frames: 3, fps: 14, loop: false },
-  attack: { row: 2, start: 0, frames: 8, fps: 16, loop: false },
+  hit:    { row: 5, start: 0, frames: 4, fps: 14, loop: false },
+  attack: { row: 4, start: 0, frames: 12, fps: 16, loop: false },
+  death: { row: 6, start: 0, frames: 4, fps: 16, loop: false },
 }
+
+const ORC_ANIMS = {
+  idle:   { row: 0, start: 0, frames: 8, fps: 10, loop: true },
+  hit:    { row: 6, start: 0, frames: 4, fps: 14, loop: false },
+  attack: { row: 3, start: 0, frames: 8, fps: 16, loop: false },
+  death: { row: 7, start: 0, frames: 4, fps: 16, loop: false },
+}
+
+const ELETEORC_ANIMS = {
+  idle:   { row: 0, start: 0, frames: 8, fps: 10, loop: true },
+  attack: { row: 4, start: 0, frames: 9, fps: 16, loop: false },
+  hit:   { row: 5, start: 0, frames: 4, fps: 14, loop: false },
+  death: { row: 6, start: 0, frames: 4, fps: 16, loop: false },
+}
+
+const SKELETON_ANIMS = {
+  idle:   { row: 0, start: 0, frames: 8, fps: 10, loop: true },
+  hit:    { row: 4, start: 0, frames: 4, fps: 14, loop: false },
+  attack: { row: 3, start: 0, frames: 9, fps: 16, loop: false },
+  death: { row: 5, start: 0, frames: 4, fps: 16, loop: false },
+}
+
+const SWORDSKELETON_ANIMS = {
+  idle:   { row: 0, start: 0, frames: 8, fps: 10, loop: true },
+  hit:    { row: 5, start: 0, frames: 4, fps: 14, loop: false },
+  attack: { row: 3, start: 0, frames: 12, fps: 16, loop: false },
+  death:  { row: 6, start: 0, frames: 4, fps: 16, loop: false },
+}
+
+const TEMPLER_ANIMS = {
+  idle:   { row: 0, start: 0, frames: 8, fps: 10, loop: true },
+  hit:    { row: 5, start: 0, frames: 4, fps: 14, loop: false },
+  attack: { row: 3, start: 0, frames: 12, fps: 16, loop: false },
+  death:  { row: 6, start: 0, frames: 4, fps: 16, loop: false },
+}
+
+
+
+
+
+
+
+
 
 export const ENEMIES = {
   slime: {

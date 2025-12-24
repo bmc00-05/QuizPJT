@@ -4,11 +4,11 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
 from django.contrib.auth import get_user_model
-
+from game.models import ProblemSet
 
 from questions.models import Category
 from .models import Profile, UserStats, UserCategoryStats, UserBadge, Badge
-from .serializers import UserProfileSerializer, UserStatsSerializer, UserCategoryStatsSerializer, RankingItemSerializer, BadgeDexSerializer
+from .serializers import UserProfileSerializer, UserStatsSerializer, UserCategoryStatsSerializer, RankingItemSerializer, BadgeDexSerializer, ProfileMemoSerializer
 
 
 User = get_user_model()
@@ -215,3 +215,43 @@ def unequip_badge(request):
     profile.equipped_badge = None
     profile.save()
     return Response({"detail": "unequipped"}, status=200)
+
+
+@api_view(["POST"])
+@permission_classes([IsAuthenticated])
+def toggle_problemset_like(request, set_id: int):
+    try:
+        ps = ProblemSet.objects.get(id=set_id)
+    except ProblemSet.DoesNotExist:
+        return Response({"detail": "ProblemSet not found"}, status=404)
+
+    user = request.user
+
+    # ✅ 토글
+    if ps.like_users.filter(id=user.id).exists():
+        ps.like_users.remove(user)
+        liked = False
+    else:
+        ps.like_users.add(user)
+        liked = True
+
+    return Response({
+        "id": ps.id,
+        "liked": liked,
+        "like_count": ps.like_users.count(),
+    }, status=200)
+
+
+@api_view(["GET", "PATCH"])
+@permission_classes([IsAuthenticated])
+def my_memo(request):
+    profile, _ = Profile.objects.get_or_create(user=request.user)
+
+    if request.method == "GET":
+        return Response(ProfileMemoSerializer(profile).data, status=200)
+
+    # PATCH
+    serializer = ProfileMemoSerializer(profile, data=request.data, partial=True)
+    serializer.is_valid(raise_exception=True)
+    serializer.save()  # updated_at 자동 갱신(auto_now=True)
+    return Response(serializer.data, status=200)

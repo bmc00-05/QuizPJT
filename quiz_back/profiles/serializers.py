@@ -129,3 +129,16 @@ class BadgeDexSerializer(serializers.ModelSerializer):
         model = Badge
         fields = ["id", "code", "name", "description", "icon", "owned", "earned_at", "equipped"]
 
+
+class ProfileMemoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Profile
+        fields = ("memo", "updated_at")
+
+    # (선택) 길이 제한하고 싶으면
+    def validate_memo(self, value):
+        if value is None:
+            return ""
+        if len(value) > 5000:
+            raise serializers.ValidationError("메모는 5000자 이내로 작성해주세요.")
+        return value

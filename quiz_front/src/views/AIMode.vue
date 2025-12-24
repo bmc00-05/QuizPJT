@@ -1,17 +1,15 @@
 <template>
-  <div class="h-full w-full min-h-0 flex flex-col gap-2">
+  <div class="h-full w-full min-h-0 flex flex-col gap-1">
     <!-- 상단 패널: 로딩/결과 표시 -->
     <div class="pixel-panel flex-[7] min-h-0">
-      <div class="pixel-panel__content h-full min-h-0 overflow-hidden flex flex-col">
+      <div class="pixel-panel__content p-3 h-full min-h-0 overflow-hidden flex flex-col">
         <div class="shrink-0">
           <h1 class="text-black text-lg font-bold mb-2">AI 모드</h1>
-          <p class="text-black/70 text-sm">
-            최근 오답 기반 코칭 + (선택) 사용자 추가 요청을 반영합니다.
-          </p>
+
         </div>
 
         <!-- ✅ 결과/로딩/에러 영역 (스크롤 가능) -->
-        <div class="mt-3 flex-1 min-h-0 overflow-auto rounded border border-black/10 bg-white/60 p-3">
+        <div class="flex-1 min-h-0 overflow-auto rounded border border-black/10 bg-white/60 p-3">
           <!-- 로딩 -->
           <template v-if="coachingLoading">
             <div class="text-sm text-black/80 font-semibold">코칭 생성 중...</div>
@@ -56,13 +54,13 @@
 
             <div class="mt-3 flex gap-2">
               <button
-                class="px-3 py-2 text-sm rounded border bg-white hover:bg-white/80"
+                class="px-3 py-2 text-sm text-black rounded border bg-white hover:bg-white/80"
                 @click="startCoaching"
               >
                 새로 생성
               </button>
               <button
-                class="px-3 py-2 text-sm rounded border bg-white hover:bg-white/80"
+                class="px-3 py-2 text-sm text-black rounded border bg-white hover:bg-white/80"
                 @click="clearCoaching"
               >
                 지우기
@@ -93,9 +91,9 @@
         <textarea
           v-model="extraInput"
           class="w-full flex-1 min-h-0 resize-none
-                 rounded border border-black/20
-                 bg-white/80 p-2 text-sm text-black
-                 focus:outline-none focus:ring-2 focus:ring-black/20"
+                rounded border border-black/20
+                bg-white/80 p-2 text-sm text-black
+                focus:outline-none focus:ring-2 focus:ring-black/20"
           placeholder="AI에게 추가로 요청할 내용을 적어주세요. (예: '네트워크 위주로 학습 계획 짜줘')"
           @input="enforceLimit"
           @paste="onPaste"
@@ -107,15 +105,18 @@
       </div>
     </div>
 
-    <!-- 버튼은 맨 아래 고정 -->
-    <div class="shrink-0 button-panel font-bold text-black flex justify-center">
-      <button
-        class="pixel-panel__content px-4 py-2 disabled:opacity-50"
-        :disabled="coachingLoading"
-        @click="openConfirm"
-      >
+    <div
+      class="shrink-0 w-full button-panel font-bold text-black flex justify-center cursor-pointer select-none"
+      :class="coachingLoading ? 'opacity-50 pointer-events-none' : ''"
+      role="button"
+      tabindex="0"
+      @click="openConfirm"
+      @keydown.enter.prevent="openConfirm"
+      @keydown.space.prevent="openConfirm"
+    >
+      <div class="pixel-panel__content px-4 py-2">
         AI 코칭!
-      </button>
+      </div>
     </div>
 
     <!-- ✅ 모달: 경고/확인만 -->

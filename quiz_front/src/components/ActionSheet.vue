@@ -10,7 +10,6 @@ const props = defineProps({
 
   frameWidth: { type: Number, required: true },
   frameHeight: { type: Number, required: true },
-
   cols: { type: Number, required: true },
 
   row: { type: Number, default: 0 },
@@ -26,7 +25,6 @@ const props = defineProps({
   offsetX: { type: Number, default: 0 },
   offsetY: { type: Number, default: 0 },
 
-  // ✅ 추가: 좌우 반전
   flipX: { type: Boolean, default: false },
 })
 
@@ -37,12 +35,11 @@ let img = null
 let rafId = null
 let lastTick = 0
 let localFrame = 0
+let imgReady = false
 
 function stop() {
-  if (rafId) {
-    cancelAnimationFrame(rafId)
-    rafId = null
-  }
+  if (rafId) cancelAnimationFrame(rafId)
+  rafId = null
 }
 
 function start() {
@@ -50,11 +47,23 @@ function start() {
   rafId = requestAnimationFrame(tick)
 }
 
-function reset() {
+function setCanvasSizeIfNeeded() {
+  const canvas = canvasRef.value
+  if (!canvas) return
+
+  const w = Math.round(props.frameWidth * props.scale)
+  const h = Math.round(props.frameHeight * props.scale)
+
+  // ✅ 같으면 건드리지 않기 (여기서 깜빡임 대부분 제거됨)
+  if (canvas.width !== w) canvas.width = w
+  if (canvas.height !== h) canvas.height = h
+}
+
+function resetFrame(shouldRestart = true) {
   localFrame = 0
   lastTick = 0
-  draw()
-  if (props.play) start()
+  draw()                // ✅ 즉시 1프레임 그려서 “공백 프레임” 방지
+  if (shouldRestart && props.play) start()
 }
 
 function tick(t) {
@@ -81,7 +90,6 @@ function tick(t) {
         return
       }
     }
-
     draw()
   }
 
@@ -90,10 +98,12 @@ function tick(t) {
 
 function draw() {
   const canvas = canvasRef.value
-  if (!canvas || !img) return
+  if (!canvas || !img || !imgReady) return
 
   const ctx = canvas.getContext("2d")
   ctx.imageSmoothingEnabled = false
+
+  // ✅ “그릴 수 있을 때만” 지우기 (이미지 준비 전 clear하면 빈 프레임)
   ctx.clearRect(0, 0, canvas.width, canvas.height)
 
   const absoluteFrame = props.start + localFrame
@@ -105,13 +115,11 @@ function draw() {
   const dw = props.frameWidth * props.scale
   const dh = props.frameHeight * props.scale
 
-  // ✅ 캔버스 중앙 배치 + offset
   const x = (canvas.width - dw) / 2 + props.offsetX
   const y = (canvas.height - dh) / 2 + props.offsetY
 
   ctx.save()
 
-  // ✅ flipX면 (x + dw) 기준으로 좌우 반전해서 그리기
   if (props.flipX) {
     ctx.translate(x + dw, y)
     ctx.scale(-1, 1)
@@ -123,50 +131,71 @@ function draw() {
   ctx.restore()
 }
 
-onMounted(() => {
-  const canvas = canvasRef.value
-  canvas.width = props.frameWidth * props.scale
-  canvas.height = props.frameHeight * props.scale
-
+async function loadImage(src) {
+  imgReady = false
   img = new Image()
-  img.onload = () => reset()
-  img.src = props.src
+  img.src = src
+
+  // ✅ decode 가능하면 decode가 깜빡임 줄이는데 도움 큼
+  try {
+    await img.decode?.()
+  } catch (_) {
+    // decode 미지원/실패 시 onload로 fallback
+    await new Promise((resolve) => (img.onload = resolve))
+  }
+
+  imgReady = true
+  setCanvasSizeIfNeeded()
+  resetFrame(true)
+}
+
+onMounted(() => {
+  setCanvasSizeIfNeeded()
+  loadImage(props.src)
 })
 
 onBeforeUnmount(() => stop())
 
+// ✅ 1) 사이즈 관련만: 캔버스 크기만 조절 (필요할 때만)
 watch(
-  () => [
-    props.src,
-    props.frameWidth,
-    props.frameHeight,
-    props.scale,
-    props.cols,
-    props.row,
-    props.start,
-    props.frames,
-    props.fps,
-    props.loop,
-    props.play,
-    props.offsetX,
-    props.offsetY,
-    props.flipX, // ✅ flip 변경도 즉시 반영
-  ],
+  () => [props.frameWidth, props.frameHeight, props.scale],
   () => {
-    const canvas = canvasRef.value
-    if (!canvas) return
-
-    canvas.width = props.frameWidth * props.scale
-    canvas.height = props.frameHeight * props.scale
-
-    if (img && img.src !== props.src) {
-      img = new Image()
-      img.onload = () => reset()
-      img.src = props.src
-      return
-    }
-
-    reset()
+    setCanvasSizeIfNeeded()
+    // 크기 바뀌면 현재 프레임 다시 그리기
+    draw()
   }
+)
+
+// ✅ 2) src 바뀔 때만: 이미지 재로딩
+watch(
+  () => props.src,
+  (src) => {
+    if (!src) return
+    stop()
+    loadImage(src)
+  }
+)
+
+// ✅ 3) “클립 변경”만: 프레임 리셋(여기서 깜빡임 가장 많이 줄어듦)
+watch(
+  () => [props.cols, props.row, props.start, props.frames],
+  () => {
+    resetFrame(true)
+  }
+)
+
+// ✅ 4) play만: 재생/정지
+watch(
+  () => props.play,
+  (v) => {
+    if (v) start()
+    else stop()
+  }
+)
+
+// ✅ 5) 그 외(오프셋/flip)는 그냥 다시 그리기만 (리셋 금지)
+watch(
+  () => [props.offsetX, props.offsetY, props.flipX],
+  () => draw()
 )
 </script>

@@ -9,7 +9,7 @@
 
     <div v-else-if="stats">
       <div class=" max-w-[250px] text-sm">
-        <div class="p-4">
+    
           <span class="font-bold flex justify-center">
             LV. {{ stats.profile.level }} {{ stats.profile.username }}
             
@@ -39,7 +39,7 @@
           </div>
         </div>
       </div>
-    </div>
+
 
     <div v-else class="text-sm text-black/60">
       표시할 데이터가 없습니다.

@@ -8,7 +8,6 @@ import SignUpPage from '@/components/SignUpPage.vue'
 import MainPage from '@/views/MainPage.vue'
 
 import Map from '@/views/Map.vue'
-import Stage from '@/views/Stage.vue'
 import GameView from '@/views/GameView.vue'
 import UserMode from '@/views/UserMode.vue'
 import Profile from '@/views/Profile.vue'
@@ -36,7 +35,6 @@ const router = createRouter({
     component: MainPage,
     children: [
       { path: 'map', name: 'map', component: Map },
-      { path: 'map/:mapid', name: 'stage', component: Stage},
       { path: 'game/:id', name: 'game', component: GameView},
       { path: 'usermode', name: 'usermode', component: UserMode},
       { path: 'profile', name: 'profile', component: Profile},

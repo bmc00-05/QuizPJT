@@ -9,4 +9,5 @@ urlpatterns = [
     path("badges/", views.my_badge_dex),
     path("equip-badge/", views.equip_badge),
     path("unequip-badge/", views.unequip_badge),
+    path("memo/", views.my_memo),
 ]
