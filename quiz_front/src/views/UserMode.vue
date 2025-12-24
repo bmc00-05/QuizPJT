@@ -5,17 +5,26 @@
     <div class="pixel-panel w-full mx-auto flex-1 min-h-0 flex flex-col">
     <!-- <div class="pixel-panel m-2 w-full max-w-[420px] flex-1 min-h-0 flex flex-col"> -->
       <!-- 헤더(고정) -->
-      <div class="shrink-0">
-        <div class="flex justify-center tracking-wide">
-          <h1 class="text-xl font-bold mt-2">유저 문제집</h1>
-        </div>
+<div class="flex items-center justify-between px-4">
+  <div class="flex justify-center tracking-wide flex-1">
+    <h1 class="text-xl font-bold mt-2">유저 문제집</h1>
+  </div>
 
-        <div class="flex justify-end mr-4">
-          <button @click="openModal" class="text-xs">
-            문제집 생성
-          </button>
-        </div>
-      </div>
+  <div class="flex items-center gap-2">
+    <!-- ✅ 정렬 스왑 버튼 -->
+  <button
+    class="text-xs px-2 py-1 border rounded disabled:opacity-40"
+    :disabled="loading"
+    @click="toggleSort"
+  >
+    {{ sortLabel }}
+  </button>
+
+    <button @click="openModal" class="text-xs">
+      문제집 생성
+    </button>
+  </div>
+</div>
 
       <!-- 리스트(남은 영역 전부 + 여기만 스크롤) -->
       <div class=" shadow-2xl pixel-panel__content flex-1 min-h-0 overflow-y-auto">
@@ -86,29 +95,63 @@ import QuizCreate from '@/components/QuizCreate.vue'
 import ProblemSetDetail from '@/components/ProblemSetDetail.vue'
 import QuizDetail from '@/components/QuizDetail.vue'
 
-
 const API_URL = import.meta.env.VITE_REST_API_URL
 const modal = useModalStore()
 const accountStore = useAccountStore()
 
 const currentQuizsetId = ref(null)
-
 const quizsets = ref([])
+
+const page = ref(1)
+const pageSize = 5
+
+// ✅ 정렬 (기본 좋아요순)
+const sort = ref('like')
+
+// ✅ 로딩(연타 방지 + UX)
+const loading = ref(false)
+
+const sortLabel = computed(() => (sort.value === 'like' ? '최신순' : '좋아요순'))
+
+const getProblemSets = async () => {
+  loading.value = true
+  try {
+    const res = await axios.get(`${API_URL}/game/problemsets/`, {
+      params: { sort: sort.value },
+      headers: { Authorization: `Token ${accountStore.token}` },
+    })
+    quizsets.value = res.data
+    page.value = 1
+  } catch (err) {
+    console.log(err)
+  } finally {
+    loading.value = false
+  }
+}
+
+const toggleSort = async () => {
+  if (loading.value) return
+  sort.value = sort.value === 'like' ? 'recent' : 'like'
+  await getProblemSets()
+}
 
 // ✅ 모달 내용 교체용
 const modalView = shallowRef(ProblemSetForm)
 const modalProps = ref({})
 
 const extraListeners = computed(() => {
-  const name = modalView.value?.__name   // ✅ 컴포넌트 이름으로 판별
-  ////나중에 문제 가능 표식/////////////////
+  const name = modalView.value?.__name
+
   if (name === 'ProblemSetCreate' || name === 'ProblemSetDetail') {
-    return { updated: onUpdated, goCreateQuiz: onGoCreateQuiz, edit: onEditProblemSet, openQuizDetail: onOpenQuizDetail,  }
+    return {
+      updated: onUpdated,
+      goCreateQuiz: onGoCreateQuiz,
+      edit: onEditProblemSet,
+      openQuizDetail: onOpenQuizDetail,
+    }
   }
-  
-  if (name === 'QuizCreate') {
-    return { done: backToProblemSetCreate }
-  }
+
+  if (name === 'QuizCreate') return { done: backToProblemSetCreate }
 
   if (name === 'QuizDetail') {
     return { back: backToProblemSetCreate, saved: backToProblemSetCreate, deleted: backToProblemSetCreate }
@@ -116,14 +159,6 @@ const extraListeners = computed(() => {
 
   return {}
 })
-  
-const getProblemSets = async () => {
-  const res = await axios.get(`${API_URL}/game/users/problemsets/`, {
-    headers: { Authorization: `Token ${accountStore.token}` },
-  })
-  quizsets.value = res.data
-  page.value = 1
-}
 
 const onOpenQuizDetail = ({ quizId, quizSetId }) => {
   currentQuizsetId.value = quizSetId
@@ -131,33 +166,28 @@ const onOpenQuizDetail = ({ quizId, quizSetId }) => {
   modalProps.value = { quizid: quizId, quizsetid: quizSetId }
 }
 
-// ✅ 생성 버튼 → 생성 폼 모달
 const openModal = () => {
   modalView.value = ProblemSetForm
   modalProps.value = {}
   modal.open(1)
 }
 
-// ✅ 생성 성공 → 디테일/수정 모달로 전환 (props 이름 맞추기!)
 const onCreated = (createdId) => {
-  currentQuizsetId.value = createdId 
+  currentQuizsetId.value = createdId
   modalView.value = ProblemSetCreate
-  modalProps.value = { quizsetid: createdId } // ✅ 여기!
+  modalProps.value = { quizsetid: createdId }
 }
 
-// ✅ 디테일에서 저장 완료 시 목록 갱신 (선택)
-const onUpdated = () => {
-  getProblemSets()
+const onUpdated = async () => {
+  await getProblemSets()
 }
 
 const closeModal = () => modal.close()
 
 const onGoCreateQuiz = (quizsetId) => {
-  console.log('modalView=', modalView.value, 'modalProps=', modalProps.value)
-  console.log('onGoCreateQuiz fired:', quizsetId)
   currentQuizsetId.value = quizsetId
   modalView.value = QuizCreate
-  modalProps.value = { quizsetid: quizsetId } // ✅ QuizCreate가 받을 props
+  modalProps.value = { quizsetid: quizsetId }
 }
 
 const backToProblemSetCreate = () => {
@@ -178,19 +208,12 @@ const openDetail = (quizsetId) => {
   modal.open(1)
 }
 
-const page = ref(1)
-const pageSize = 5
-
-const totalPages = computed(() => {
-  return Math.max(1, Math.ceil(quizsets.value.length / pageSize))
-})
+const totalPages = computed(() => Math.max(1, Math.ceil(quizsets.value.length / pageSize)))
 
 const pagedQuizsets = computed(() => {
   const start = (page.value - 1) * pageSize
   return quizsets.value.slice(start, start + pageSize)
 })
-
-
 
 onMounted(getProblemSets)
 </script>
