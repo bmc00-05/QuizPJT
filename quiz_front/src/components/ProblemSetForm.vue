@@ -1,6 +1,6 @@
 <template>
 
-      <h1 class="mb-4 text-lg justiffont-semibold text-gray-900">
+      <h1 class="mb-4 text-lg font-bold justiffont-semibold text-gray-900">
         문제집 생성
       </h1>
 
@@ -8,31 +8,31 @@
       <form @submit.prevent="createProblemSets" class="space-y-6">
         <div>
           <label class="block text-sm font-medium text-gray-900">
-            Title
+            제목
           </label>
           <input
             v-model.trim="title"
             type="text"
             required
-            class="mt-2 block w-full rounded-md border border-gray-300 px-3 py-2 text-gray-900 focus:border-indigo-500 focus:ring-indigo-500"
+            class="mt-2 rounded-none focus:rounded-none block w-full input-panel-icon px-3 py-2 text-gray-900 "
           />
         </div>
 
         <div>
           <label class="block text-sm font-medium text-gray-900">
-            Description
+            설명
           </label>
-          <input
+          <textarea
             v-model.trim="description"
             type="text"
             required
-            class="mt-2 block w-full rounded-md border border-gray-300 px-3 py-2 text-gray-900 focus:border-indigo-500 focus:ring-indigo-500"
+            class=" block w-full input-panel-icon min-h-30 text-gray-900"
           />
         </div>
 
         <button
           type="submit"
-          class="w-full rounded-md bg-indigo-600 py-2 text-sm font-semibold text-white hover:bg-indigo-500"
+          class="w-full input-panel-icon  text-lg font-bold text-black hover:bg-indigo-500"
         >
           문제집 생성
         </button>

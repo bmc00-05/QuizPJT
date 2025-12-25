@@ -1,38 +1,40 @@
 <template>
-  <div class="pixel-panel w-full text-black">
-    <div v-if="rankData" class="pixel-panel__content flex flex-col items-center">
-      <div class="w-full text-center text-xl font-bold mb-4">
+  <!-- ✅ 패널 자체가 화면 끝까지 -->
+  <div class="pixel-panel w-full h-full min-h-0 flex flex-col text-black">
+    <div v-if="rankData" class="pixel-panel__content flex-1 min-h-0 flex flex-col items-center">
+      <!-- ✅ 헤더는 고정(스크롤 안 됨) -->
+      <div class="w-full text-center text-xl font-bold py-3 shrink-0">
         Ranking Board
       </div>
 
-      <ul class="w-full max-w-[360px] flex flex-col items-center gap-2">
-        <li
-          v-for="rank in (rankData.items ?? [])"
-          :key="rank.user_id"
-          class="w-full flex items-center justify-between px-3 py-2 bg-white/70 rounded border cursor-pointer hover:bg-white"
-          @click="openUser(rank.user_id)"
-        >
-          <span class="w-10 text-center font-bold">{{ rank.rank }}</span>
-          <span class="flex-1 text-center">{{ rank.username }}</span>
-          <span class="w-16 text-center">Lv {{ rank.level }}</span>
-          <span class="w-24 text-right">{{ rank.total_experience }}</span>
-        </li>
-      </ul>
+      <!-- ✅ 리스트만 남은 공간 전부 + 여기만 스크롤 -->
+      <div class="w-full flex-1 min-h-0 overflow-y-auto px-2 pb-3">
+        <ul class="w-full max-w-[360px] mx-auto flex flex-col gap-2">
+          <li
+            v-for="rank in (rankData.items ?? [])"
+            :key="rank.user_id"
+            class="w-full flex items-center justify-between px-3 py-2 input-panel-icon"
+            @click="openUser(rank.user_id)"
+          >
+            <span class="w-10 text-center font-bold">{{ rank.rank }}</span>
+            <span class="flex-1 text-center">{{ rank.username }}</span>
+            <span class="w-16 text-center">Lv {{ rank.level }}</span>
+            <span class="w-24 text-right">{{ rank.total_experience }}</span>
+          </li>
+        </ul>
+      </div>
     </div>
 
-    <div v-else class="pixel-panel__content text-center text-gray-500">
+    <div v-else class="pixel-panel__content flex-1 min-h-0 flex items-center justify-center text-gray-500">
       로딩중...
     </div>
 
     <!-- ✅ 유저 정보 모달 -->
     <BaseModal v-if="userModalOpen" @close="closeUserModal">
-      <!-- Status.vue를 그대로 재사용 -->
-      <div class="w-full max-w-[420px]">
+      <div class="w-full max-w-[360px]">
         <div class="flex items-center justify-between mb-2">
           <div class="font-bold">유저 정보</div>
-          <button class="underline text-sm" @click="closeUserModal">닫기</button>
         </div>
-
         <Status :userId="selectedUserId" />
       </div>
     </BaseModal>

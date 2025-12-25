@@ -11,10 +11,10 @@
         <!-- 질문 -->
         <div>
           <label class="block text-xs font-medium mb-1">문제</label>
-          <input
+          <textarea
             v-model.trim="form.question"
             required
-            class="w-full border rounded px-2 py-1.5 text-sm"
+            class="w-full input-panel-icon pb-3 text-sm"
           />
         </div>
 
@@ -24,7 +24,7 @@
           <input
             v-model.trim="form[`choice${i}`]"
             required
-            class="w-full border rounded px-2 py-1.5 text-sm"
+            class="w-full input-panel-icon text-sm"
           />
         </div>
 
@@ -34,7 +34,7 @@
           <select
             v-model.number="form.answer"
             required
-            class="w-full border px-2 py-1.5 text-sm"
+            class="w-full input-panel-icon text-sm"
           >
             <option disabled value="">선택</option>
             <option v-for="n in 4" :key="n" :value="n">
@@ -49,7 +49,7 @@
           <select
             v-model="form.difficulty"
             required
-            class="w-full border px-2 py-1.5 text-sm"
+            class="w-full input-panel-icon text-sm"
           >
             <option disabled value="">선택</option>
             <option value="easy">easy</option>
@@ -63,7 +63,7 @@
           <label class="block text-xs font-medium mb-1">해설</label>
           <textarea
             v-model.trim="form.explanation"
-            class="w-full border rounded px-2 py-1.5 text-sm"
+            class="w-full input-panel-icon text-sm"
             rows="3"
           />
         </div>
@@ -71,7 +71,7 @@
         <!-- 제출 버튼 -->
         <button
           type="submit"
-          class="w-full bg-blue-500 text-white py-2 rounded sticky bottom-0"
+          class="w-full input-panel-icon sticky bottom-0"
         >
           생성
         </button>
@@ -92,7 +92,7 @@
 </template>
 
 <script setup>
-import { reactive, ref } from 'vue'
+import { reactive, ref, vModelText } from 'vue'
 import axios from 'axios'
 import { useAccountStore } from '@/stores/accounts'
 

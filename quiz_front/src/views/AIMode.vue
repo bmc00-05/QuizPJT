@@ -9,8 +9,9 @@
         </div>
 
         <!-- ✅ 결과/로딩/에러 영역 (스크롤 가능) -->
-        <div class="flex-1 min-h-0 overflow-auto rounded border border-black/10 bg-white/60 p-3">
+        <div class="flex-1 input-panel-icon min-h-0 overflow-auto p-3">
           <!-- 로딩 -->
+          <div class="pixel-panel__content p-0">
           <template v-if="coachingLoading">
             <div class="text-sm text-black/80 font-semibold">코칭 생성 중...</div>
             <div class="mt-2 text-xs text-black/60">
@@ -71,9 +72,10 @@
           <!-- 기본 안내 -->
           <template v-else>
             <div class="text-sm text-black/60">
-              아래 입력창에 추가 요청을 적고 <b>AI 코칭!</b>을 누르면 여기에서 결과가 표시됩니다.
+            <b>AI 코칭!</b>을 누르면 여기에서 결과가 표시됩니다.
             </div>
           </template>
+        </div>
         </div>
       </div>
     </div>
@@ -90,11 +92,12 @@
 
         <textarea
           v-model="extraInput"
-          class="w-full flex-1 min-h-0 resize-none
-                rounded border border-black/20
-                bg-white/80 p-2 text-sm text-black
-                focus:outline-none focus:ring-2 focus:ring-black/20"
-          placeholder="AI에게 추가로 요청할 내용을 적어주세요. (예: '네트워크 위주로 학습 계획 짜줘')"
+          class="w-full flex-1 input-panel-icon min-h-0 resize-none
+          p-2 text-sm text-black
+              "
+          placeholder=
+          "AI에게 추가로 요청할 내용을 적어주세요.
+          (예: '네트워크 위주로 학습 계획 짜줘')"
           @input="enforceLimit"
           @paste="onPaste"
         />

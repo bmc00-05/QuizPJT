@@ -3,7 +3,7 @@
     <div class="flex-1 min-h-0 flex flex-col gap-2">
 
       <!-- ✅ 위 50%: 스프라이트/스테이터스 2등분 -->
-      <div class="flex-1 min-h-0 grid grid-cols-2 gap-2">
+<div class="flex-1 min-h-0 grid gap-2 grid-cols-1 sm:grid-cols-[0.9fr_1.1fr]">
         <!-- 스프라이트 -->
         <div class="relative min-h-0 overflow-hidden bg-black/5 rounded">
           <div class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
@@ -19,17 +19,10 @@
           </div>
         </div>
 
-
 <!-- 스테이터스 -->
-<div class="pixel-panel min-h-0 overflow-hidden">
-  <div class="pixel-panel__content h-full min-h-0 p-0 overflow-hidden">
-    <!-- ✅ Status가 패널 높이를 꽉 쓰도록 -->
-    <div class="h-full min-h-0 flex flex-col">
-      <!-- ✅ Status 자체가 커져도 여기만 스크롤 -->
-      <div class="flex-1 min-h-0 overflow-auto">
-        <Status class="h-full min-h-0" />
-      </div>
-    </div>
+<div class="pixel-panel h-full min-h-0 overflow-hidden">
+  <div class="pixel-panel__content h-full min-h-0 p-2 overflow-hidden">
+    <Status class="h-full min-h-0" />
   </div>
 </div>
       </div>
@@ -86,7 +79,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from "vue"
+import { ref, onMounted, onBeforeUnmount, nextTick } from "vue"
 import { useRouter } from "vue-router"
 import { useAccountStore } from "@/stores/accounts"
 
@@ -99,6 +92,36 @@ import BaseModal from "@/components/common/BaseModal.vue"
 import AIHistory from "@/components/AIHistory.vue"
 import Badge from "@/components/Badge.vue"
 import MyProblemSetManager from "@/components/MyProblemSetManager.vue"
+
+const statusBox = ref(null)
+const statusInner = ref(null)
+const statusScale = ref(1)
+
+// ✅ (원상복구 핵심) ResizeObserver 핸들러 선언
+let ro1 = null
+let ro2 = null
+
+const fitStatus = async () => {
+  // ✅ 항상 원본 크기 기준으로 재측정
+  statusScale.value = 1
+  await nextTick()
+
+  const box = statusBox.value
+  const inner = statusInner.value
+  if (!box || !inner) return
+
+  const bw = box.clientWidth
+  const bh = box.clientHeight
+
+  // ✅ transform이 아니라 “원본 콘텐츠” 크기
+  const cw = inner.scrollWidth
+  const ch = inner.scrollHeight
+
+  if (!bw || !bh || !cw || !ch) return
+
+  const s = Math.min(1, bw / cw, bh / ch)
+  statusScale.value = Math.max(0.7, s)
+}
 
 const router = useRouter()
 const API_URL = import.meta.env.VITE_REST_API_URL
@@ -153,13 +176,36 @@ const onSelectBadge = (item) => {
   badgeOpen.value = false
 }
 
-// (선택) 라우팅으로 내 문제집 페이지로 가는 버튼이 필요하면 사용
+// (선택) 라우팅으로 내 문제집 페이지로 가는 버튼
 const goMyProblemSet = async () => {
   await ensureUser()
   router.push({ name: "myproblemset" })
 }
 
+onMounted(() => {
+  fitStatus()
+
+  // ✅ ResizeObserver가 없는 환경 대비
+  if (typeof ResizeObserver !== "undefined") {
+    ro1 = new ResizeObserver(fitStatus)
+    ro2 = new ResizeObserver(fitStatus)
+
+    if (statusBox.value) ro1.observe(statusBox.value)
+    if (statusInner.value) ro2.observe(statusInner.value)
+  }
+
+  window.addEventListener("resize", fitStatus)
+})
+
+// ✅ 원래 있던 ensureUser onMounted 유지(원상복구)
 onMounted(async () => {
   await ensureUser()
 })
+
+onBeforeUnmount(() => {
+  window.removeEventListener("resize", fitStatus)
+  ro1?.disconnect()
+  ro2?.disconnect()
+})
 </script>
+

@@ -74,14 +74,14 @@
           <!-- 왼쪽(2칸) -->
           <div class="col-span-2 min-w-0">
       <div class="ml-2 mb-1 text-lg font-bold">
-          {{ mapData.name }}
+          {{ currentMapName }}
         <!-- 난이도 -->
         <span v-if="problemSetData" class="mt-2 text-sm text-gray-800">
             {{ problemSetData.title }}  
         </span>                     
           <!-- 지역명 -->
           <div class="font-bold text-sm min-h-[20px]">
-              {{ problemSetData?.description ?? '' }}
+              {{ currentRegionName }}
           </div>
 
         </div>
@@ -89,22 +89,20 @@
 
 
 <!-- 썸네일/배너 -->
-<div class="w-full h-28 rounded mb-2 overflow-hidden bg-black/10">
-  <img
-    :src="getMapBanner(mapData)"
-    alt=""
-    class="w-full h-full object-cover [image-rendering:pixelated]"
-    draggable="false"
-  />
+<div class="w-full h-28 input-panel-icon rounded mb-2 overflow-hidden bg-black/10">
+<img
+  :src="currentBannerUrl"
+  alt=""
+  class="w-full h-full object-cover [image-rendering:pixelated]"
+  draggable="false"
+/>
 </div>
 
+    <p class="input-panel-icon text-xs font-normal">{{ currentDescriptionText }}</p>
+    </div>
 
-
-            <p class="text-xs font-normal">{{ mapData.description }}</p>
-          </div>
-
-          <!-- 오른쪽(1칸) -->
-          <div class="col-span-1 flex flex-col items-end">
+  <!-- 오른쪽(1칸) -->
+    <div class="col-span-1 flex flex-col items-end">
             
 <button
   :class="[
@@ -138,11 +136,8 @@
 
 <button
   v-if="problemSetData"
-  :class="[
-    activeBtn === 'go' ? 'button-panel_click' : 'button-panel',
-    'w-full max-w-[100px]'
-  ]"
-  @click="openModal(); setActiveBtn('go')"
+  class="button-panel w-full max-w-[100px]"
+  @click="openModal()"
 >
   <div class="pixel-panel__content p-2 font-bold">GO!</div>
 </button>
@@ -162,19 +157,68 @@
 
     
 
-    <BaseModal v-if="modal.isOpen && problemSetData" @close="closeModal">
-      <div class="text-black">
-        모달
-        {{ problemSetData.title }} <br/>
-        {{ problemSetData.description }}<br/>
-        <RouterLink
-          :to="{ name: 'game', params: { id: problemSetData.id } }"
-          @click="closeModal"
-        >
-          START
-        </RouterLink>
+<BaseModal v-if="modal.isOpen && problemSetData" @close="closeModal">
+  <div class="text-black w-[92vw] max-w-[300px]">
+    <div class="">
+      <div class=" flex flex-col gap-3">
+
+        <!-- 헤더 -->
+        <div class="text-center">
+          <div class="text-[13px] font-black tracking-widest">
+            {{ currentMapName }}
+          </div>
+          <div class="text-[11px] opacity-80 mt-0.5">
+            {{ currentRegionName }}
+          </div>
+
+          <div class="mt-2 inline-flex items-center gap-2">
+            <span class="text-[11px] opacity-70">난이도</span>
+            <span class="text-[12px] font-bold">
+              {{ problemSetData.title }}
+            </span>
+          </div>
+        </div>
+
+        <!-- 선택된 맵 이미지 -->
+        <div class="w-full h-28 input-panel-icon overflow-hidden bg-black/10">
+          <img
+            :src="currentBannerUrl"
+            alt=""
+            class="w-full h-full object-cover [image-rendering:pixelated]"
+            draggable="false"
+          />
+        </div>
+
+        <!-- 설명 -->
+        <div class="input-panel-icon px-2 py-2 text-[11px] leading-relaxed">
+          <div class="font-bold mb-1">진입 안내</div>
+          <div class="opacity-90">
+            {{ problemSetData.description }}
+          </div>
+          <div class="mt-2 font-bold">
+            퀴즈 세션에 진입하겠습니까?
+          </div>
+        </div>
+
+        <!-- 버튼 -->
+        <div class="grid grid-cols-2 gap-2">
+          <button type="button" class="button-panel" @click="closeModal">
+            <div class="pixel-panel__content p-2 text-center font-bold">취소</div>
+          </button>
+
+          <RouterLink
+            class="button-panel"
+            :to="{ name: 'game', params: { id: problemSetData.id } }"
+            @click="closeModal"
+          >
+            <div class="pixel-panel__content p-2 text-center font-bold">퀴즈 시작</div>
+          </RouterLink>
+        </div>
+
       </div>
-    </BaseModal>
+    </div>
+  </div>
+</BaseModal>
   </div>
 
 </template>
@@ -201,19 +245,69 @@ import castle_normal from "@/assets/mapicons/castle_normal.png"
 import castle_hover from "@/assets/mapicons/castle_hover.png"
 import mountain_normal from "@/assets/mapicons/mountain_normal.png"
 import mountain_hover from "@/assets/mapicons/mountain_hover.png"
+
 import bannerDefault from "@/assets/background/camp.png"
 
+import bannerMap1 from "@/assets/banners/lake_main.jpg"
+import bannerMap2 from "@/assets/banners/forest_main.jpg"
+import bannerMap3 from "@/assets/banners/cave_main.jpg"
+import bannerMap4 from "@/assets/banners/castle_main.jpg"
+import bannerMap5 from "@/assets/banners/mountain_main.jpg"
 
+import lake_easy_banner from "@/assets/banners/lake_easy.jpg"
+import lake_normal_banner from "@/assets/banners/lake_normal.jpg"
+import lake_hard_banner from "@/assets/banners/lake_hard.jpg"
 
-const MAP_BANNER = {
+import forest_easy_banner from "@/assets/banners/forest_easy.jpg"
+import forest_normal_banner from "@/assets/banners/forest_normal.jpg"
+import forest_hard_banner from "@/assets/banners/forest_hard.jpg"
+
+import cave_easy_banner from "@/assets/banners/cave_easy.jpg"
+import cave_normal_banner from "@/assets/banners/cave_normal.jpg"
+import cave_hard_banner from "@/assets/banners/cave_hard.jpg"
+
+import castle_easy_banner from "@/assets/banners/castle_easy.jpg"
+import castle_normal_banner from "@/assets/banners/castle_normal.jpg"
+import castle_hard_banner from "@/assets/banners/castle_hard.jpg"
+
+import mountain_easy_banner from "@/assets/banners/mountain_easy.jpg"
+import mountain_normal_banner from "@/assets/banners/mountain_normal.jpg"
+import mountain_hard_banner from "@/assets/banners/mountain_hard.jpg"
+
+const MAP_BANNER_BY_ID = {
+  1: bannerMap1,
+  2: bannerMap2,
+  3: bannerMap3,
+  4: bannerMap4,
+  5: bannerMap5,
+}
+
+const MAP_DIFFICULTY_BANNER = {
+  1: { easy: lake_easy_banner, normal: lake_normal_banner, hard: lake_hard_banner },
+  2: { easy: forest_easy_banner, normal: forest_normal_banner, hard: forest_hard_banner },
+  3: { easy: cave_easy_banner, normal: cave_normal_banner, hard: cave_hard_banner },
+  4: { easy: castle_easy_banner, normal: castle_normal_banner, hard: castle_hard_banner },
+  5: { easy: mountain_easy_banner, normal: mountain_normal_banner, hard: mountain_hard_banner },
 
 }
 
+const currentBannerUrl = computed(() => {
+  const mapId = mapData.value?.id
+  if (!mapId) return bannerDefault
 
-const getMapBanner = (map) => {
-  if (!map) return bannerDefault
-  return MAP_BANNER[map.id] ?? bannerDefault
-}
+  const diff = selectedDifficulty.value
+  if (diff && MAP_DIFFICULTY_BANNER[mapId]?.[diff]) {
+    return MAP_DIFFICULTY_BANNER[mapId][diff]
+  }
+
+  // 난이도 아직 선택 안 했으면 맵 기본 배너
+  return MAP_BANNER_BY_ID[mapId] ?? bannerDefault
+})
+
+// const getMapBanner = (map) => {
+//   if (!map) return bannerDefault
+//   return MAP_BANNER[map.id] ?? bannerDefault
+// }
 
 const API_URL = import.meta.env.VITE_REST_API_URL
 const modal = useModalStore()
@@ -248,6 +342,67 @@ const MAP_ICON = {
   // ...
 }
 
+// ✅ 맵 기본 설명(난이도 선택 전)
+const MAP_STORY = {
+  1: "잔잔한 호숫가. 초보 모험가들이 첫 발을 떼는 곳이다.",
+  2: "짙은 숲. 길을 잃기 쉽고, 소리 없는 위험이 숨어 있다.",
+  3: "동굴. 어둠 속에서 작은 실수 하나가 큰 대가가 된다.",
+  4: "성. 규칙과 함정이 얽힌 거대한 미궁.",
+  5: "산. 높은 곳일수록 바람은 차갑고, 시험은 더 험하다.",
+}
+
+// ✅ 난이도(=지역) 선택 후 설명(맵 + 난이도 조합)
+const REGION_STORY = {
+  1: {
+    easy: "호숫가 산책로. 기본기를 다지기 좋은 구간.",
+    normal: "수로 유적. 선택과 집중이 중요해진다.",
+    hard: "호수 깊은 곳. 신비로운 기운이 느껴진다.",
+  },
+  2: {
+    easy: "숲 입구. 길은 단순하지만 방심 금지.",
+    normal: "그늘 숲길. 주변에서 맹수의 시선이 느껴진다.",
+    hard: "깊은 숲 중앙 신비로운 기운이 느껴진다.",
+  },
+  3: {
+    easy: "동굴 초입. 수많은 수정들이 동굴 안을 장식한다.",
+    normal: "흔들 다리 구간. 항상 조심할 것.",
+    hard: "심층 용암 지대. 뜨거워서 온몸이 타버릴 것 같다.",
+  },
+  4: {
+    easy: "도서관. 구조 파악부터 시작.",
+    normal: "지하 감옥. 어둡고 축축하다.",
+    hard: "왕좌의 방. 가장 높은 수준의 시험.",
+  },
+  5: {
+    easy: "산기슭. 리듬을 만들기 좋은 코스.",
+    normal: "폐광. 오랫동안 방치된 것 같다.",
+    hard: "정상 설원. 끝까지 흔들리지 마라.",
+  },
+}
+const currentMapName = computed(() => mapData.value?.name ?? "")
+
+const currentDescriptionText = computed(() => {
+  const mapId = mapData.value?.id
+  if (!mapId) return ""
+
+  const diff = selectedDifficulty.value
+
+  // ✅ 난이도 선택된 경우: 맵+난이도 설명 우선
+  if (diff) {
+    return (
+      REGION_STORY[mapId]?.[diff] ??
+      problemSetData.value?.description ??   // 서버/DB 설명 fallback
+      MAP_STORY[mapId] ??
+      mapData.value?.description ??
+      ""
+    )
+  }
+
+  // ✅ 난이도 선택 전: 맵 기본 설명
+  return MAP_STORY[mapId] ?? mapData.value?.description ?? ""
+})
+
+
 const getMapIcon = (map) => {
   const pack = MAP_ICON[map.id]
   if (!pack) return iconDefault
@@ -259,6 +414,37 @@ const getMapIcon = (map) => {
 }
 
 
+// ✅ 난이도 키: activeBtn -> 'easy' | 'normal' | 'hard'
+const selectedDifficulty = computed(() => {
+  if (activeBtn.value === "easy") return "easy"
+  if (activeBtn.value === "normal") return "normal"
+  if (activeBtn.value === "hard") return "hard"
+  return null
+})
+
+/** ✅ 맵 + 난이도별 지역명 사전 */
+const REGION_NAME = {
+  1: { easy: "호숫가 산책로", normal: "수로 유적", hard: "호수 깊은 곳" },
+  2: { easy: "숲 입구",     normal: "그늘 숲길",   hard: "신비한 나무" },
+  3: { easy: "동굴 초입",   normal: "흔들 다리 구간",   hard: "심층 용암 지대" },
+  4: { easy: "도서관",     normal: "지하 감옥",   hard: "왕좌의 방" },
+  5: { easy: "산기슭",     normal: "폐광",     hard: "정상 설원" },
+}
+
+/** ✅ 지역명: 사전 우선 -> 없으면 problemSetData.description fallback */
+const currentRegionName = computed(() => {
+  const mapId = mapData.value?.id
+  const diff = selectedDifficulty.value
+  if (!mapId) return ""
+
+  // ✅ 난이도 선택된 경우: 사전 지역명 우선
+  if (diff && REGION_NAME[mapId]?.[diff]) {
+    return REGION_NAME[mapId][diff]
+  }
+
+  // ✅ 난이도 미선택 or 사전 없을 때: 기존 데이터 fallback
+  return problemSetData.value?.description ?? ""
+})
 const activeBtn = ref(null) // 'easy' | 'normal' | 'hard' | 'go'
 
 const setActiveBtn = (key) => {

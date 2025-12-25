@@ -1,7 +1,7 @@
 <template>
   <div class="h-full min-h-0 flex flex-col gap-2 text-black">
     <!-- ✅ 헤더: 타이틀 + (오른쪽) 버튼 나열 -->
-    <div class="flex items-center justify-between gap-2">
+    <div class="flex items-center justify-between gap-2 shrink-0">
       <div class="flex items-center gap-2 min-w-0">
         <div class="font-bold text-sm shrink-0">메모</div>
 
@@ -14,37 +14,37 @@
 
       <!-- ✅ 타이틀 옆(오른쪽) 버튼들 -->
       <div class="flex items-center gap-2 shrink-0">
-        <button class="px-3 py-1 rounded border bg-white/70 text-xs font-bold"
-                @click="$emit('openMyProblemSet')">
-          내 문제
-        </button>
-        <button class="px-3 py-1 rounded border bg-white/70 text-xs font-bold"
-                @click="$emit('openHistory')">
-          히스토리
-        </button>
-        <button class="px-3 py-1 rounded border bg-white/70 text-xs font-bold"
-                @click="$emit('openBadge')">
-          뱃지
-        </button>
+        <div class="button-small">
+          <button class="px-2 text-xs font-bold" @click="$emit('openMyProblemSet')">
+            내 문제
+          </button>
+        </div>
+        <div class="button-small">
+          <button class="px-2 text-xs font-bold" @click="$emit('openHistory')">
+            히스토리
+          </button>
+        </div>
+        <div class="button-small">
+          <button class="px-3.5 text-xs font-bold" @click="$emit('openBadge')">
+            뱃지
+          </button>
+        </div>
       </div>
     </div>
 
-    <textarea
-      v-model="memo"
-      class="flex-1 min-h-0 w-full p-2 rounded border bg-white/80 text-sm outline-none resize-none"
-      placeholder="여기에 개인 메모를 작성하세요..."
-    />
-
-    <div class="flex gap-2">
-      <button class="btn px-3 py-1.5 text-sm" @click="manualSave" :disabled="saving">
-        저장
-      </button>
-      <button class="px-3 py-1.5 text-sm rounded border bg-white/70" @click="reload" :disabled="saving">
-        다시 불러오기
-      </button>
+    <!-- ✅ textarea가 남은 공간 전부 차지 -->
+    <div class="flex-1  min-h-0">
+      <textarea
+        v-model="memo"
+        class="h-full w-full p-2 input-panel rounded border bg-white/80 text-sm outline-none resize-none"
+        placeholder="여기에 개인 메모를 작성하세요..."
+      />
     </div>
 
-    <div v-if="error" class="text-red-500 text-xs">{{ error }}</div>
+    <!-- ✅ 에러는 아래 고정 -->
+    <div v-if="error" class="text-red-500 text-xs shrink-0">
+      {{ error }}
+    </div>
   </div>
 </template>
 

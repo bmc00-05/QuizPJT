@@ -3,7 +3,7 @@
     <!-- 헤더 -->
     <div class="shrink-0 flex items-center justify-between mb-2">
       <h1 class="text-base font-semibold">퀴즈 상세/수정</h1>
-      <button class="text-gray-500 hover:text-black" @click="emit('close')">닫기</button>
+
     </div>
 
     <!-- 상태 -->

@@ -1,20 +1,47 @@
 <template>
   <div class="text-black">
     <template v-if="quizSet">
-      No. {{ quizSet.id }}
+      <div class="text-xs text-black/60 mb-2">No. {{ quizSet.id }}</div>
 
-      <form @submit.prevent="updateQuizSet">
-        제목:
-        <input v-model="quizSet.title" class="border p-2 w-full" placeholder="제목" />
+      <form @submit.prevent="updateQuizSet" class="space-y-3">
+        <!-- 제목 -->
+        <div class="space-y-1">
+          <div class="text-xs font-bold text-black/70">제목</div>
+          <input
+            v-model="quizSet.title"
+            class="w-full input-panel-icon outline-none"
+            placeholder="제목"
+          />
+        </div>
 
-        설명:
-        <textarea v-model="quizSet.description" class="border p-2 w-full mt-2" placeholder="설명" />
+        <!-- 설명 -->
+        <div class="space-y-1">
+          <div class="text-xs font-bold text-black/70">설명</div>
+          <textarea
+            v-model="quizSet.description"
+            class="w-full input-panel-icon outline-none resize-none min-h-[96px]"
+            placeholder="설명"
+          />
+        </div>
 
-        <button type="submit" class="mt-4">저장</button>
+        <!-- ✅ 저장 / 삭제: 양옆 배치 -->
+        <div class="flex items-center justify-between pt-2">
+          <button
+            type="submit"
+            class="px-3 py-1.5 border rounded text-sm font-bold"
+          >
+            저장
+          </button>
+
+          <button
+            type="button"
+            class="px-3 py-1.5 border rounded text-sm font-bold text-red-600"
+            @click="deleteQuizSet"
+          >
+            삭제
+          </button>
+        </div>
       </form>
-      <button type="button" class="mt-4" @click="deleteQuizSet">
-        삭제
-      </button>
 
       <hr class="my-3" />
 
@@ -25,12 +52,15 @@
         @changed="refreshQuizSetProblems"
       />
 
-      <!-- ✅ 모달 전환 방식 유지 -->
-      <button class="mt-4 border px-3 py-2" @click="goCreateQuiz">
-        문제 추가
-      </button>
-
-
+      <!-- ✅ 문제 추가: 중앙 정렬 -->
+      <div class="mt-4 flex justify-center">
+        <button
+          class="px-4 py-2 input-panel-icon font-bold"
+          @click="goCreateQuiz"
+        >
+          문제 추가
+        </button>
+      </div>
     </template>
   </div>
 </template>
