@@ -82,39 +82,64 @@
     </div>
   </div>
 </template>
-
 <script setup>
-import { ref, computed, onMounted } from 'vue'
-import axios from 'axios'
-import { useAccountStore } from '@/stores/accounts'
+import { ref, computed, onMounted } from "vue"
+import axios from "axios"
+import { useAccountStore } from "@/stores/accounts"
 
 const API_URL = import.meta.env.VITE_REST_API_URL
 const accountStore = useAccountStore()
 
 const badges = ref([])
 const loading = ref(false)
-const error = ref('')
+const error = ref("")
 
 const selectedId = ref(null)
-const selected = computed(() => badges.value.find(b => b.id === selectedId.value) ?? null)
+const selected = computed(() => badges.value.find((b) => b.id === selectedId.value) ?? null)
 
 const equipping = ref(false)
+const ownedCount = computed(() => badges.value.filter((b) => b.owned).length)
 
-const ownedCount = computed(() => badges.value.filter(b => b.owned).length)
+/** ✅ 로컬 뱃지 폴더 전부 포함 (src/assets/badge/*.png) */
+const badgeIcons = import.meta.glob("@/assets/badges/*.png", {
+  eager: true,
+  import: "default",
+})
+
+/** ✅ code -> 실제 이미지 URL 찾기 */
+const resolveBadgeIcon = (code) => {
+  if (!code) code = "default"
+
+  const hit = Object.entries(badgeIcons).find(([path]) =>
+    path.endsWith(`/assets/badges/${code}.png`)
+  )
+  if (hit) return hit[1]
+
+  // fallback
+  const fallback = Object.entries(badgeIcons).find(([path]) =>
+    path.endsWith(`/assets/badges/default.png`)
+  )
+  return fallback ? fallback[1] : null
+}
 
 const fetchDex = async () => {
   loading.value = true
-  error.value = ''
+  error.value = ""
   try {
     const res = await axios.get(`${API_URL}/profile/badges/`, {
-      headers: { Authorization: `Token ${accountStore.token}` }
+      headers: { Authorization: `Token ${accountStore.token}` },
     })
-    badges.value = res.data
-    // 기본 선택: 착용중이면 그걸 선택
-    const equipped = badges.value.find(b => b.equipped)
+
+    // ✅ 서버 응답에 icon이 없어도, 여기서 로컬 icon을 붙여준다
+    badges.value = (res.data ?? []).map((b) => ({
+      ...b,
+      icon: resolveBadgeIcon(b.code), // 서버의 code로 로컬 파일 매칭
+    }))
+
+    const equipped = badges.value.find((b) => b.equipped)
     if (equipped) selectedId.value = equipped.id
   } catch (e) {
-    error.value = e?.response?.data?.detail || '뱃지를 불러오지 못했습니다.'
+    error.value = e?.response?.data?.detail || "뱃지를 불러오지 못했습니다."
   } finally {
     loading.value = false
   }
@@ -129,13 +154,14 @@ const equipSelected = async () => {
   if (!selected.value) return
   equipping.value = true
   try {
-    await axios.post(`${API_URL}/profile/equip-badge/`,
+    await axios.post(
+      `${API_URL}/profile/equip-badge/`,
       { badge_id: selected.value.id },
       { headers: { Authorization: `Token ${accountStore.token}` } }
     )
-    await fetchDex() // 착용 표시 갱신
+    await fetchDex()
   } catch (e) {
-    alert(e?.response?.data?.detail || '착용 실패')
+    alert(e?.response?.data?.detail || "착용 실패")
   } finally {
     equipping.value = false
   }
@@ -144,19 +170,25 @@ const equipSelected = async () => {
 const unequip = async () => {
   equipping.value = true
   try {
-    await axios.post(`${API_URL}/profile/unequip-badge/`, {},
+    await axios.post(
+      `${API_URL}/profile/unequip-badge/`,
+      {},
       { headers: { Authorization: `Token ${accountStore.token}` } }
     )
     await fetchDex()
   } catch (e) {
-    alert(e?.response?.data?.detail || '해제 실패')
+    alert(e?.response?.data?.detail || "해제 실패")
   } finally {
     equipping.value = false
   }
 }
 
 const formatDate = (iso) => {
-  try { return new Date(iso).toLocaleString() } catch { return iso }
+  try {
+    return new Date(iso).toLocaleString()
+  } catch {
+    return iso
+  }
 }
 
 onMounted(fetchDex)

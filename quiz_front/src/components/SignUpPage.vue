@@ -20,7 +20,7 @@
       <div class="mt-8">
         <form @submit.prevent="signUp" class="space-y-6">
           <div>
-            <label for="username" class="block text-sm font-medium text-gray-900">
+            <label for="username" class="block text-sm font-bold text-gray-900">
               Username
             </label>
             <div class="mt-2">
@@ -30,14 +30,13 @@
                 type="text"
                 autocomplete="username"
                 required
-                class="block w-full rounded-md border border-gray-300 px-3 py-2 text-gray-900
-                       focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                class="block w-full input-panel-icon"
               />
             </div>
           </div>
 
           <div>
-            <label for="email" class="block text-sm font-medium text-gray-900">
+            <label for="email" class="block text-sm font-bold text-gray-900">
               Email
             </label>
             <div class="mt-2">
@@ -47,14 +46,13 @@
                 type="email"
                 autocomplete="email"
                 required
-                class="block w-full rounded-md border border-gray-300 px-3 py-2 text-gray-900
-                       focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                class="block w-full input-panel-icon"
               />
             </div>
           </div>
 
           <div>
-            <label for="password1" class="block text-sm font-medium text-gray-900">
+            <label for="password1" class="block text-sm font-bold text-gray-900">
               Password
             </label>
             <div class="mt-2">
@@ -64,14 +62,13 @@
                 type="password"
                 autocomplete="new-password"
                 required
-                class="block w-full rounded-md border border-gray-300 px-3 py-2 text-gray-900
-                       focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                class="block w-full input-panel-icon"
               />
             </div>
           </div>
 
           <div>
-            <label for="password2" class="block text-sm font-medium text-gray-900">
+            <label for="password2" class="block text-sm font-bold text-gray-900">
               Password 확인
             </label>
             <div class="mt-2">
@@ -81,8 +78,7 @@
                 type="password"
                 autocomplete="new-password"
                 required
-                class="block w-full rounded-md border border-gray-300 px-3 py-2 text-gray-900
-                       focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                class="block w-full rounded-md input-panel-icon"
               />
             </div>
           </div>

@@ -22,9 +22,11 @@
         <!-- 가운데 -->
         <div class="min-w-0 flex-1 flex items-center gap-2">
           <span class="shrink-0 font-bold text-lg">Lv.{{ level }}</span>
-          <span class="min-w-0 truncate text-sm opacity-90">
+          <span class="min-w-0 truncate text-lg font opacity-90">
             {{ username }}
           </span>
+          <span> {{ totalExperience }}</span>점
+
         </div>
 
         <!-- 오른쪽 -->
@@ -84,7 +86,7 @@ const accountStore = useAccountStore()
 const router = useRouter()
 
 // ✅ 스토어 반응성 유지
-const { username, level, equippedBadge } = storeToRefs(userStore)
+const { username, level, equippedBadge, totalExperience} = storeToRefs(userStore)
 
 // ✅ 로컬 뱃지 폴더(빌드 포함): /src 경로로 glob 해야 안전함
 // - 확장자 섞여도 대응하도록 패턴 확장

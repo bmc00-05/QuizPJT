@@ -193,7 +193,7 @@
         <div class="input-panel-icon px-2 py-2 text-[11px] leading-relaxed">
           <div class="font-bold mb-1">진입 안내</div>
           <div class="opacity-90">
-            {{ problemSetData.description }}
+            {{ currentRegionName}}
           </div>
           <div class="mt-2 font-bold">
             퀴즈 세션에 진입하겠습니까?

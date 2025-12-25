@@ -109,16 +109,16 @@
 
 
 <script setup>
-import { ref, onMounted, shallowRef, computed } from 'vue'
-import { useAccountStore } from '@/stores/accounts'
-import { useModalStore } from '@/stores/modal'
-import axios from 'axios'
-import BaseModal from '@/components/common/BaseModal.vue'
-import ProblemSetForm from '@/components/ProblemSetForm.vue'
-import ProblemSetCreate from '@/components/ProblemSetCreate.vue'
-import QuizCreate from '@/components/QuizCreate.vue'
-import ProblemSetDetail from '@/components/ProblemSetDetail.vue'
-import QuizDetail from '@/components/QuizDetail.vue'
+import { ref, onMounted, shallowRef, computed } from "vue"
+import { useAccountStore } from "@/stores/accounts"
+import { useModalStore } from "@/stores/modal"
+import axios from "axios"
+import BaseModal from "@/components/common/BaseModal.vue"
+import ProblemSetForm from "@/components/ProblemSetForm.vue"
+import ProblemSetCreate from "@/components/ProblemSetCreate.vue"
+import QuizCreate from "@/components/QuizCreate.vue"
+import ProblemSetDetail from "@/components/ProblemSetDetail.vue"
+import QuizDetail from "@/components/QuizDetail.vue"
 
 const API_URL = import.meta.env.VITE_REST_API_URL
 const modal = useModalStore()
@@ -130,22 +130,23 @@ const quizsets = ref([])
 const page = ref(1)
 const pageSize = 5
 
-// ✅ 정렬 (기본 좋아요순)
-const sort = ref('like')
+// ✅ 정렬 모드: like | recent
+const sort = ref("like")
 
-// ✅ 로딩(연타 방지 + UX)
+// ✅ 로딩
 const loading = ref(false)
 
-const sortLabel = computed(() => (sort.value === 'like' ? '최신순' : '좋아요순'))
+// ✅ 버튼 라벨: "현재 모드"를 표시(헷갈림 방지)
+const sortLabel = computed(() => (sort.value === "like" ? "좋아요순" : "최신순"))
 
 const getProblemSets = async () => {
   loading.value = true
   try {
+    // ✅ 서버가 sort를 처리 안할 수 있으니 일단 원본만 받아옴
     const res = await axios.get(`${API_URL}/game/users/problemsets/`, {
-      params: { sort: sort.value },
       headers: { Authorization: `Token ${accountStore.token}` },
     })
-    quizsets.value = res.data
+    quizsets.value = Array.isArray(res.data) ? res.data : []
     page.value = 1
   } catch (err) {
     console.log(err)
@@ -154,10 +155,43 @@ const getProblemSets = async () => {
   }
 }
 
-const toggleSort = async () => {
+// ✅ 프론트에서 정렬 확정 적용
+const sortedQuizsets = computed(() => {
+  const arr = [...quizsets.value]
+
+  if (sort.value === "like") {
+    // 좋아요 내림차순 (같으면 id 내림차순)
+    arr.sort((a, b) => {
+      const al = Number(a.like_count ?? 0)
+      const bl = Number(b.like_count ?? 0)
+      if (bl !== al) return bl - al
+      return Number(b.id ?? 0) - Number(a.id ?? 0)
+    })
+  } else {
+    // 최신순: created_at 있으면 그걸로, 없으면 id로 대체
+    arr.sort((a, b) => {
+      const at = a.created_at ? new Date(a.created_at).getTime() : Number(a.id ?? 0)
+      const bt = b.created_at ? new Date(b.created_at).getTime() : Number(b.id ?? 0)
+      return bt - at
+    })
+  }
+
+  return arr
+})
+
+const totalPages = computed(() =>
+  Math.max(1, Math.ceil(sortedQuizsets.value.length / pageSize))
+)
+
+const pagedQuizsets = computed(() => {
+  const start = (page.value - 1) * pageSize
+  return sortedQuizsets.value.slice(start, start + pageSize)
+})
+
+const toggleSort = () => {
   if (loading.value) return
-  sort.value = sort.value === 'like' ? 'recent' : 'like'
-  await getProblemSets()
+  sort.value = sort.value === "like" ? "recent" : "like"
+  page.value = 1 // ✅ 정렬 바꾸면 페이지 1로
 }
 
 // ✅ 모달 내용 교체용
@@ -167,7 +201,7 @@ const modalProps = ref({})
 const extraListeners = computed(() => {
   const name = modalView.value?.__name
 
-  if (name === 'ProblemSetCreate' || name === 'ProblemSetDetail') {
+  if (name === "ProblemSetCreate" || name === "ProblemSetDetail") {
     return {
       updated: onUpdated,
       goCreateQuiz: onGoCreateQuiz,
@@ -176,76 +210,40 @@ const extraListeners = computed(() => {
     }
   }
 
-  if (name === 'QuizCreate') return { done: popOrCloseModal }
+  if (name === "QuizCreate") return { done: popOrCloseModal }
 
-  if (name === 'QuizDetail') {
+  if (name === "QuizDetail") {
     return { back: popOrCloseModal, saved: popOrCloseModal, deleted: popOrCloseModal }
   }
 
   return {}
 })
 
-
-
-
-
-
 const onUpdated = async () => {
   await getProblemSets()
 }
 
-const closeModal = () => modal.close()
-
-
-
-const backToProblemSetCreate = () => {
-  modalView.value = ProblemSetCreate
-  modalProps.value = { quizsetid: currentQuizsetId.value }
-}
-
-const onEditProblemSet = (quizsetId) => {
-  currentQuizsetId.value = quizsetId
-  modalView.value = ProblemSetCreate
-  modalProps.value = { quizsetid: quizsetId }
-}
-
-
-
-const totalPages = computed(() => Math.max(1, Math.ceil(quizsets.value.length / pageSize)))
-
-const pagedQuizsets = computed(() => {
-  const start = (page.value - 1) * pageSize
-  return quizsets.value.slice(start, start + pageSize)
-})
-
-// 모달
-
 const modalStack = ref([])
 
 const openRootModal = (view, props = {}) => {
-  modalStack.value = []          // 루트로 열 때는 히스토리 초기화
+  modalStack.value = []
   modalView.value = view
   modalProps.value = props
   modal.open(1)
 }
 
-
 const onOpenQuizDetail = ({ quizId, quizSetId }) => {
   currentQuizsetId.value = quizSetId
-  pushModal(QuizDetail, { quizid: quizId, quizsetid: quizSetId }) // ✅ 여기!
+  pushModal(QuizDetail, { quizid: quizId, quizsetid: quizSetId })
 }
 
 const onGoCreateQuiz = (quizsetId) => {
   currentQuizsetId.value = quizsetId
-  pushModal(QuizCreate, { quizsetid: quizsetId })   // ✅ 여기!
+  pushModal(QuizCreate, { quizsetid: quizsetId })
 }
 
 const pushModal = (nextView, nextProps = {}) => {
-  // 현재 화면을 스택에 저장하고 다음 화면으로 전환
-  modalStack.value.push({
-    view: modalView.value,
-    props: modalProps.value,
-  })
+  modalStack.value.push({ view: modalView.value, props: modalProps.value })
   modalView.value = nextView
   modalProps.value = nextProps
 }
@@ -274,5 +272,12 @@ const openDetail = (quizsetId) => {
   openRootModal(ProblemSetDetail, { quizsetid: quizsetId })
 }
 
+const onEditProblemSet = (quizsetId) => {
+  currentQuizsetId.value = quizsetId
+  modalView.value = ProblemSetCreate
+  modalProps.value = { quizsetid: quizsetId }
+}
+
 onMounted(getProblemSets)
 </script>
+

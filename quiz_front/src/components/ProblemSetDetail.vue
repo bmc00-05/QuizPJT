@@ -7,7 +7,7 @@
       <!-- ✅ 헤더 -->
       <div class="flex items-start justify-between  gap-3">
         <div class="min-w-0">
-          <div class="text-xs text-black/50">ProblemSet #{{ quizSet.id }}</div>
+          <div class="text-xs text-black/50 mb-3"> #{{ quizSet.id }}</div>
           <h2 class="text-lg font-black leading-snug truncate">
             {{ quizSet.title }}
           </h2>

@@ -1,18 +1,18 @@
 <template>
-  <!-- ✅ 최상단 컨테이너: 배경을 깔기 위해 min-h-screen + overflow-hidden 권장 -->
   <div class="relative min-h-screen overflow-hidden flex flex-col">
-
-    <!-- ✅ 배경 레이어 (div) -->
     <div class="absolute inset-0 bg-start-bg bg-cover bg-center bg-no-repeat"></div>
-
-    <!-- (선택) 배경 어둡게 덮는 오버레이 -->
     <div class="absolute inset-0 bg-black/30"></div>
 
-    <!-- ✅ 실제 UI 레이어: 배경보다 위로 -->
     <div class="relative z-10 flex min-h-screen flex-col">
       <div class="min-h-screen flex items-center justify-center flex-col">
-        <div class="fixed top-0 h-32 flex items-center justify-center">
-          <h1>TITLE IMAGE</h1>
+        <!-- ✅ 타이틀 로고 -->
+        <div class="fixed mt-10 top-0 z-20 h-32 w-full flex items-center justify-center pointer-events-none">
+          <img
+            :src="titleLogo"
+            alt="Title Logo"
+            class="w-[min(92vw,400px)] h-auto object-contain [image-rendering:pixelated] select-none"
+            draggable="false"
+          />
         </div>
 
         <!-- 로그인/회원가입 모달 -->
@@ -32,7 +32,7 @@
         @click="$router.push({ name: 'profile' })"
         class="fixed inset-0 z-10 flex items-end justify-center pb-[25%] cursor-pointer"
       >
-        <span class="text-lg font-semibold animate-fade-blink">
+        <span class="text-lg font-bold  animate-fade-blink">
           Press to Start
         </span>
       </div>
@@ -44,14 +44,14 @@
       >
         <RouterLink
           :to="{ name: 'login' }"
-          class="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm/6 font-semibold text-white shadow-xs hover:bg-indigo-500"
+          class="input-panel-icon w-full flex justify-center font-bold"
         >
           로그인
         </RouterLink>
 
         <RouterLink
           :to="{ name: 'signup' }"
-          class="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm/6 font-semibold text-white shadow-xs hover:bg-indigo-500"
+          class="input-panel-icon w-full flex justify-center font-bold"
         >
           회원가입
         </RouterLink>
@@ -61,26 +61,26 @@
 </template>
 
 <script setup>
-import { computed } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
-import { useAccountStore } from '@/stores/accounts'
+import { computed } from "vue"
+import { useRoute, useRouter } from "vue-router"
+import { useAccountStore } from "@/stores/accounts"
+
+// ✅ 타이틀 로고 경로
+import titleLogo from "@/assets/background/title_logo.png"
+
 const route = useRoute()
 const accountStore = useAccountStore()
-const router = useRouter()
-const showMainButtons = computed(() =>
-  !['login', 'signup'].includes(route.name) &&
-  !accountStore.isLogin
+useRouter()
+
+const showMainButtons = computed(
+  () => !["login", "signup"].includes(route.name) && !accountStore.isLogin
 )
 
-const showStartButton = computed(() =>
-  accountStore.isLogin
-  )
-
-
+const showStartButton = computed(() => accountStore.isLogin)
 </script>
 
 <style scoped>
 .bg-start-bg {
-  background-image: url("@/assets/background/start-bg.png");
+  background-image: url("@/assets/background/main_title_2.jpg");
 }
 </style>
