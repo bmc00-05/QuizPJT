@@ -4,9 +4,31 @@
     "pk": 1,
     "fields": {
       "code": "default",
-      "name": "초심자",
+      "name": "Cat.LOG",
       "description": "기본 제공 뱃지",
       "icon": "badges/default.png",
+      "created_at": "2025-12-23T00:00:00Z"
+    }
+  },
+  {
+    "model": "profiles.badge",
+    "pk": 2,
+    "fields": {
+      "code": "badge_1",
+      "name": "자라는 새싹!",
+      "description": "새로운 출발이다.",
+      "icon": "badges/badge_1.png",
+      "created_at": "2025-12-23T00:00:00Z"
+    }
+  },
+  {
+    "model": "profiles.badge",
+    "pk": 3,
+    "fields": {
+      "code": "badge_2",
+      "name": "first_fail",
+      "description": "실패는 곧 성공의 어머니.",
+      "icon": "badges/badge_2.png",
       "created_at": "2025-12-23T00:00:00Z"
     }
   }
