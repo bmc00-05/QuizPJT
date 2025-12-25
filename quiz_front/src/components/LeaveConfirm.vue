@@ -7,11 +7,11 @@
     </div>
 
     <div class="mt-4 flex gap-8">
-      <button class="red-button flex-1 btn px-4 py-2" @click="$emit('confirm')">
+      <button class="button-red flex-1 btn px-4 py-2 font-bold text-black" @click="$emit('confirm')">
       <div class="pixel-panel__content p-0">나가기</div>  
       </button>
       <button
-        class="silver-button flex-1 px-4 py-2 rounded border bg-white/70 hover:bg-white"
+        class="button-green flex-1 px-4 py-2 font-bold "
         @click="$emit('cancel')"
       >
       <div class="pixel-panel__content p-0">계속하기</div>

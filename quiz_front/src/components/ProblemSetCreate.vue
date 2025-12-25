@@ -28,14 +28,14 @@
         <div class="flex items-center justify-between pt-2">
           <button
             type="submit"
-            class="px-3 py-1.5 border rounded text-sm font-bold"
+            class="px-1 button-green"
           >
             저장
           </button>
 
           <button
             type="button"
-            class="px-3 py-1.5 border rounded text-sm font-bold text-red-600"
+            class="px-1 button-red"
             @click="deleteQuizSet"
           >
             삭제

@@ -68,13 +68,13 @@
       <div class="flex gap-2 pt-1">
         <RouterLink
           :to="{ name: 'game', params: { id: quizSet.id } }"
-          class="flex-1 py-2 rounded text-center font-bold bg-blue-600 text-white"
+          class="flex-1 py-2 button-green flex justify-center font-bold"
         >
           Start
         </RouterLink>
 
         <button
-          class="px-4 py-2 border rounded font-bold"
+          class="px-4 py-2 button-red font-bold"
           @click="emit('close')"
         >
           닫기

@@ -6,9 +6,10 @@
       로그아웃 하시겠습니까?
     </p>
 
-    <div class="max-w-100 red-button">
+
+    <div class="max-w-100 flex justify-center button-red">
       <button
-        class="flex-1 pixel-panel__content"
+        class="flex-1 text-lg font-bold"
         @click="emit('logout')"
       >
         로그아웃

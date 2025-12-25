@@ -14,12 +14,14 @@ export const useAccountStore = defineStore('account', () => {
   const router = useRouter()
 
   const signUp = async (payload) => {
+
     try {
-      const res = await axios.post(
+        
+const res = await axios.post(
         `${API_URL}/accounts/signup/`,
         payload
       )
-      return res
+      return res.data
 
     } catch (err) {
       throw err

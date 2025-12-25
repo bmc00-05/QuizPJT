@@ -9,41 +9,91 @@ class Profile(models.Model):
         related_name="profile",
     )
 
-    # (선택) 프로필에서 별도 표시명을 쓰고 싶으면 nickname으로 명확히 분리하는 게 좋음
-    # 기존 username 필드를 유지하고 싶으면 아래 nickname은 빼도 됨.
-    nickname = models.CharField(max_length=50, unique=True, null=True, blank=True)
-
-    level = models.PositiveIntegerField(default=1)
-    experience = models.PositiveIntegerField(default=0)
-
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
-    total_experience = models.PositiveIntegerField(default=0, db_index=True)
-    memo = models.TextField(blank=True, default="") 
-    equipped_badge = models.ForeignKey(
-        "Badge",
-        null=True, blank=True,
-        on_delete=models.SET_NULL,
-        related_name="equipped_profiles"
+    # 표시명(선택)
+    nickname = models.CharField(
+        max_length=50,
+        unique=True,
+        null=True,
+        blank=True,
     )
 
+    # ✅ 회원가입 후 "홈(프로필) 최초 진입" 기록 (WELCOME_HOME 지급 트리거용)
+    first_home_visited_at = models.DateTimeField(null=True, blank=True)
+
+    # 레벨/경험치
+    level = models.PositiveIntegerField(default=1)
+    experience = models.PositiveIntegerField(default=0)        # 현재 레벨의 경험치
+    total_experience = models.PositiveIntegerField(default=0, db_index=True)  # 누적 경험치(랭킹용)
+
+    # 메모/장착 뱃지
+    memo = models.TextField(blank=True, default="")
+    equipped_badge = models.ForeignKey(
+        "Badge",
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name="equipped_profiles",
+    )
+
+    # timestamps
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
     def __str__(self):
-        # nickname이 있으면 nickname, 없으면 user.username
         display = self.nickname or self.user.username
         return f"{display} ({self.user.username})"
 
+    @staticmethod
+    def required_exp_for_level(level: int) -> int:
+        """
+        다음 레벨업에 필요한 경험치
+        현재 로직: level * 100
+        """
+        if level < 1:
+            level = 1
+        return level * 100
+
     def add_experience(self, amount: int):
+        """
+        경험치/레벨 반영
+        - amount <= 0이면 변화 없음
+        - 결과를 dict로 반환 (check_answer에서 레벨업/LEVEL_10 배지 판단에 유용)
+        """
+        level_before = self.level
+        exp_before = self.experience
+        total_before = self.total_experience
+
         if amount <= 0:
-            return
+            return {
+                "level_before": level_before,
+                "level_after": self.level,
+                "exp_before": exp_before,
+                "exp_after": self.experience,
+                "total_before": total_before,
+                "total_after": self.total_experience,
+                "leveled_up": False,
+            }
 
         self.total_experience += amount
         self.experience += amount
 
-        while self.experience >= self.level * 100:
-            self.experience -= self.level * 100
+        # 레벨업 처리
+        while self.experience >= self.required_exp_for_level(self.level):
+            self.experience -= self.required_exp_for_level(self.level)
             self.level += 1
 
+        # ✅ updated_at(auto_now)까지 확실히 갱신하려면 update_fields에 updated_at 포함
         self.save(update_fields=["total_experience", "experience", "level", "updated_at"])
+
+        return {
+            "level_before": level_before,
+            "level_after": self.level,
+            "exp_before": exp_before,
+            "exp_after": self.experience,
+            "total_before": total_before,
+            "total_after": self.total_experience,
+            "leveled_up": self.level > level_before,
+        }
     
 class UserStats(models.Model):
     user = models.OneToOneField(
@@ -130,6 +180,7 @@ class UserBadge(models.Model):
         related_name="user_badges",
     )
     earned_at = models.DateTimeField(auto_now_add=True)
+    announced_at = models.DateTimeField(null=True, blank=True)
 
     class Meta:
         constraints = [

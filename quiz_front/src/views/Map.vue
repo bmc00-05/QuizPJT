@@ -51,14 +51,6 @@
           </div>
         </div>
 
-        <div class="absolute top-2 left-2 z-20 flex gap-2">
-          <button class="px-2 py-1 text-xs bg-white/80 border rounded" @click.stop="resetView">
-            Reset
-          </button>
-          <div class="px-2 py-1 text-xs bg-white/80 border rounded">
-            x{{ scale.toFixed(2) }}
-          </div>
-        </div>
       </div>
     </div>
 <!-- 아래 패널 (스크롤 버전) -->

@@ -126,15 +126,6 @@
     image-rendering: pixelated;
   }
 
-  .button-small {
-    border: 5px solid transparent;
-    border-image-source: url("./ui/input_panel.png");
-    border-image-slice: 16 fill;
-    border-image-width: 1.5;
-    border-image-repeat: round;
-    box-sizing: border-box;
-    image-rendering: pixelated;
-  }
 
   .button-panel {
     border: 8px solid transparent;
@@ -154,32 +145,48 @@
     image-rendering: pixelated;
   }
 
-  .green-button {
-    border: 9px solid transparent;
-    border-image-source: url("./ui/green_button.png");
-    border-image-slice: 30 fill;
-    border-image-width: 32px;
-    border-image-repeat: stretch;
+  .button-red {
+    border: 8px solid transparent;
+    border-image-source: url("./ui/button_red.png");
+    border-image-slice: 23 fill;
+    border-image-width: 2;
+    border-image-repeat: round;
+    box-sizing: border-box;
+    border-radius: 0;
+    outline: none;
+    box-shadow: none;
+    -webkit-appearance: none;
     image-rendering: pixelated;
   }
 
-  .red-button {
-    border: 10px solid transparent;
-    border-image-source: url("./ui/red_button.png");
-    border-image-slice: 25 fill;
-    border-image-width: 40px;
-    border-image-repeat: stretch;
+
+
+  .button-green {
+    border: 8px solid transparent;
+    border-image-source: url("./ui/button_green.png");
+    border-image-slice: 23 fill;
+    border-image-width: 2;
+    border-image-repeat: round;
+    box-sizing: border-box;
+    border-radius: 0;
+    outline: none;
+    box-shadow: none;
+    -webkit-appearance: none;
     image-rendering: pixelated;
   }
 
-  .silver-button {
-    border: 9px solid transparent;
-    border-image-source: url("./ui/silver_button.png");
-    border-image-slice: 30 fill;
-    border-image-width: 32px;
-    border-image-repeat: stretch;
-    image-rendering: pixelated;
-  }
+
+
+
+
+
+  .button-red:hover {
+  border-image-source: url("./ui/button_red_hover.png");
+}
+
+.button-green:hover {
+  border-image-source: url("./ui/button_green_hover.png");
+}
 
   /* =========================
      Tailwind @apply Helpers

@@ -5,7 +5,7 @@
     "fields": {
       "code": "default",
       "name": "Cat.LOG",
-      "description": "기본 제공 뱃지",
+      "description": "나는 고양이다.",
       "icon": "badges/default.png",
       "created_at": "2025-12-23T00:00:00Z"
     }
@@ -15,8 +15,8 @@
     "pk": 2,
     "fields": {
       "code": "badge_1",
-      "name": "자라는 새싹!",
-      "description": "새로운 출발이다.",
+      "name": "기본 뱃지 1",
+      "description": "기본으로 제공되는 뱃지입니다.",
       "icon": "badges/badge_1.png",
       "created_at": "2025-12-23T00:00:00Z"
     }
@@ -26,10 +26,43 @@
     "pk": 3,
     "fields": {
       "code": "badge_2",
-      "name": "first_fail",
-      "description": "실패는 곧 성공의 어머니.",
+      "name": "기본 뱃지 2",
+      "description": "기본으로 제공되는 뱃지입니다.",
       "icon": "badges/badge_2.png",
       "created_at": "2025-12-23T00:00:00Z"
+    }
+  },
+  {
+    "model": "profiles.badge",
+    "pk": 4,
+    "fields": {
+      "code": "welcome_home",
+      "name": "회원가입",
+      "description": "서비스 회원가입을 환영합니다.",
+      "icon": "badges/welcome_home.png",
+      "created_at": "2025-12-25T20:30:44.482Z"
+    }
+  },
+  {
+    "model": "profiles.badge",
+    "pk": 5,
+    "fields": {
+      "code": "first_clear",
+      "name": "첫 발걸음",
+      "description": "스테이지 첫 클리어를 축하합니다.",
+      "icon": "badges/first_clear.png",
+      "created_at": "2025-12-25T20:30:44.498Z"
+    }
+  },
+  {
+    "model": "profiles.badge",
+    "pk": 6,
+    "fields": {
+      "code": "level_10",
+      "name": "lv.10 달성",
+      "description": "어느새 10레벨이 된 당신..",
+      "icon": "badges/level_10.png",
+      "created_at": "2025-12-25T20:30:44.498Z"
     }
   }
 ]

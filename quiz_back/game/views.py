@@ -23,7 +23,7 @@ from .serializers import (
 from profiles.models import Profile
 from profiles.services.stats_service import update_stats_from_log
 
-
+from profiles.services.badge import grant_badge_to_user
 # ==============================================================================================
 # 공통 QuerySet (like_count / problem_count annotate)
 # ==============================================================================================
@@ -137,13 +137,24 @@ def start_play_session(request):
         "problems": serialized
     }, status=201)
 
-
-# 퀴즈 정답 채점 함수
 @api_view(["POST"])
 @permission_classes([IsAuthenticated])
 @transaction.atomic
 def check_answer(request):
+    """
+    퀴즈 정답 채점 API
+    - 세션 유효성 검사
+    - SessionLog 기록(중복 제출 방지)
+    - 통계 업데이트
+    - 세션 완료 처리 + 경험치/레벨 반영
+
+    ✅ 배지 지급 트리거(코드는 전부 소문자 고정):
+      1) 첫 세션 완료: "first_clear"
+      2) 레벨 10 달성: "level_10"
+    (배지 모달 표시는 홈(프로필) 진입 시 new_badges로 처리)
+    """
     try:
+        # 1) 입력값 검증
         session_id = request.data.get("session_id")
         question_id = request.data.get("question_id")
         selected = request.data.get("selected")
@@ -151,31 +162,45 @@ def check_answer(request):
         if session_id is None or question_id is None or selected is None:
             return Response(
                 {"error": "session_id, question_id, selected는 필수값입니다."},
-                status=400
+                status=status.HTTP_400_BAD_REQUEST,
             )
 
         try:
             selected_int = int(selected)
         except (TypeError, ValueError):
-            return Response({"error": "selected는 숫자여야 합니다."}, status=400)
+            return Response(
+                {"error": "selected는 숫자여야 합니다."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
-        # 🔐 세션 조회 & 유저 확인
-        session = PlaySession.objects.get(id=session_id, user=request.user)
+        # 2) 세션 조회 & 유저 확인 (본인 세션만)
+        # ✅ 동시 제출/연타로 solved_count 꼬임 방지: row lock
+        session = (
+            PlaySession.objects
+            .select_for_update()
+            .get(id=session_id, user=request.user)
+        )
 
         if session.is_completed or session.expired:
-            return Response({"error": "이미 종료된 세션입니다."}, status=400)
+            return Response(
+                {"error": "이미 종료된 세션입니다."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
-        # 문제 조회
+        # 3) 문제 조회
         question = Problem.objects.get(id=question_id)
 
-        # 🧩 이 문제가 세션에 포함된 문제인지 확인
+        # 4) 해당 문제가 세션에 포함된 문제인지 확인
         if not session.selected_problems.filter(id=question.id).exists():
-            return Response({"error": "세션과 관련 없는 문제입니다."}, status=400)
+            return Response(
+                {"error": "세션과 관련 없는 문제입니다."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
-        # 🎯 채점
+        # 5) 채점
         is_correct = (question.answer == selected_int)
 
-        # 📝 SessionLog 저장
+        # 6) SessionLog 저장 (이미 제출한 문제면 IntegrityError 발생)
         try:
             log = SessionLog.objects.create(
                 user=request.user,
@@ -183,70 +208,107 @@ def check_answer(request):
                 problem=question,
                 selected_answer=selected_int,
                 is_correct=is_correct,
-                solved_at=timezone.now()
+                solved_at=timezone.now(),
             )
         except IntegrityError:
-            return Response({"error": "이미 제출한 문제입니다."}, status=400)
+            return Response(
+                {"error": "이미 제출한 문제입니다."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
-        # ✅ 통계 업데이트
+        # 7) 통계 업데이트
         update_stats_from_log(log)
 
-        # answered_count
+        # 8) 현재 세션에서 몇 문제 제출했는지 계산
         answered_count = SessionLog.objects.filter(session=session).count()
 
-        # 🔥 세션 상태 업데이트 (현재 로직: 맞춘 개수만 solved_count 증가)
+        # 9) 세션 진행 상태 업데이트 (맞춘 경우만 solved_count 증가)
         if is_correct:
             session.solved_count += 1
 
         session_completed_result = None
 
+        # 10) 세션 완료 조건
         if answered_count >= session.total_problems:
+            # ✅ solved_count 변경분을 먼저 저장(안전)
+            session.save(update_fields=["solved_count"])
+
+            # ✅ 세션 완료 처리 (is_completed / completed_at 등)
             session.mark_completed()
 
             correct = session.solved_count
             total = session.total_problems
             score = correct * 20
 
-            profile, _ = Profile.objects.get_or_create(user=request.user)
+            # ✅ 경험치/레벨 반영 (프로필도 row lock 권장)
+            profile, _ = Profile.objects.select_for_update().get_or_create(user=request.user)
 
+            # add_experience가 dict를 반환하든/안 하든 안전하게 처리
             before_level = profile.level
             before_exp = profile.experience
 
-            profile.add_experience(score)
+            ret = profile.add_experience(score)
+
+            if isinstance(ret, dict):
+                xp = ret
+                # dict 키 이름이 다를 수도 있으니 최소 보정
+                level_before = xp.get("level_before", before_level)
+                level_after = xp.get("level_after", profile.level)
+                exp_before = xp.get("exp_before", before_exp)
+                exp_after = xp.get("exp_after", profile.experience)
+                leveled_up = xp.get("leveled_up", level_after > level_before)
+            else:
+                level_before = before_level
+                level_after = profile.level
+                exp_before = before_exp
+                exp_after = profile.experience
+                leveled_up = level_after > level_before
+
+            # ✅ (배지1) 첫 세션 클리어 (소문자 코드)
+            grant_badge_to_user(request.user, "first_clear")
+
+            # ✅ (배지2) 레벨 10 달성 (구간 통과)
+            if level_before < 10 <= level_after:
+                grant_badge_to_user(request.user, "level_10")
 
             session_completed_result = {
                 "score": score,
                 "correct": correct,
                 "total": total,
-                "level_before": before_level,
-                "level_after": profile.level,
-                "before_exp": before_exp,
-                "experience": profile.experience,
-                "leveled_up": profile.level > before_level,
+                "level_before": level_before,
+                "level_after": level_after,
+                "before_exp": exp_before,
+                "experience": exp_after,
+                "leveled_up": leveled_up,
             }
         else:
-            session.save()
+            # ✅ 세션이 완료되지 않았다면 진행 상태만 저장
+            session.save(update_fields=["solved_count"])
 
-        return Response({
-            "correct": is_correct,
-            "correct_answer": question.answer,
-            "explanation": question.explanation,
-            "is_completed": session.is_completed,
-            "solved_count": session.solved_count,
-            "total_problems": session.total_problems,
-            "session_result": session_completed_result
-        }, status=status.HTTP_200_OK)
+        # 11) 응답
+        return Response(
+            {
+                "correct": is_correct,
+                "correct_answer": question.answer,
+                "explanation": question.explanation,
+                "is_completed": session.is_completed,
+                "solved_count": session.solved_count,
+                "total_problems": session.total_problems,
+                "session_result": session_completed_result,
+            },
+            status=status.HTTP_200_OK,
+        )
 
     except PlaySession.DoesNotExist:
         return Response(
             {"error": "잘못된 session_id이거나 접근 권한이 없습니다."},
-            status=status.HTTP_404_NOT_FOUND
+            status=status.HTTP_404_NOT_FOUND,
         )
 
     except Problem.DoesNotExist:
         return Response(
             {"error": "해당 문제를 찾을 수 없습니다."},
-            status=status.HTTP_404_NOT_FOUND
+            status=status.HTTP_404_NOT_FOUND,
         )
 
 

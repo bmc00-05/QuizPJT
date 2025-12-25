@@ -18,19 +18,19 @@
         <!-- 문제 -->
         <div>
           <label class="block text-xs font-medium mb-1">문제</label>
-          <input v-model="form.question" required class="w-full border rounded px-2 py-1.5 text-sm" />
+          <input v-model="form.question" required class="w-full input-panel-icon px-2 py-1.5 text-sm" />
         </div>
 
         <!-- 선택지 -->
         <div v-for="i in 4" :key="i">
           <label class="block text-xs font-medium mb-1">선택지 {{ i }}</label>
-          <input v-model="form[`choice${i}`]" required class="w-full border rounded px-2 py-1.5 text-sm" />
+          <input v-model="form[`choice${i}`]" required class="w-full input-panel-icon px-2 py-1.5 text-sm" />
         </div>
 
         <!-- 정답 -->
         <div>
           <label class="block text-xs font-medium mb-1">정답</label>
-          <select v-model.number="form.answer" required class="w-full border px-2 py-1.5 text-sm">
+          <select v-model.number="form.answer" required class="w-full input-panel-icon px-2 py-1.5 text-sm">
             <option disabled :value="null">선택</option>
             <option v-for="n in 4" :key="n" :value="n">{{ n }}번</option>
           </select>
@@ -39,7 +39,7 @@
         <!-- 난이도 -->
         <div>
           <label class="block text-xs font-medium mb-1">난이도</label>
-          <select v-model="form.difficulty" required class="w-full border px-2 py-1.5 text-sm">
+          <select v-model="form.difficulty" required class="w-full input-panel-icon px-2 py-1.5 text-sm">
             <option disabled value="">선택</option>
             <option value="easy">easy</option>
             <option value="medium">medium</option>
@@ -50,28 +50,28 @@
         <!-- 해설 -->
         <div>
           <label class="block text-xs font-medium mb-1">해설</label>
-          <textarea v-model="form.explanation" rows="3" class="w-full border rounded px-2 py-1.5 text-sm" />
+          <textarea v-model="form.explanation" rows="3" class="w-full input-panel-icon px-2 py-1.5 text-sm" />
         </div>
 
         <p v-if="validationError" class="text-red-500 text-xs">{{ validationError }}</p>
 
         <!-- 하단 버튼 -->
-        <div class="sticky bottom-0 bg-white pt-2 pb-1 flex gap-2">
+        <div class="sticky bottom-0 pt-2 pb-1 flex gap-2">
           <button
             type="submit"
-            class="flex-1 bg-blue-600 text-white py-2 rounded disabled:opacity-50"
+            class="flex-1 button-green py-2  disabled:opacity-50"
             :disabled="saving"
           >
             {{ saving ? '저장 중...' : '저장' }}
           </button>
 
-          <button type="button" class="px-4 border rounded" @click="emit('back')">
+          <button type="button" class="px-2 input-panel-icon" @click="emit('back')">
             뒤로
           </button>
 
           <button
             type="button"
-            class="px-4 border rounded text-red-600"
+            class="px-2 button-red"
             @click="remove"
             :disabled="deleting"
           >

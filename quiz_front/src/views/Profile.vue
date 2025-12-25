@@ -76,12 +76,46 @@
       <MyProblemSetManager :showClose="true" @close="closeMyProblem" />
     </BaseModal>
   </div>
+
+  <BadgeCongratsModal
+      v-if="showBadgeModal"
+      :badges="badgesToShow"
+      @close="closeBadgeModal"
+    />
+
+     <BaseModal v-if="congratsOpen" @close="congratsOpen = false">
+      <div class="p-4 text-black">
+        <div class="font-bold mb-2">🎉 뱃지 획득!</div>
+
+        <div class="flex items-center gap-3">
+          <img
+            v-if="earnedIcon"
+            :src="earnedIcon"
+            class="w-14 h-14 [image-rendering:pixelated]"
+            alt=""
+          />
+          <div>
+            <div class="font-bold">{{ earned?.name }}</div>
+            <div class="text-xs opacity-80">{{ earned?.description }}</div>
+          </div>
+        </div>
+
+        <div class="mt-3 flex justify-end">
+          <button class="px-3 py-2 border" @click="congratsOpen = false">
+            확인
+          </button>
+        </div>
+      </div>
+    </BaseModal>
 </template>
 
+
 <script setup>
-import { ref, onMounted, onBeforeUnmount, nextTick } from "vue"
+import { ref, computed, onMounted, onBeforeUnmount, nextTick } from "vue"
 import { useRouter } from "vue-router"
 import { useAccountStore } from "@/stores/accounts"
+import { useProfileStore } from "@/stores/profile"
+import BadgeCongratsModal from "@/components/BadgeCongratsModal.vue"
 
 import idleSheet from "@/assets/character/test_sheet.png"
 import SpriteSheet from "@/components/SpriteSheet.vue"
@@ -92,10 +126,73 @@ import BaseModal from "@/components/common/BaseModal.vue"
 import AIHistory from "@/components/AIHistory.vue"
 import Badge from "@/components/Badge.vue"
 import MyProblemSetManager from "@/components/MyProblemSetManager.vue"
-
+import { useUiStore } from "@/stores/ui"
 const router = useRouter()
 const API_URL = import.meta.env.VITE_REST_API_URL
 const accountStore = useAccountStore()
+const profileStore = useProfileStore()
+
+const showBadgeModal = ref(false)
+const badgesToShow = computed(() => profileStore.newBadges)
+
+
+
+const uiStore = useUiStore()
+
+const congratsOpen = ref(false)
+const earned = ref(null)
+
+// (선택) 로컬 아이콘을 code로 매칭하고 싶으면 BadgeDex랑 똑같이
+const badgeIcons = import.meta.glob("@/assets/badges/*.png", {
+  eager: true,
+  import: "default",
+})
+
+const resolveBadgeIcon = (code) => {
+  if (!code) code = "default"
+  const hit = Object.entries(badgeIcons).find(([path]) =>
+    path.endsWith(`/assets/badges/${code}.png`)
+  )
+  if (hit) return hit[1]
+  const fallback = Object.entries(badgeIcons).find(([path]) =>
+    path.endsWith(`/assets/badges/default.png`)
+  )
+  return fallback ? fallback[1] : null
+}
+
+const earnedIcon = computed(() => {
+  const code = earned.value?.code
+  return resolveBadgeIcon(code) || earned.value?.icon || null
+})
+
+onMounted(() => {
+  const b = uiStore.consumeEarnedBadge()
+  if (b) {
+    earned.value = b
+    congratsOpen.value = true
+  }
+})
+
+
+onMounted(async () => {
+  // ✅ 홈(프로필) 진입 시 status 호출
+  await profileStore.fetchMyStatus(accountStore.apiUrl, accountStore.token)
+
+  // ✅ 새 배지 있으면 모달 오픈
+  if (badgesToShow.value.length > 0) {
+    showBadgeModal.value = true
+  }
+})
+
+async function closeBadgeModal() {
+  showBadgeModal.value = false
+
+  // ✅ ack 호출(모달에서 실제로 보여준 codes만 보냄)
+  const codes = badgesToShow.value.map(b => b.code)
+  if (codes.length > 0) {
+    await profileStore.ackNewBadges(accountStore.apiUrl, accountStore.token, codes)
+  }
+}
 
 const ensureUser = async () => {
   if (!accountStore.user) await accountStore.fetchMe?.()

@@ -3,7 +3,7 @@
     <!-- ✅ 헤더: 타이틀 + (오른쪽) 버튼 나열 -->
     <div class="flex items-center justify-between gap-2 shrink-0">
       <div class="flex items-center gap-2 min-w-0">
-        <div class="font-bold text-sm shrink-0">메모</div>
+        <div class="font-bold ml-2 text-sm shrink-0">메모</div>
 
         <div class="text-xs text-gray-600">
           <span v-if="saving">저장중...</span>
@@ -14,18 +14,18 @@
 
       <!-- ✅ 타이틀 옆(오른쪽) 버튼들 -->
       <div class="flex items-center gap-2 shrink-0">
-        <div class="button-small">
-          <button class="px-2 text-xs font-bold" @click="$emit('openMyProblemSet')">
+        <div class="">
+          <button class="px-2 text-xs input-panel-icon font-bold" @click="$emit('openMyProblemSet')">
             내 문제
           </button>
         </div>
-        <div class="button-small">
-          <button class="px-2 text-xs font-bold" @click="$emit('openHistory')">
+        <div class="">
+          <button class="px-2 text-xs input-panel-icon font-bold" @click="$emit('openHistory')">
             히스토리
           </button>
         </div>
-        <div class="button-small">
-          <button class="px-3.5 text-xs font-bold" @click="$emit('openBadge')">
+        <div class="">
+          <button class="px-3.5 text-xs input-panel-icon font-bold" @click="$emit('openBadge')">
             뱃지
           </button>
         </div>

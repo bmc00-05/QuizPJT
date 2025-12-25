@@ -145,13 +145,13 @@
 
         <div class="flex justify-end gap-2 pt-2">
           <button
-            class="px-3 py-2 rounded border bg-white hover:bg-white/80"
+            class="p-1 button-red"
             @click="closeModal"
           >
             취소
           </button>
           <button
-            class="px-3 py-2 rounded bg-black text-white hover:opacity-90"
+            class="p-1 button-green"
             @click="confirmStart"
           >
             확인

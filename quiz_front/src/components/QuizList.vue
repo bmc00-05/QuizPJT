@@ -9,7 +9,7 @@
       <li
         v-for="quiz in quizzes"
         :key="quiz.id"
-        class="border rounded px-2 py-2 hover:bg-gray-50 cursor-pointer"
+        class=" px-1 py-1 input-panel-icon"
         @click="onSelect(quiz)"
       >
         <span v-if="quiz?.id" class="hover:underline">

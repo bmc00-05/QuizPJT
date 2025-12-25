@@ -6,12 +6,12 @@
         <!-- ✅ 좌측: 뱃지 -->
         <div class="shrink-0">
           <div class="input-panel-icon px-2 py-1">
-            <div class="pixel-panel__content p-1 w-10 h-10 flex items-center justify-center">
+            <div class="pixel-panel__content p-0 w-10 h-10 flex items-center justify-center">
               <img
                 v-if="badgeIconUrl"
                 :src="badgeIconUrl"
                 :alt="badgeName"
-                class="w-8 h-8 [image-rendering:pixelated] select-none"
+                class="w-20 h-8 [image-rendering:pixelated] select-none"
                 draggable="false"
               />
               <span v-else class="text-[10px] opacity-60">NO</span>
@@ -20,22 +20,34 @@
         </div>
 
         <!-- 가운데 -->
-        <div class="min-w-0 flex-1 flex items-center gap-2">
-          <span class="shrink-0 font-bold text-lg">Lv.{{ level }}</span>
-          <span class="min-w-0 truncate text-lg font opacity-90">
-            {{ username }}
-          </span>
-          <span> {{ totalExperience }}</span>점
+<!-- 가운데 영역 -->
+<div class="relative min-w-0 flex-1 h-12 flex items-center">
+  <!-- 왼쪽: 레벨 -->
+  <span class="shrink-0 font-bold text-lg">Lv.{{ level }}</span>
 
-        </div>
+  <!-- 가운데: 이름(진짜 중앙 고정) -->
+  <span class="absolute left-1/2 -translate-x-1/2 max-w-[55%] truncate text-lg opacity-90">
+    {{ username }}
+  </span>
 
+  <!-- 오른쪽: 점수 -->
+  <span class="ml-auto shrink-0 text-lg">
+    {{ totalExperience }} 점
+  </span>
+</div>
         <!-- 오른쪽 -->
-        <button
-          class="shrink-0 input-panel-icon px-3 py-1 hover:bg-white/20"
-          @click="openMenu"
-        >
-          설정
-        </button>
+<button
+  class="shrink-0 input-panel-icon hover:bg-white/20"
+  @click="openMenu"
+  aria-label="설정"
+>
+  <img
+    :src="settingsIcon"
+    alt=""
+    class="w-8 h-8 [image-rendering:pixelated] select-none"
+    draggable="false"
+  />
+</button>
       </div>
     </div>
 
@@ -80,7 +92,7 @@ import { useAccountStore } from "@/stores/accounts"
 import NavBar from "@/components/NavBar.vue"
 import BaseModal from "@/components/common/BaseModal.vue"
 import LogoutConfirmModal from "@/components/LogoutConfirmModal.vue"
-
+import settingsIcon from "@/assets/icons/settings.png"
 const userStore = useUserStore()
 const accountStore = useAccountStore()
 const router = useRouter()

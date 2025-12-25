@@ -1,38 +1,91 @@
 from django.db.models import Q
-from rest_framework import status
+from django.utils import timezone
+
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
 from django.contrib.auth import get_user_model
-from game.models import ProblemSet
 
+from game.models import ProblemSet
 from questions.models import Category
 from .models import Profile, UserStats, UserCategoryStats, UserBadge, Badge
-from .serializers import UserProfileSerializer, UserStatsSerializer, UserCategoryStatsSerializer, RankingItemSerializer, BadgeDexSerializer, ProfileMemoSerializer
+from .serializers import (
+    UserProfileSerializer,
+    UserStatsSerializer,
+    UserCategoryStatsSerializer,
+    RankingItemSerializer,
+    BadgeDexSerializer,
+    ProfileMemoSerializer,
+)
 
+# ✅ 상대 임포트로 변경 (노란줄 방지에 도움)
+from .services.badge import grant_badge_to_user
 
 User = get_user_model()
+
+
+def _new_badges_payload(profile: Profile):
+    """
+    ✅ 아직 모달로 보여주지 않은(announced_at=None) 배지 목록
+    """
+    qs = (
+        UserBadge.objects
+        .filter(profile=profile, announced_at__isnull=True)
+        .select_related("badge")
+        .order_by("earned_at", "id")
+    )
+    return [
+        {
+            "id": ub.badge_id,
+            "code": ub.badge.code,
+            "name": ub.badge.name,
+            "description": ub.badge.description,
+            "icon": ub.badge.icon,
+            "earned_at": ub.earned_at,
+        }
+        for ub in qs
+    ]
+
+
+def _award_welcome_home_if_first_visit(profile: Profile) -> bool:
+    """
+    ✅ '홈(프로필) 최초 진입'을 DB에서 1회만 감지해서 WELCOME_HOME 지급
+    - True: 이번 요청에서 최초 진입 처리됨
+    - False: 이미 방문 기록 있음
+    """
+    updated = Profile.objects.filter(
+        pk=profile.pk,
+        first_home_visited_at__isnull=True,
+    ).update(first_home_visited_at=timezone.now())
+
+    if updated:
+        grant_badge_to_user(profile.user, "WELCOME_HOME")
+        return True
+    return False
+
 
 @api_view(["GET"])
 @permission_classes([IsAuthenticated])
 def get_profile(request):
     """
-    로그인한 유저의 현재 프로필 정보를 반환
-    (user store fetchUser 용)
+    로그인한 유저의 현재 프로필 정보를 반환 (user store fetchUser 용)
+    - 여기서는 배지 지급/모달까지 넣지 않고, 가볍게 유지 추천
     """
     profile, _ = Profile.objects.get_or_create(user=request.user)
     serializer = UserProfileSerializer(profile)
     return Response(serializer.data)
 
 
-def _build_payload(target_user):
+def _build_payload(target_user, include_new_badges: bool = False):
     profile, _ = Profile.objects.get_or_create(user=target_user)
-    
+
+    # ✅ 내 프로필(홈 진입)일 때만 최초 방문 처리 + new_badges 포함
+    if include_new_badges:
+        _award_welcome_home_if_first_visit(profile)
+
     profile = Profile.objects.select_related("equipped_badge", "user").get(pk=profile.pk)
-    
     stats, _ = UserStats.objects.get_or_create(user=target_user)
 
-    # ✅ 유저가 가진 카테고리 통계를 dict로
     user_stats_qs = (
         UserCategoryStats.objects
         .filter(user=target_user)
@@ -40,7 +93,6 @@ def _build_payload(target_user):
     )
     by_cat_id = {ucs.category_id: ucs for ucs in user_stats_qs}
 
-    # ✅ 모든 카테고리를 순회하며 없으면 0으로 생성(조회만 할 거면 create 안 하고 임시로 만들기)
     all_categories = Category.objects.all().order_by("id")
 
     merged = []
@@ -49,79 +101,91 @@ def _build_payload(target_user):
         if ucs:
             merged.append(ucs)
         else:
-            # DB에 저장할 필요 없으면 메모리 객체로 0값 생성
             merged.append(UserCategoryStats(user=target_user, category=c, solved=0, correct=0, wrong=0))
 
     cat_data = UserCategoryStatsSerializer(merged, many=True).data
 
-    return {
+    payload = {
         "user": {"id": target_user.id},
         "profile": UserProfileSerializer(profile).data,
         "stats": UserStatsSerializer(stats).data,
-        "category_stats": cat_data,   # ✅ 모든 카테고리 포함(0점 포함)
+        "category_stats": cat_data,
     }
+
+    if include_new_badges:
+        payload["new_badges"] = _new_badges_payload(profile)
+
+    return payload
 
 
 @api_view(["GET"])
 @permission_classes([IsAuthenticated])
 def my_profile_stats(request):
     """
-    내 프로필 + 통계 + 카테고리 숙련도 + 요약
+    ✅ 내 프로필(=홈/프로필 화면 진입 시 호출 추천)
+    - WELCOME_HOME 최초 지급 트리거
+    - new_badges 내려줌 (프론트는 모달 띄우고 ack 호출)
     """
-    return Response(_build_payload(request.user), status=200)
+    return Response(_build_payload(request.user, include_new_badges=True), status=200)
 
 
 @api_view(["GET"])
-@permission_classes([AllowAny])  # ✅ 공개로 할지, IsAuthenticated로 할지 선택 가능
+@permission_classes([AllowAny])
 def user_profile_stats(request, user_id: int):
     """
     다른 유저 프로필/통계 조회
+    - ✅ new_badges 같은 개인 알림 정보는 포함하지 않음
     """
     try:
         target = User.objects.get(id=user_id)
     except User.DoesNotExist:
         return Response({"detail": "User not found"}, status=404)
 
-    return Response(_build_payload(target), status=200)
+    return Response(_build_payload(target, include_new_badges=False), status=200)
+
+
+@api_view(["POST"])
+@permission_classes([IsAuthenticated])
+def ack_new_badges(request):
+    """
+    ✅ 프로필 화면에서 new_badges 모달을 '띄운 뒤' 닫을 때 호출
+    Body:
+      - codes: ["WELCOME_HOME", "FIRST_CLEAR"]  (선택)
+        codes 없으면 announced_at=None 인 것 전부 처리
+    """
+    profile, _ = Profile.objects.get_or_create(user=request.user)
+    codes = request.data.get("codes")
+
+    qs = UserBadge.objects.filter(profile=profile, announced_at__isnull=True)
+    if codes:
+        qs = qs.filter(badge__code__in=codes)
+
+    updated = qs.update(announced_at=timezone.now())
+    return Response({"acknowledged": updated}, status=200)
+
 
 def _rank_ordering():
-    # 동점 기준까지 고정 정렬 (반드시 동일하게 사용)
     return ["-total_experience", "-level", "-experience", "user_id"]
 
+
 def _count_better_than(me: Profile) -> int:
-    """
-    me 보다 '랭킹이 높은' Profile 개수
-    (total_exp, level, exp, user_id 기준)
-    """
     return Profile.objects.filter(
         Q(total_experience__gt=me.total_experience)
-        | (
-            Q(total_experience=me.total_experience)
-            & Q(level__gt=me.level)
-        )
-        | (
-            Q(total_experience=me.total_experience)
-            & Q(level=me.level)
-            & Q(experience__gt=me.experience)
-        )
-        | (
-            Q(total_experience=me.total_experience)
-            & Q(level=me.level)
-            & Q(experience=me.experience)
-            & Q(user_id__lt=me.user_id)
-        )
+        | (Q(total_experience=me.total_experience) & Q(level__gt=me.level))
+        | (Q(total_experience=me.total_experience) & Q(level=me.level) & Q(experience__gt=me.experience))
+        | (Q(total_experience=me.total_experience) & Q(level=me.level) & Q(experience=me.experience) & Q(user_id__lt=me.user_id))
     ).count()
+
 
 @api_view(["GET"])
 @permission_classes([AllowAny])
 def ranking(request):
-
     try:
         limit = int(request.query_params.get("limit", 50))
     except ValueError:
         limit = 50
 
-    limit = max(1, min(limit, 200))  # 과도한 요청 방지
+    limit = max(1, min(limit, 200))
 
     qs = (
         Profile.objects
@@ -132,8 +196,6 @@ def ranking(request):
     top = list(qs[:limit])
     top_data = RankingItemSerializer(top, many=True).data
 
-    # top 리스트에 rank 부여 (동점 고려해서 "진짜 등수" 계산)
-    # - limit이 작으니 각 아이템당 count 쿼리 발생해도 부담 적음
     items = []
     for p, row in zip(top, top_data):
         rank_num = _count_better_than(p) + 1
@@ -143,16 +205,9 @@ def ranking(request):
     if request.user.is_authenticated:
         me, _ = Profile.objects.get_or_create(user=request.user)
         me_rank = _count_better_than(me) + 1
-        me_payload = {
-            **RankingItemSerializer(me).data,
-            "rank": me_rank,
-        }
+        me_payload = {**RankingItemSerializer(me).data, "rank": me_rank}
 
-    return Response({
-        "limit": limit,
-        "items": items,
-        "me": me_payload,
-    })
+    return Response({"limit": limit, "items": items, "me": me_payload})
 
 
 @api_view(["GET"])
@@ -162,7 +217,6 @@ def my_badge_dex(request):
 
     badges = list(Badge.objects.all().order_by("id"))
 
-    # ✅ UserBadge는 user가 아니라 profile로 필터링
     owned_map = {
         ub.badge_id: ub.earned_at
         for ub in UserBadge.objects.filter(profile=profile).select_related("badge")
@@ -196,13 +250,11 @@ def equip_badge(request):
 
     profile, _ = Profile.objects.get_or_create(user=request.user)
 
-    # ✅ 보유 여부 검사도 profile 기준으로
     owned = UserBadge.objects.filter(profile=profile, badge_id=badge_id).exists()
     if not owned:
         return Response({"detail": "You don't own this badge"}, status=403)
 
     profile.equipped_badge_id = badge_id
-    # ✅ auto_now(updated_at)까지 확실히 갱신하고 싶으면 update_fields 쓰지 말고 save()
     profile.save()
 
     return Response({"detail": "equipped", "badge_id": int(badge_id)}, status=200)
@@ -227,7 +279,6 @@ def toggle_problemset_like(request, set_id: int):
 
     user = request.user
 
-    # ✅ 토글
     if ps.like_users.filter(id=user.id).exists():
         ps.like_users.remove(user)
         liked = False
@@ -250,8 +301,7 @@ def my_memo(request):
     if request.method == "GET":
         return Response(ProfileMemoSerializer(profile).data, status=200)
 
-    # PATCH
     serializer = ProfileMemoSerializer(profile, data=request.data, partial=True)
     serializer.is_valid(raise_exception=True)
-    serializer.save()  # updated_at 자동 갱신(auto_now=True)
+    serializer.save()
     return Response(serializer.data, status=200)

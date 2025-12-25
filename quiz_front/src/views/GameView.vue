@@ -186,7 +186,7 @@
         <div class="shrink-0 mt-2 flex justify-end gap-1">
           <button
             v-if="!isAnswered"
-            class="btn green-button px-6 py-1.5 disabled:opacity-50"
+            class="btn button-green px-6 py-1.5 disabled:opacity-50"
             :disabled="selectedChoice === null || isChecking"
             @click="checkQuiz"
           >
@@ -195,9 +195,9 @@
             </div>
           </button>
 
-          <button v-else-if="!pendingFinish" class="btn green-button px-6 py-1.5" @click="nextQuestion">
+          <button v-else-if="!pendingFinish" class="btn button-green px-6 py-1.5" @click="nextQuestion">
             <div class="pixel-panel__content p-0">
-            다음 문제
+            다음
             </div>
           </button>
 
