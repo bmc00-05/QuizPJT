@@ -8,7 +8,7 @@
           ref="spriteBox"
           class="relative min-h-0 min-w-0 overflow-hidden bg-black/5 rounded"
         >
-          <div class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+          <div class="absolute left-3/4 top-2/3 -translate-x-1/2 -translate-y-1/2">
             <SpriteSheet
               :src="idleSheet"
               :frameWidth="256"
