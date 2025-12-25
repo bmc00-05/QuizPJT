@@ -22,7 +22,7 @@
 
         <!-- 문제 영역(고정) -->
 <!-- 문제 영역(고정) -->
-<div class="quiz-panel text-black shrink-0 flex flex-col h-[140px] min-h-[140px] max-h-[140px] overflow-hidden">
+<div class="quiz-panel text-black shrink-0 flex flex-col h-[120px] min-h-[120px] max-h-[120px] overflow-hidden">
   <!-- ✅ 채점 결과: 해설 -> 정답 (위아래) + 중앙정렬 -->
   <div
     v-if="result"
@@ -38,17 +38,26 @@
     </div>
   </div>
 
-  <!-- ✅ 문제 표시: 패널 제일 하단 중앙 -->
-  <div v-else class="h-full px-3 py-3 flex flex-col items-center justify-center min-h-0">
-    <div class="w-full max-h-[96px] overflow-y-auto text-center">
+
+<!-- ✅ 문제 표시: 패널 제일 하단 중앙 -->
+<div v-else class="h-full px-3 py-3 flex flex-col items-center min-h-0">
+  <!-- 문제 텍스트: 영역은 flex-1, 내부에서 중앙정렬 -->
+  <div class="w-full flex-1 min-h-0 overflow-y-auto">
+    <div class="min-h-full flex items-center justify-center text-center">
       {{ currentQuestion.question }}
     </div>
   </div>
+
+  <!-- 라운드 표시: 항상 맨 아래 -->
+  <div class="mt-auto text-xs text-black">
+    {{ currentIndex + 1 }} / {{ totalProblems }}
+  </div>
+</div>
 </div>
 
 <!-- 보기 2x2(고정) -->
 <div class="text-black shrink-0">
-  <ul class="grid grid-cols-2 grid-rows-2 h-[176px]">
+  <ul class="grid grid-cols-2 gap-1 id-rows-2 p-1 h-[160px]">
     <li
       v-for="n in 4"
       :key="n"
@@ -70,17 +79,26 @@
 </div>
 
         <!-- ✅ 액션 패널 -->
-        <div class="flex-1 min-h-0 overflow-hidden">
+        <div class="flex-1 pt-3 min-h-0 overflow-hidden">
           <div class="pixel-panel h-full min-h-0">
             <div class="pixel-panel__content p-0 h-full min-h-0 overflow-hidden">
               <div class="relative h-full w-full overflow-hidden bg-black/5 rounded">
+                <div class="relative h-full w-full overflow-hidden rounded">
+  <!-- ✅ 맵별 배경(맨 아래) -->
+  <div
+    class="absolute inset-0 z-0 bg-center bg-cover [image-rendering:pixelated]"
+    :style="actionBgStyle"
+  />
+  <!-- ✅ 가독성용 어두운 필름(선택) -->
+  <div class="absolute inset-0 z-[1] bg-black/25" />
+
+  <!-- ✅ 기존 HUD/캐릭터/이펙트는 그대로(위로 올라오게 z값 유지) -->
+
+</div>
 
 
   <!-- ✅ HUD: 상단 중앙 라운드 + 하트 -->
   <div class="absolute top-2 left-1/2 -translate-x-1/2 z-40 flex flex-col items-center gap-1 pointer-events-none">
-    <div class="text-xs px-2 py-1 rounded bg-black/40 text-white">
-      {{ currentIndex + 1 }} / {{ totalProblems }}
-    </div>
 
     <div class="flex items-center gap-1">
       <span
@@ -165,18 +183,22 @@
         </div>
 
         <!-- 하단 버튼바 -->
-        <div class="shrink-0 p-3 flex justify-end gap-2">
+        <div class="shrink-0 mt-2 flex justify-end gap-1">
           <button
             v-if="!isAnswered"
-            class="btn px-4 py-2 disabled:opacity-50"
+            class="btn green-button px-6 py-1.5 disabled:opacity-50"
             :disabled="selectedChoice === null || isChecking"
             @click="checkQuiz"
           >
+          <div class="pixel-panel__content p-0">
             제출
+            </div>
           </button>
 
-          <button v-else-if="!pendingFinish" class="btn px-4 py-2" @click="nextQuestion">
+          <button v-else-if="!pendingFinish" class="btn green-button px-6 py-1.5" @click="nextQuestion">
+            <div class="pixel-panel__content p-0">
             다음 문제
+            </div>
           </button>
 
           <button v-else class="btn px-4 py-2 opacity-60 cursor-not-allowed" disabled>
@@ -193,21 +215,15 @@
     </div>
 
     <!-- 결과 모달 -->
-    <BaseModal v-if="isFinished && sessionResult && modal.isOpen" @close="closeDetail">
-      <h2 class="text-lg font-bold text-black">결과</h2>
-
-      <p class="text-black">
-        맞춘 문제: {{ sessionResult.correct }} / {{ sessionResult.total }}
-      </p>
-      <p class="text-black">획득 경험치: {{ sessionResult.score }}</p>
-      <p class="text-black">
-        레벨: {{ sessionResult.level_before }} → {{ sessionResult.level_after }}
-      </p>
-
-      <button class="mt-4 w-full bg-gray-800 text-white py-2 rounded" @click="closeDetail">
-        닫기
-      </button>
-    </BaseModal>
+  <BaseModal v-if="isFinished && sessionResult && resultOpen" @close="closeResult">
+    <Result
+    :result="sessionResult"
+      :expNow="userStore.exp"
+      :expMax="userStore.maxExp"
+      @close="goProfile"
+      @goMap="goMap"
+  />
+  </BaseModal>
   </div>
 
   <BaseModal v-if="leaveOpen" @close="cancelLeave">
@@ -229,6 +245,32 @@ import LeaveConfirm from "@/components/LeaveConfirm.vue"
 import playerSheet from "@/assets/character/main_cat.png"
 import { ANIMS, PICK_RULES } from "@/game/anims"
 import { ENEMIES } from "@/game/enemies"
+import Result from "@/components/Result.vue"
+
+import bg1 from "@/assets/battlebg/map1_lake.png"
+import bg2 from "@/assets/battlebg/map2_forest.png"
+import bg3 from "@/assets/battlebg/map3_cave.png"
+import bg4 from "@/assets/battlebg/map4_castle.png"
+import bg5 from "@/assets/battlebg/map5_mountain.png"
+
+const goMap = () => {
+  resultOpen.value = false
+  router.replace({ name: "map" })
+}
+
+const ACTION_BG = {
+  1: bg1,
+  2: bg2,
+  3: bg3,
+  4: bg4,
+  5: bg5,
+}
+
+const actionBgUrl = computed(() => ACTION_BG[mapId.value] ?? bg1)
+
+const actionBgStyle = computed(() => ({
+  backgroundImage: `url(${actionBgUrl.value})`,
+}))
 
 const modal = useModalStore()
 const router = useRouter()
@@ -249,7 +291,7 @@ const totalProblems = ref(0)
 
 const currentIndex = ref(0)
 const selectedChoice = ref(null)
-
+const resultOpen = ref(false)
 const result = ref(null)
 const isChecking = ref(false)
 
@@ -267,6 +309,10 @@ const isGameOver = ref(false)
 let gameOverTimer = null
 const GAME_OVER_DELAY_MS = 2000
 
+const goProfile = () => {
+  modal.close?.()
+  router.replace({ name: "profile" }) // profile 라우트 name에 맞춰서
+}
 
 const triggerGameOver = () => {
   if (isGameOver.value) return
@@ -358,9 +404,8 @@ function commitFinish(session_result) {
   isFinished.value = true
   sessionResult.value = session_result
   userStore.applySessionResult(session_result)
-  modal.open(1)
+  resultOpen.value = true
 }
-
 function tryCommitFinish() {
   if (!pendingFinish.value || !pendingFinishResult.value) return
   if (pendingAfterOnceKey.value) return
@@ -372,7 +417,11 @@ function tryCommitFinish() {
   pendingFinishResult.value = null
   commitFinish(finalResult)
 }
-
+const closeResult = () => {
+  resultOpen.value = false
+   // 결과창 닫고 화면 유지하고 싶으면 여기서 끝
+   // 맵으로 나가고 싶으면 router.replace({ name: "map" })로 바꿔도 됨
+}
 // -----------------------------
 // 플레이어 애니
 // -----------------------------
@@ -811,7 +860,7 @@ const checkQuiz = async () => {
 }
 
 const closeDetail = () => {
-  modal.close()
+  resultOpen.value = false
   router.back()
 }
 

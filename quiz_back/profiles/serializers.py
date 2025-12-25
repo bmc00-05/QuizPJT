@@ -24,6 +24,7 @@ class UserProfileSerializer(serializers.ModelSerializer):
             "level",
             "exp",
             "max_exp",
+            "total_experience",
             "equipped_badge_id",
             "equipped_badge",   # ✅ 반드시 포함
         ]

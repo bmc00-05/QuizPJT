@@ -1,46 +1,81 @@
 <template>
-  <div class="w-full h-full min-h-0 flex flex-col text-black">
-    <!-- ✅ 패널(위쪽, 남은 공간) -->
-    <div class="flex-1 min-h-0 flex flex-col">
-      <div class=" flex-1 min-h-0 overflow-auto flex flex-col items-center">
-        <div class="m-4 font-bold text-xl text-center">
-          내가 만든 문제집 목록
-        </div>
-
-        <ul class="w-full max-w-[360px]">
-          <li
-            v-for="quizset in quizSets"
-            :key="quizset.id"
-            class="cursor-pointer hover:bg-gray-50 text-center"
-            @click="openDetail(quizset.id)"
-          >
-            {{ quizset.title }} like: {{ quizset.like_count }}
-            <hr />
-          </li>
-        </ul>
+  <div class="h-full w-full min-h-0 flex flex-col text-black">
+    <!-- Header -->
+    <header class="shrink-0 px-4 pt-4 pb-2">
+      <div class="mx-auto w-full max-w-[360px] text-center">
+        <h2 class="font-bold text-xl">나의 문제집</h2>
+        <p class="text-[11px] opacity-70 mt-1">클릭하면 상세/편집 화면으로 이동</p>
       </div>
-    </div>
+    </header>
 
-    <!-- ✅ 버튼(패널 밖, 맨 아래, 중앙 정렬) -->
-    <div class="shrink-0 w-full mt-4 flex justify-center pb-3 gap-2">
-      <button
-        @click="openModal"
-        class="px-4 py-2 bg-blue-500 text-white rounded"
-      >
-        문제집 생성
-      </button>
+    <!-- List -->
+    <main class="flex-1 min-h-0 px-4 pb-2 flex justify-center">
+      <div class="w-full max-w-[360px] min-h-0">
+        <!-- ✅ 패널 프레임 -->
+        <div class="h-full min-h-0">
+          <!-- ✅ 실제 스크롤은 여기 -->
+          <div
+            class="h-full min-h-0 p-2 overflow-y-auto pr-1 max-h-[360px] no-scrollbar"
 
-      <!-- ✅ 프로필 모달에서 쓸 “닫기” 버튼 (필요하면 사용) -->
-      <button
-        v-if="showClose"
-        class="px-4 py-2 border rounded"
-        @click="$emit('close')"
-      >
-        닫기
-      </button>
-    </div>
 
-    <!-- ✅ 내부 모달(로컬 상태) -->
+          >
+            <ul class="flex flex-col gap-2">
+              <li v-for="quizset in quizSets" :key="quizset.id">
+                <button
+                  type="button"
+                  class="w-full input-panel-icon px-3 py-2 text-left
+                         transition-transform active:scale-[0.99]"
+                  @click="openDetail(quizset.id)"
+                >
+                  <div class="flex items-center justify-between gap-2">
+                    <div class="min-w-0">
+                      <div class="font-semibold text-[13px] leading-snug truncate">
+                        {{ quizset.title }}
+                      </div>
+                      <div class="text-[11px] opacity-70 mt-0.5">
+                        좋아요 {{ quizset.like_count }}
+                      </div>
+                    </div>
+
+                    <span class="text-[11px] opacity-70 shrink-0">
+                      ▶
+                    </span>
+                  </div>
+                </button>
+              </li>
+
+              <li v-if="!quizSets.length" class="text-center text-[11px] opacity-70 py-6">
+                아직 문제집이 없습니다. 아래에서 만들어보세요!
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- Bottom action bar -->
+    <footer class="shrink-0 px-4 pb-4 pt-2">
+      <div class="mx-auto w-full max-w-[360px] flex justify-center gap-2">
+        <button
+          type="button"
+          @click="openModal"
+          class="button-panel w-full max-w-[160px]"
+        >
+          <div class="pixel-panel__content p-2 text-center font-bold">문제집 생성</div>
+        </button>
+
+        <button
+          v-if="showClose"
+          type="button"
+          class="button-panel w-full max-w-[120px]"
+          @click="$emit('close')"
+        >
+          <div class="pixel-panel__content p-2 text-center font-bold">닫기</div>
+        </button>
+      </div>
+    </footer>
+
+    <!-- Modal -->
     <BaseModal v-if="innerOpen" @close="closeModal">
       <component
         :is="modalView"
@@ -52,6 +87,7 @@
     </BaseModal>
   </div>
 </template>
+
 
 <script setup>
 import { ref, onMounted, shallowRef, computed } from 'vue'
@@ -188,3 +224,12 @@ const openDetail = (quizsetId) => {
 
 onMounted(getQuizSets)
 </script>
+<style scoped>
+/* no-scrollbar 유틸 */
+.no-scrollbar::-webkit-scrollbar {
+  display: none; /* Chrome/Safari/Edge */
+}
+.no-scrollbar {
+  -ms-overflow-style: none;  /* IE/old Edge */
+  scrollbar-width: none;     /* Firefox */
+}</style>

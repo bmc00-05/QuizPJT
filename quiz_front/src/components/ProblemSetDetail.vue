@@ -1,56 +1,82 @@
 <template>
-  <div class="text-black p-4">
-    <div v-if="loading">불러오는 중...</div>
+  <div class="text-black p-2">
+    <div v-if="loading" class="text-sm text-black/60">불러오는 중...</div>
     <div v-else-if="error" class="text-red-500 text-sm">{{ error }}</div>
 
     <div v-else-if="quizSet" class="space-y-4">
-      <div>
-        <div class="text-xs text-gray-500">ProblemSet #{{ quizSet.id }}</div>
-        <h2 class="text-xl font-bold">{{ quizSet.title }}</h2>
-        <p class="mt-2 text-sm text-gray-700 whitespace-pre-wrap">
+      <!-- ✅ 헤더 -->
+      <div class="flex items-start justify-between  gap-3">
+        <div class="min-w-0">
+          <div class="text-xs text-black/50">ProblemSet #{{ quizSet.id }}</div>
+          <h2 class="text-lg font-black leading-snug truncate">
+            {{ quizSet.title }}
+          </h2>
+        </div>
+
+        <button
+          v-if="canEdit"
+          class="shrink-0 mr-5 mt-3 px-2 input-panel-icon text-xs"
+          @click="emit('edit', quizSet.id)"
+        >
+          수정
+        </button>
+      </div>
+
+      <!-- ✅ 설명 -->
+      <div class="input-panel-icon p-2 pb-8">
+        <div class="text-xs  mb-1">설명</div>
+        <p class="text-sm whitespace-pre-wrap leading-relaxed text-black/80">
           {{ quizSet.description }}
         </p>
       </div>
-      <button
-        v-if="canEdit"
-        class="px-4 border rounded"
-        @click="emit('edit', quizSet.id)"
-      >
-        수정
-      </button>
-      <div class="grid grid-cols-2 gap-2 text-sm">
-        <div class="border rounded p-2">
-          <div class="text-xs text-gray-500">작성자</div>
-          <div class="font-medium">{{ quizSet.created_by_name ?? '-' }}</div>
+
+      <!-- ✅ 요약 정보 카드들 -->
+      <div class="grid grid-cols-3 gap-2">
+        <div class="input-panel-icon p-1">
+          <div class="text-[11px] text-black/50">작성자</div>
+          <div class="text-sm font-bold truncate">
+            {{ quizSet.created_by_name ?? "-" }}
+          </div>
         </div>
-<div class="border rounded p-2">
-  <div class="text-xs text-gray-500">좋아요</div>
 
-  <div class="flex items-center justify-between gap-2">
-    <div class="font-medium">{{ quizSet.like_count ?? 0 }}</div>
+        <div class="input-panel-icon p-1">
+          <div class="text-[11px] text-black/50">문제 수</div>
+          <div class="text-sm font-bold">
+            {{ quizSet.problem_count ?? 0 }}
+          </div>
+        </div>
 
-    <button
-      class="px-2 py-1 border rounded text-xs disabled:opacity-40"
-      :disabled="liking"
-      @click.stop="toggleLike"
-    >
-      {{ quizSet.is_liked ? '♥ 취소' : '♡ 좋아요' }}
-    </button>
-  </div>
-</div>
+        <div class="input-panel-icon p-1">
+          <div class="text-[11px] text-black/50">좋아요</div>
+          <div class="flex items-center justify-between gap-2">
+            <div class="text-sm font-bold">
+              {{ quizSet.like_count ?? 0 }}
+            </div>
+
+            <button
+              class="px-2 py-1 border rounded text-[11px] disabled:opacity-40"
+              :disabled="liking"
+              @click.stop="toggleLike"
+            >
+              {{ quizSet.is_liked ? "♥" : "♡" }}
+            </button>
+          </div>
+        </div>
       </div>
 
-      <!-- (선택) 미리보기 -->
-      <div class="border rounded p-3">
-        <div class="font-semibold mb-2">문제 수</div>
-        {{ quizSet.problem_count }}
-      </div>
-
-      <div class="flex gap-2">
-        <RouterLink :to="{ name: 'game', params: {'id':quizSet.id}}" class="flex-1 bg-blue-600 text-white py-2 rounded">
+      <!-- ✅ 하단 버튼바 -->
+      <div class="flex gap-2 pt-1">
+        <RouterLink
+          :to="{ name: 'game', params: { id: quizSet.id } }"
+          class="flex-1 py-2 rounded text-center font-bold bg-blue-600 text-white"
+        >
           Start
-        </RouterLink >
-        <button class="px-4 border rounded" @click="emit('close')">
+        </RouterLink>
+
+        <button
+          class="px-4 py-2 border rounded font-bold"
+          @click="emit('close')"
+        >
           닫기
         </button>
       </div>

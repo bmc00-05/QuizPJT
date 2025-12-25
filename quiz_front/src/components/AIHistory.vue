@@ -1,7 +1,7 @@
 <template>
-  <!-- ✅ 모바일 프레임 기준: 최대 너비 420px + 뷰포트 높이 제한 -->
-  <div class="w-full text-black max-w-[420px] mx-auto">
-    <!-- ✅ 헤더(고정) -->
+  <!-- ✅ 루트가 부모(모달 content 영역) 높이를 꽉 쓰도록 -->
+  <div class="w-full max-w-[420px] mx-auto text-black h-full min-h-0 flex flex-col">
+    <!-- ✅ 헤더(타이틀) 고정 -->
     <div class="flex items-center justify-between mb-2 shrink-0">
       <div class="flex items-center gap-2">
         <button
@@ -11,44 +11,37 @@
         >
           ← 목록
         </button>
+
         <h2 class="text-lg font-bold">
           {{ mode === 'list' ? 'AI 코칭 히스토리' : `코칭 #${selected?.id}` }}
         </h2>
       </div>
     </div>
 
-    <!-- ✅ 컨텐츠 래퍼: 화면 높이에 맞춰 최대 높이 제한 -->
-    <div class="rounded border bg-white/60">
-      <!-- 로딩/에러 -->
-      <div v-if="loading" class="p-3 text-sm text-black/60">불러오는 중...</div>
+    <!-- ✅ 아래 영역만 유연하게 늘어나고(=본문), 여기서만 스크롤 -->
+    <div class="input-panel-icon flex-1 min-h-0 flex flex-col">
+      <!-- 로딩/에러는 고정 -->
+      <div v-if="loading" class="p-3 text-sm text-black/60 shrink-0">
+        불러오는 중...
+      </div>
 
-      <div v-else-if="error" class="p-3 text-sm text-red-600">
+      <div v-else-if="error" class="p-3 text-sm text-red-600 shrink-0">
         {{ error }}
         <button class="ml-2 underline" @click="fetchHistory">재시도</button>
       </div>
 
-      <!-- ✅ 본문: 스크롤 영역(스크롤바 숨김) -->
-      <div
-        v-else
-        class="
-          max-h-[70vh] sm:max-h-[75vh]
-          overflow-y-auto
-          scrollbar-hide
-          p-2
-        "
-      >
+      <!-- ✅ 스크롤은 여기(본문) 딱 한 번만 -->
+      <div v-else class="flex-1 min-h-0 overflow-y-auto scrollbar-hide p-2">
         <!-- ===================== -->
         <!-- ✅ LIST MODE -->
         <!-- ===================== -->
         <div v-if="mode === 'list'">
-          <!-- 메타 -->
           <div class="text-xs text-black/50 mb-2 flex items-center gap-2 px-1">
             <span>page: {{ raw?.page ?? '-' }}</span>
             <span>/</span>
             <span>total: {{ raw?.total ?? items.length }}</span>
           </div>
 
-          <!-- 목록 -->
           <div v-if="items.length === 0" class="text-sm text-black/60 p-2">
             히스토리가 없습니다.
           </div>
@@ -79,7 +72,7 @@
         </div>
 
         <!-- ===================== -->
-        <!-- ✅ DETAIL MODE (전문) -->
+        <!-- ✅ DETAIL MODE -->
         <!-- ===================== -->
         <div v-else class="p-1">
           <div class="text-xs text-black/60 mb-2">
@@ -87,17 +80,8 @@
             wrong: {{ selected?.wrong_count }} / days: {{ selected?.days }}
           </div>
 
-          <!-- ✅ 전문은 길어질 수 있으니 여기서도 스크롤 가능하게(바 숨김) -->
-          <div
-            class="
-              rounded border bg-white/70 p-2
-              max-h-[55vh] sm:max-h-[60vh]
-              overflow-y-auto
-              scrollbar-hide
-              whitespace-pre-wrap
-              text-sm
-            "
-          >
+          <!-- ✅ 여기서 따로 max-h/스크롤 주지 말고, 위 본문 스크롤 하나로 처리 -->
+          <div class="rounded border bg-white/70 p-2 whitespace-pre-wrap text-sm">
             {{ selected?.feedback }}
           </div>
 
@@ -114,6 +98,7 @@
     </div>
   </div>
 </template>
+
 
 <script setup>
 import { ref, onMounted, computed } from "vue"

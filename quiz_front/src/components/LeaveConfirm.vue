@@ -6,15 +6,16 @@
       정말 나갈까요?
     </div>
 
-    <div class="mt-4 flex gap-2">
-      <button class="flex-1 btn px-4 py-2" @click="$emit('confirm')">
-        나가기
+    <div class="mt-4 flex gap-8">
+      <button class="red-button flex-1 btn px-4 py-2" @click="$emit('confirm')">
+      <div class="pixel-panel__content p-0">나가기</div>  
       </button>
       <button
-        class="flex-1 px-4 py-2 rounded border bg-white/70 hover:bg-white"
+        class="silver-button flex-1 px-4 py-2 rounded border bg-white/70 hover:bg-white"
         @click="$emit('cancel')"
       >
-        계속하기
+      <div class="pixel-panel__content p-0">계속하기</div>
+        
       </button>
     </div>
   </div>
