@@ -1,0 +1,15 @@
+title: QuizPJT
+description: 대전_2반/SSAFY/관통 프로젝트
+remote_theme: just-the-docs/just-the-docs
+plugins:
+- jekyll-remote-theme
+url: https://bmc00-05.github.io
+baseurl: /QuizPJT
+aux_links:
+  QuizPJT on GitHub: https://github.com/bmc00-05/QuizPJT
+color_scheme: eggit_custom
+mermaid:
+  version: 9.1.3
+permalink: pretty
+search_enabled: true
+heading_anchors: true
