@@ -53,7 +53,7 @@ else:
 
 # --------------------------------------------------------------------- AI
 # 키가 없어도 앱은 기동된다. 호출 시 데모 모드로 축소 동작한다.
-AI_BASE_URL    = env("AI_BASE_URL", default="https://api.openai.com")
+AI_BASE_URL    = env("AI_BASE_URL", default="https://api.openai.com/v1")
 AI_API_KEY     = env("AI_API_KEY", default="")
 AI_MODEL       = env("AI_MODEL", default="gpt-5-mini")
 AI_DAILY_LIMIT = env.int("AI_DAILY_LIMIT", default=100)

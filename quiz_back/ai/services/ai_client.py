@@ -21,7 +21,7 @@ def call_chat_completions(messages, model=None, timeout=30):
         "messages": messages,
     }
 
-    url = f"{settings.AI_BASE_URL}/v1/chat/completions"
+    url = f"{settings.AI_BASE_URL}/chat/completions"
 
     try:
         res = requests.post(
