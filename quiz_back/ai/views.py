@@ -269,7 +269,7 @@ def wrong_feedback(request):
         }
     ]
 
-    model_name = "gpt-5-mini"
+    model_name = settings.AI_MODEL
 
     try:
         logger = logging.getLogger(__name__)
