@@ -59,6 +59,17 @@ export default defineConfig({
         // SPA 라우팅 fallback
         navigateFallback: "/index.html",
 
+        // ⚠️ 제외 목록이 없으면 Workbox 가 '모든' 내비게이션 요청을 가로채
+        //    index.html 을 돌려준다. Django admin 처럼 서버가 렌더링하는 경로까지
+        //    Vue 앱으로 대체되어, 라우터에 없는 경로라 배경색만 남는 백지가 된다.
+        //    브라우저에서만 재현되고 curl 로는 정상이라 원인 파악이 늦어진다.
+        navigateFallbackDenylist: [
+          /^\/admin/,
+          /^\/api/,
+          /^\/static/,
+          /^\/media/,
+        ],
+
         // ✅ 정적 파일 precache
         globPatterns: ["**/*.{js,css,html,ico,png,svg,webp,woff2}"],
 
