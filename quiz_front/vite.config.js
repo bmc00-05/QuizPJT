@@ -6,8 +6,13 @@ import tailwindcss from "@tailwindcss/vite"
 import { fileURLToPath, URL } from "node:url"
 
 export default defineConfig({
-  // ✅ 서브경로/정적호스팅까지 안전(상대경로)
-  base: "./",
+  // 도메인 루트(https://catlog.bomun.dev/)에 배포하므로 절대경로를 쓴다.
+  //
+  // 상대경로("./")를 쓰면 /main/map, /main/game/:id 같은 중첩 라우트에서
+  // 에셋 경로가 /main/assets/... 로 잘못 해석된다. SPA fallback 때문에
+  // 그 요청에 index.html 이 반환되어 MIME 타입 오류로 앱이 뜨지 않는다.
+  // (내부 이동은 멀쩡하고 새로고침·직접 링크에서만 깨져 발견이 늦다)
+  base: "/",
 
   resolve: {
     alias: {
@@ -26,7 +31,7 @@ export default defineConfig({
       injectRegister: "auto",
       includeAssets: ["favicon.ico", "robots.txt", "apple-touch-icon.png"],
 
-      // ✅ base="./"일 때 절대경로(/...) 쓰면 깨질 수 있으니 상대경로 사용
+      // base="/" 에 맞춰 절대경로를 사용한다
       manifest: {
         name: "Quiz RPG",
         short_name: "QuizRPG",
@@ -35,9 +40,8 @@ export default defineConfig({
         background_color: "#0f172a",
         display: "standalone",
 
-        // ✅ 어디에 배포해도 동작
-        start_url: ".",
-        scope: ".",
+        start_url: "/",
+        scope: "/",
 
         icons: [
           { src: "pwa-192.png", sizes: "192x192", type: "image/png" },
@@ -52,8 +56,8 @@ export default defineConfig({
       },
 
       workbox: {
-        // ✅ SPA 라우팅 fallback (상대경로)
-        navigateFallback: "index.html",
+        // SPA 라우팅 fallback
+        navigateFallback: "/index.html",
 
         // ✅ 정적 파일 precache
         globPatterns: ["**/*.{js,css,html,ico,png,svg,webp,woff2}"],
