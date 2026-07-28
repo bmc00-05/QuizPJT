@@ -19,10 +19,12 @@ from django.urls import path, include
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('accounts/', include('dj_rest_auth.urls')),
-    path('accounts/signup/', include('dj_rest_auth.registration.urls')),
-    
-    # path('api/v1/accounts/', include('accounts.urls')),
+
+    # 모든 API를 /api/v1/ 아래로 통일한다.
+    # accounts 만 루트에 있어 프론트가 base URL 변수를 두 개 관리해야 했다.
+    path('api/v1/accounts/', include('dj_rest_auth.urls')),
+    path('api/v1/accounts/signup/', include('dj_rest_auth.registration.urls')),
+
     path('api/v1/questions/', include('questions.urls')),
     path('api/v1/game/', include('game.urls')), 
     path('api/v1/profile/', include('profiles.urls')), 

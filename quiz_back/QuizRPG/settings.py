@@ -51,6 +51,15 @@ else:
             f"DEBUG=False 에서는 다음 환경변수가 반드시 설정되어야 합니다: {', '.join(missing)}"
         )
 
+# 프록시(Cloudflare Tunnel → Nginx) 뒤에서 원래 요청 스킴을 인식한다.
+# Cloudflare 가 HTTPS 를 종료하고 Nginx 에는 HTTP 로 들어오므로,
+# 이 설정이 없으면 Django 가 요청을 HTTP 로 판단해 admin 로그인이 CSRF 오류로 실패한다.
+# Nginx 가 X-Forwarded-Proto 를 전달해야 짝이 맞는다.
+SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+
+# API 는 TokenAuthentication 이라 CSRF 영향이 없으나, Django admin 은 세션 기반이다.
+CSRF_TRUSTED_ORIGINS = env.list("CSRF_TRUSTED_ORIGINS", default=[])
+
 # --------------------------------------------------------------------- AI
 # 키가 없어도 앱은 기동된다. 호출 시 데모 모드로 축소 동작한다.
 AI_BASE_URL    = env("AI_BASE_URL", default="https://api.openai.com/v1")
@@ -174,6 +183,9 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
 STATIC_URL = 'static/'
+
+# collectstatic 수집 대상 경로. Nginx 가 이 디렉터리를 /static/ 으로 서빙한다.
+STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
