@@ -17,6 +17,7 @@ from game.models import SessionLog
 from ai.services.ai_client import call_chat_completions, UpstreamAIError, AIUnavailable
 from ai.services.demo import DEMO_ECHO, DEMO_FEEDBACK
 from ai.services.limits import check_and_increment
+from ai.services.quota import get_quota
 from ai.throttles import AIRateThrottle
 
 def extract_chat_text(data: dict) -> str:
@@ -48,6 +49,18 @@ def upstream_error_response(e: UpstreamAIError, demo_factory):
             status=502,
         )
     return demo_factory()
+
+@api_view(["GET"])
+@permission_classes([IsAuthenticated])
+def ai_quota(request):
+    """
+    남은 AI 호출 횟수 조회.
+
+    ⚠️ 이 엔드포인트에는 throttle_classes 를 붙이지 않는다.
+       잔여량을 확인하는 행위가 잔여량을 소모하면 안 된다.
+    """
+    return Response(get_quota(request), status=200)
+
 
 @api_view(["POST"])
 @permission_classes([IsAuthenticated])
