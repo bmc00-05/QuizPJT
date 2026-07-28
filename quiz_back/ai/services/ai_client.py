@@ -1,7 +1,6 @@
 import requests
 from django.conf import settings
 
-OPENAI_BASE_URL = "https://gms.ssafy.io/gmsapi/api.openai.com"
 
 class UpstreamAIError(Exception):
     def __init__(self, status_code: int, detail: str):
@@ -9,20 +8,20 @@ class UpstreamAIError(Exception):
         self.detail = detail
         super().__init__(detail)
 
-def call_chat_completions(messages, model=None, timeout=30):
-    api_key = getattr(settings, "GMS_KEY", "")
-    if not api_key:
-        raise RuntimeError("GMS_KEY is not configured")
 
-    # 기본 모델: settings.OPENAI_MODEL 있으면 그걸 쓰고, 없으면 gpt-5-mini
-    model_name = model or getattr(settings, "gpt-5-mini", "OPENAI_MODEL" )
+def call_chat_completions(messages, model=None, timeout=30):
+    api_key = settings.AI_API_KEY
+    if not api_key:
+        raise RuntimeError("AI_API_KEY is not configured")
+
+    model_name = model or settings.AI_MODEL
 
     payload = {
         "model": model_name,
         "messages": messages,
     }
 
-    url = f"{OPENAI_BASE_URL}/v1/chat/completions"
+    url = f"{settings.AI_BASE_URL}/v1/chat/completions"
 
     try:
         res = requests.post(

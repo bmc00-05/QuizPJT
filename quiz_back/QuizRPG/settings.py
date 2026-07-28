@@ -12,24 +12,51 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 import environ
 from pathlib import Path
 
+from django.core.exceptions import ImproperlyConfigured
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 env = environ.Env()
-environ.Env.read_env(BASE_DIR / ".env")  # ✅ 루트 .env 읽기
+environ.Env.read_env(BASE_DIR / ".env")  # quiz_back/.env
 
-OPENAI_API_KEY = env("OPENAI_API_KEY", default="")
-OPENAI_MODEL = env("OPENAI_MODEL", default="gpt-5-mini")
-GMS_KEY = env("GMS_KEY", default="")
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-r3)1p=g3r@!8sq^4p#37+*5^b1(0kpf)2nn2a4iy00+ux_%18x'
+# ------------------------------------------------------------- Django core
+# DEBUG를 가장 먼저 읽는다. 아래 설정들의 엄격도가 여기에 따라 갈린다.
+DEBUG = env.bool("DJANGO_DEBUG", default=False)
 
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+if DEBUG:
+    SECRET_KEY = env("DJANGO_SECRET_KEY", default="dev-only-insecure-key")
+    ALLOWED_HOSTS = env.list("DJANGO_ALLOWED_HOSTS", default=["localhost", "127.0.0.1"])
+    CORS_ALLOWED_ORIGINS = env.list("CORS_ALLOWED_ORIGINS", default=[
+        "http://localhost:5173", "http://127.0.0.1:5173",
+        "http://localhost:4173", "http://127.0.0.1:4173",
+    ])
+else:
+    # default 생략 → 키 자체가 없으면 ImproperlyConfigured로 기동 실패
+    SECRET_KEY = env("DJANGO_SECRET_KEY")
+    ALLOWED_HOSTS = env.list("DJANGO_ALLOWED_HOSTS")
+    CORS_ALLOWED_ORIGINS = env.list("CORS_ALLOWED_ORIGINS", default=[])
 
-ALLOWED_HOSTS = ["*"]
+    # 키는 있는데 값이 비어 있는 경우까지 차단한다.
+    # .env.example을 그대로 복사해 배포하는 실수가 실제 사고 유형이다.
+    missing = [
+        name for name, value in (
+            ("DJANGO_SECRET_KEY", SECRET_KEY),
+            ("DJANGO_ALLOWED_HOSTS", ALLOWED_HOSTS),
+        )
+        if not value
+    ]
+    if missing:
+        raise ImproperlyConfigured(
+            f"DEBUG=False 에서는 다음 환경변수가 반드시 설정되어야 합니다: {', '.join(missing)}"
+        )
+
+# --------------------------------------------------------------------- AI
+# 키가 없어도 앱은 기동된다. 호출 시 데모 모드로 축소 동작한다.
+AI_BASE_URL    = env("AI_BASE_URL", default="https://api.openai.com")
+AI_API_KEY     = env("AI_API_KEY", default="")
+AI_MODEL       = env("AI_MODEL", default="gpt-5-mini")
+AI_DAILY_LIMIT = env.int("AI_DAILY_LIMIT", default=100)
 
 
 # Application definition
@@ -70,14 +97,6 @@ MIDDLEWARE = [
     'allauth.account.middleware.AccountMiddleware',
 ]
 
-CORS_ALLOWED_ORIGINS = [
-    'http://127.0.0.1:5173',
-    'http://localhost:5173',
-    "http://localhost:4173",
-    "http://127.0.0.1:4173",
-    'http://3.35.2.114:5173',
-]
-
 ROOT_URLCONF = 'QuizRPG.urls'
 
 TEMPLATES = [
@@ -102,11 +121,22 @@ WSGI_APPLICATION = 'QuizRPG.wsgi.application'
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
+    "default": env.db("DATABASE_URL", default=f"sqlite:///{BASE_DIR / 'db.sqlite3'}")
 }
+
+if DATABASES["default"]["ENGINE"].endswith("sqlite3"):
+    # DATABASE_URL의 상대경로는 실행 디렉터리 기준으로 해석된다.
+    # gunicorn 등 작업 디렉터리가 다른 환경에서 엉뚱한 파일을 보지 않도록 BASE_DIR 기준으로 고정한다.
+    db_name = DATABASES["default"]["NAME"]
+    if db_name and not Path(db_name).is_absolute():
+        DATABASES["default"]["NAME"] = str(BASE_DIR / db_name)
+
+    # 동시성 옵션 — gunicorn 멀티 워커 환경에서 쓰기 락 경합 완화 (DR-1)
+    DATABASES["default"]["OPTIONS"] = {
+        "init_command": "PRAGMA journal_mode=WAL; PRAGMA synchronous=NORMAL;",
+        "transaction_mode": "IMMEDIATE",
+        "timeout": 20,
+    }
 
 
 # Password validation
