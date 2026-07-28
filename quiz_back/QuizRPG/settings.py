@@ -190,6 +190,22 @@ REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.IsAuthenticated',
     ],
+    # ai.throttles.AIRateThrottle 이 이 요율을 읽는다.
+    # 전역 스로틀은 두지 않는다 — AI 엔드포인트에만 명시적으로 적용한다.
+    'DEFAULT_THROTTLE_RATES': {
+        'ai': '10/day',
+    },
+}
+
+# 캐시 — 스로틀 카운터와 AI 전역 상한이 공유한다.
+# 기본값인 locmem 은 프로세스마다 별도로 존재해 gunicorn 멀티 워커에서
+# 상한이 워커 수만큼 늘어난다. DB 캐시는 워커 간에 공유된다.
+#   테이블 생성: python manage.py createcachetable
+CACHES = {
+    "default": {
+        "BACKEND": "django.core.cache.backends.db.DatabaseCache",
+        "LOCATION": "django_cache",
+    }
 }
 
 ACCOUNT_EMAIL_VERIFICATION = 'none'

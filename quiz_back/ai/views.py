@@ -1,4 +1,4 @@
-from rest_framework.decorators import api_view, permission_classes
+from rest_framework.decorators import api_view, permission_classes, throttle_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from django.conf import settings
@@ -16,6 +16,8 @@ import logging
 from game.models import SessionLog
 from ai.services.ai_client import call_chat_completions, UpstreamAIError, AIUnavailable
 from ai.services.demo import DEMO_ECHO, DEMO_FEEDBACK
+from ai.services.limits import check_and_increment
+from ai.throttles import AIRateThrottle
 
 def extract_chat_text(data: dict) -> str:
     try:
@@ -23,8 +25,33 @@ def extract_chat_text(data: dict) -> str:
     except Exception:
         return ""
 
+
+def demo_echo_response():
+    return Response({"output": DEMO_ECHO, "demo": True}, status=200)
+
+
+def upstream_error_response(e: UpstreamAIError, demo_factory):
+    """
+    업스트림 오류 처리.
+
+    로컬(DEBUG)에서는 원인을 그대로 노출해야 모델명 오타 같은 실수를 잡을 수 있다.
+    배포에서는 사용자 잘못이 아니므로 데모 응답으로 축소한다.
+    무료 티어의 호출량 초과(429)도 이 경로로 들어온다.
+    """
+    if settings.DEBUG:
+        return Response(
+            {
+                "detail": "AI upstream error",
+                "upstream_status": e.status_code,
+                "upstream_body": e.detail,
+            },
+            status=502,
+        )
+    return demo_factory()
+
 @api_view(["POST"])
 @permission_classes([IsAuthenticated])
+@throttle_classes([AIRateThrottle])
 def ai_echo(request):
     user_input = request.data.get("input", "")
     if not user_input:
@@ -36,21 +63,19 @@ def ai_echo(request):
     ]
 
     try:
+        # 전역 일일 상한. 초과 시 데모로 축소 동작한다.
+        if not check_and_increment():
+            raise AIUnavailable("daily limit exceeded")
+
         raw = call_chat_completions(messages=messages)
         return Response({"output": extract_chat_text(raw)}, status=200)
 
     # ⚠️ except Exception 보다 위에 있어야 한다 (아래에 두면 도달하지 않음)
     except AIUnavailable:
-        return Response({"output": DEMO_ECHO, "demo": True}, status=200)
+        return demo_echo_response()
 
     except UpstreamAIError as e:
-        # 개발 중엔 원인 노출, 배포 시엔 숨김
-        if settings.DEBUG:
-            return Response(
-                {"detail": "AI upstream error", "upstream_status": e.status_code, "upstream_body": e.detail},
-                status=502,
-            )
-        return Response({"detail": "AI service unavailable"}, status=502)
+        return upstream_error_response(e, demo_echo_response)
 
     except Exception as e:
         # 진짜 서버 코드 버그
@@ -193,6 +218,7 @@ MAX_EXTRA_LEN = 500
 
 @api_view(["POST"])
 @permission_classes([IsAuthenticated])
+@throttle_classes([AIRateThrottle])
 def wrong_feedback(request):
     """
     최근 N일 오답을 AI에 보내 피드백 받기
@@ -276,8 +302,30 @@ def wrong_feedback(request):
 
     model_name = settings.AI_MODEL
 
+    # 데모 응답 생성기 — AIUnavailable / UpstreamAIError 양쪽에서 같은 본문을 쓴다.
+    # 카테고리 트렌드는 DB만으로 계산되므로 데모 모드에서도 실제 값을 그대로 내려준다.
+    # AI가 작성한 텍스트만 예시로 대체된다.
+    # 데모 응답은 AIFeedbackRecord 에 저장하지 않는다 — 코칭 히스토리 오염 방지.
+    def demo_response():
+        return Response(
+            {
+                "count": len(logs),
+                "from_days": days,
+                "model": "demo",
+                "category_trend": cat_trend,
+                "extra_input": extra_input,
+                "feedback": DEMO_FEEDBACK,
+                "demo": True,
+            },
+            status=200
+        )
+
     try:
         logger = logging.getLogger(__name__)
+
+        # 전역 일일 상한. 초과 시 데모로 축소 동작한다.
+        if not check_and_increment():
+            raise AIUnavailable("daily limit exceeded")
 
         payload = {
             "model": model_name,
@@ -319,33 +367,10 @@ def wrong_feedback(request):
 
     # ⚠️ except Exception 보다 위에 있어야 한다 (아래에 두면 도달하지 않음)
     except AIUnavailable:
-        # 카테고리 트렌드는 DB만으로 계산되므로 데모 모드에서도 실제 값을 그대로 내려준다.
-        # AI가 작성한 텍스트만 예시로 대체된다.
-        # 데모 응답은 AIFeedbackRecord 에 저장하지 않는다 — 코칭 히스토리 오염 방지.
-        return Response(
-            {
-                "count": len(logs),
-                "from_days": days,
-                "model": "demo",
-                "category_trend": cat_trend,
-                "extra_input": extra_input,
-                "feedback": DEMO_FEEDBACK,
-                "demo": True,
-            },
-            status=200
-        )
+        return demo_response()
 
     except UpstreamAIError as e:
-        if settings.DEBUG:
-            return Response(
-                {
-                    "detail": "AI upstream error",
-                    "upstream_status": e.status_code,
-                    "upstream_body": e.detail
-                },
-                status=502
-            )
-        return Response({"detail": "AI service unavailable"}, status=502)
+        return upstream_error_response(e, demo_response)
 
     except Exception as e:
         if settings.DEBUG:
