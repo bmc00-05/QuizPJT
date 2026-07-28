@@ -14,7 +14,8 @@ import json
 import logging
 
 from game.models import SessionLog
-from ai.services.ai_client import call_chat_completions, UpstreamAIError
+from ai.services.ai_client import call_chat_completions, UpstreamAIError, AIUnavailable
+from ai.services.demo import DEMO_ECHO, DEMO_FEEDBACK
 
 def extract_chat_text(data: dict) -> str:
     try:
@@ -37,6 +38,10 @@ def ai_echo(request):
     try:
         raw = call_chat_completions(messages=messages)
         return Response({"output": extract_chat_text(raw)}, status=200)
+
+    # ⚠️ except Exception 보다 위에 있어야 한다 (아래에 두면 도달하지 않음)
+    except AIUnavailable:
+        return Response({"output": DEMO_ECHO, "demo": True}, status=200)
 
     except UpstreamAIError as e:
         # 개발 중엔 원인 노출, 배포 시엔 숨김
@@ -308,6 +313,24 @@ def wrong_feedback(request):
                 "category_trend": cat_trend,     # 프론트 그래프용
                 "extra_input": extra_input,      # 프론트 디버그/표시용(원하면 제거)
                 "feedback": feedback_text,
+            },
+            status=200
+        )
+
+    # ⚠️ except Exception 보다 위에 있어야 한다 (아래에 두면 도달하지 않음)
+    except AIUnavailable:
+        # 카테고리 트렌드는 DB만으로 계산되므로 데모 모드에서도 실제 값을 그대로 내려준다.
+        # AI가 작성한 텍스트만 예시로 대체된다.
+        # 데모 응답은 AIFeedbackRecord 에 저장하지 않는다 — 코칭 히스토리 오염 방지.
+        return Response(
+            {
+                "count": len(logs),
+                "from_days": days,
+                "model": "demo",
+                "category_trend": cat_trend,
+                "extra_input": extra_input,
+                "feedback": DEMO_FEEDBACK,
+                "demo": True,
             },
             status=200
         )
