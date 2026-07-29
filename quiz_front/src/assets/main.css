@@ -136,8 +136,20 @@
     image-rendering: pixelated;
   }
 
-  .input-panel-icon:hover {
-    border-image-source: url("./ui/input_panel_hover.png");
+  /*
+    .input-panel-icon 은 버튼·입력창뿐 아니라 장식용 액자(div, p)에도 쓰인다.
+    클래스에만 :hover 를 걸면 클릭할 수 없는 패널까지 이미지가 바뀐다.
+    실제로 상호작용하는 요소로 한정한다.
+  */
+  @media (hover: hover) {
+    button.input-panel-icon:not(:disabled):hover,
+    a.input-panel-icon:hover,
+    input.input-panel-icon:not(:disabled):hover,
+    select.input-panel-icon:not(:disabled):hover,
+    textarea.input-panel-icon:not(:disabled):hover,
+    [role="button"].input-panel-icon:hover {
+      border-image-source: url("./ui/input_panel_hover.png");
+    }
   }
 
   .input-panel-content {
@@ -155,7 +167,7 @@
   .button-panel {
     border: 8px solid transparent;
     border-image-source: url("./ui/button_retro.png");
-    border-image-slice: 12 fill;
+    border-image-slice: 14 fill;
     border-image-width: 18px;
     border-image-repeat: repeat;
     image-rendering: pixelated;
@@ -171,7 +183,7 @@
   .button-panel_click {
     border: 8px solid transparent;
     border-image-source: url("./ui/button_retro_click.png");
-    border-image-slice: 12 fill;
+    border-image-slice: 14 fill;
     border-image-width: 18px;
     border-image-repeat: repeat;
     image-rendering: pixelated;
