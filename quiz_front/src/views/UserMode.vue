@@ -112,7 +112,7 @@
 import { ref, onMounted, shallowRef, computed } from "vue"
 import { useAccountStore } from "@/stores/accounts"
 import { useModalStore } from "@/stores/modal"
-import axios from "axios"
+import { fetchUserProblemSets } from "@/api/game"
 import BaseModal from "@/components/common/BaseModal.vue"
 import ProblemSetForm from "@/components/ProblemSetForm.vue"
 import ProblemSetCreate from "@/components/ProblemSetCreate.vue"
@@ -120,7 +120,6 @@ import QuizCreate from "@/components/QuizCreate.vue"
 import ProblemSetDetail from "@/components/ProblemSetDetail.vue"
 import QuizDetail from "@/components/QuizDetail.vue"
 
-const API_URL = import.meta.env.VITE_REST_API_URL
 const modal = useModalStore()
 const accountStore = useAccountStore()
 
@@ -143,9 +142,7 @@ const getProblemSets = async () => {
   loading.value = true
   try {
     // ✅ 서버가 sort를 처리 안할 수 있으니 일단 원본만 받아옴
-    const res = await axios.get(`${API_URL}/game/users/problemsets/`, {
-      headers: { Authorization: `Token ${accountStore.token}` },
-    })
+    const res = await fetchUserProblemSets()
     quizsets.value = Array.isArray(res.data) ? res.data : []
     page.value = 1
   } catch (err) {

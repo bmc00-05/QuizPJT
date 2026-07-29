@@ -28,7 +28,7 @@
 <script setup>
 import { ref, watch } from 'vue'
 import { useAccountStore } from '@/stores/accounts'
-import axios from 'axios'
+import { fetchProblems } from "@/api/questions"
 
 const props = defineProps({
   quizSetId: { type: [Number, String], required: true },
@@ -36,7 +36,6 @@ const props = defineProps({
 
 const emit = defineEmits(['select'])
 
-const API_URL = import.meta.env.VITE_REST_API_URL
 const accountStore = useAccountStore()
 
 const quizzes = ref([])
@@ -49,10 +48,7 @@ const getQuiz = async () => {
   error.value = ''
 
   try {
-    const res = await axios.get(
-      `${API_URL}/questions/problemsets/${props.quizSetId}/problems/`,
-      { headers: { Authorization: `Token ${accountStore.token}` } }
-    )
+    const res = await fetchProblems(props.quizSetId)
     quizzes.value = res.data
   } catch (err) {
     console.error(err)

@@ -86,10 +86,10 @@
 
 <script setup>
 import { ref, computed, watch } from 'vue'
-import axios from 'axios'
+import { fetchProblemSet } from "@/api/questions"
+import { toggleProblemSetLike } from "@/api/game"
 import { useAccountStore } from '@/stores/accounts'
 
-const API_URL = import.meta.env.VITE_REST_API_URL
 const accountStore = useAccountStore()
 
 const props = defineProps({
@@ -109,15 +109,8 @@ const fetchDetail = async () => {
 
 
   try {
-    const res = await axios.get(`${API_URL}/questions/problemsets/${props.quizsetid}/`, {
-      headers: { Authorization: `Token ${accountStore.token}` },
-    })
+    const res = await fetchProblemSet(props.quizsetid)
     quizSet.value = res.data
-
-    // ✅ 미리보기(선택): 문제 목록 API가 있으면 3개만 가져오기
-    // 백엔드가 지원한다면:
-    // const p = await axios.get(`${API_URL}/questions/problemsets/${props.quizsetid}/problems/`, ...)
-    // preview.value = p.data.slice(0, 3)
   } catch (err) {
     console.error(err)
     error.value = '문제집 정보를 불러오지 못했습니다.'
@@ -144,11 +137,7 @@ const toggleLike = async () => {
   if (!quizSet.value || liking.value) return
   liking.value = true
   try {
-    const res = await axios.post(
-      `${API_URL}/game/problemsets/${quizSet.value.id}/like/`,
-      {},
-      { headers: { Authorization: `Token ${accountStore.token}` } }
-    )
+    const res = await toggleProblemSetLike(quizSet.value.id)
 
     // 응답: { liked, like_count, problemset_id }
     quizSet.value.is_liked = res.data.liked

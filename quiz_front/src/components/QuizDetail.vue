@@ -87,7 +87,7 @@
 
 <script setup>
 import { ref, watch } from 'vue'
-import axios from 'axios'
+import { fetchProblem, updateProblem, deleteProblem } from "@/api/questions"
 import { useAccountStore } from '@/stores/accounts'
 
 const props = defineProps({
@@ -98,7 +98,6 @@ const props = defineProps({
 
 const emit = defineEmits(['back', 'close', 'saved', 'deleted'])
 
-const API_URL = import.meta.env.VITE_REST_API_URL
 const accountStore = useAccountStore()
 
 const loading = ref(false)
@@ -108,7 +107,6 @@ const error = ref('')
 const validationError = ref('')
 
 // ✅ 단건 API (네 백엔드에 맞게 여기만 조정하면 됨)
-const QUIZ_DETAIL_URL = (id) => `${API_URL}/questions/problem/${id}/`
 
 const form = ref(null)
 
@@ -120,9 +118,7 @@ const fetchQuiz = async () => {
   form.value = null
 
   try {
-    const res = await axios.get(QUIZ_DETAIL_URL(props.quizid), {
-      headers: { Authorization: `Token ${accountStore.token}` },
-    })
+    const res = await fetchProblem(props.quizid)
 
     // 서버 응답 → 수정용 form 구성
     const d = res.data
@@ -168,11 +164,7 @@ const save = async () => {
 
   saving.value = true
   try {
-    await axios.patch(
-      QUIZ_DETAIL_URL(props.quizid),
-      { ...form.value },
-      { headers: { Authorization: `Token ${accountStore.token}` } }
-    )
+    await updateProblem(props.quizid, { ...form.value })
     emit('saved')
   } catch (err) {
     console.error(err)
@@ -187,9 +179,7 @@ const remove = async () => {
 
   deleting.value = true
   try {
-    await axios.delete(QUIZ_DETAIL_URL(props.quizid), {
-      headers: { Authorization: `Token ${accountStore.token}` },
-    })
+    await deleteProblem(props.quizid)
     emit('deleted')
   } catch (err) {
     console.error(err)

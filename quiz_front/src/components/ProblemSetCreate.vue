@@ -69,10 +69,9 @@
 import { ref, computed, watch } from 'vue'
 import { useAccountStore } from '@/stores/accounts'
 import { useRoute } from 'vue-router'
-import axios from 'axios'
+import { fetchProblemSet, updateProblemSet, deleteProblemSet } from "@/api/questions"
 import QuizList from '@/components/QuizList.vue'
 
-const API_URL = import.meta.env.VITE_REST_API_URL
 const accountStore = useAccountStore()
 const route = useRoute()
 
@@ -89,9 +88,7 @@ const quizSet = ref(null)
 const getQuizSet = async (id) => {
   if (!id) return
   try {
-    const res = await axios.get(`${API_URL}/questions/problemsets/${id}/`, {
-      headers: { Authorization: `Token ${accountStore.token}` },
-    })
+    const res = await fetchProblemSet(id)
     quizSet.value = res.data
   } catch (err) {
     console.error('문제집 조회 실패:', err)
@@ -103,11 +100,10 @@ const updateQuizSet = async () => {
   if (!quizSet.value || !quizSetId.value) return
 
   try {
-    const res = await axios.patch(
-      `${API_URL}/questions/problemsets/${quizSetId.value}/`,
-      { title: quizSet.value.title, description: quizSet.value.description },
-      { headers: { Authorization: `Token ${accountStore.token}` } }
-    )
+    const res = await updateProblemSet(quizSetId.value, {
+      title: quizSet.value.title,
+      description: quizSet.value.description,
+    })
 
     quizSet.value = res.data
     emit('updated')
@@ -125,9 +121,7 @@ const deleteQuizSet = async () => {
   if (!ok) return
 
   try {
-    await axios.delete(`${API_URL}/questions/problemsets/${quizSetId.value}/`, {
-      headers: { Authorization: `Token ${accountStore.token}` },
-    })
+    await deleteProblemSet(quizSetId.value)
 
     alert("문제집 삭제 완료")
 

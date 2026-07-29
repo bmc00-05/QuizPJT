@@ -92,7 +92,7 @@
 <script setup>
 import { ref, onMounted, shallowRef, computed } from 'vue'
 import { useAccountStore } from '@/stores/accounts'
-import axios from 'axios'
+import { fetchMyProblemSets } from "@/api/questions"
 
 import BaseModal from '@/components/common/BaseModal.vue'
 import ProblemSetForm from '@/components/ProblemSetForm.vue'
@@ -108,7 +108,6 @@ const props = defineProps({
   showClose: { type: Boolean, default: false },
 })
 
-const API_URL = import.meta.env.VITE_REST_API_URL
 const accountStore = useAccountStore()
 
 const quizSets = ref([])
@@ -155,9 +154,7 @@ const extraListeners = computed(() => {
 // ✅ 목록 조회
 const getQuizSets = async () => {
   try {
-    const res = await axios.get(`${API_URL}/questions/problemsets/`, {
-      headers: { Authorization: `Token ${accountStore.token}` },
-    })
+    const res = await fetchMyProblemSets()
     quizSets.value = res.data
   } catch (err) {
     console.error(err)

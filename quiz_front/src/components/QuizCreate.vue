@@ -93,10 +93,9 @@
 
 <script setup>
 import { reactive, ref, vModelText } from 'vue'
-import axios from 'axios'
+import { createProblem } from "@/api/questions"
 import { useAccountStore } from '@/stores/accounts'
 
-const API_URL = import.meta.env.VITE_REST_API_URL
 const accountStore = useAccountStore()
 
 // ✅ 모달에서 주입 받는 문제집 id
@@ -149,22 +148,16 @@ const createQuiz = async () => {
   }
 
   try {
-    await axios.post(
-      `${API_URL}/questions/problemsets/${props.quizsetid}/problems/`,
-      {
-        question: form.question,
-        choice1: form.choice1,
-        choice2: form.choice2,
-        choice3: form.choice3,
-        choice4: form.choice4,
-        answer: form.answer,
-        difficulty: form.difficulty,
-        explanation: form.explanation,
-      },
-      {
-        headers: { Authorization: `Token ${accountStore.token}` },
-      }
-    )
+    await createProblem(props.quizsetid, {
+      question: form.question,
+      choice1: form.choice1,
+      choice2: form.choice2,
+      choice3: form.choice3,
+      choice4: form.choice4,
+      answer: form.answer,
+      difficulty: form.difficulty,
+      explanation: form.explanation,
+    })
 
     resetForm()
     alert('퀴즈 생성 완료')

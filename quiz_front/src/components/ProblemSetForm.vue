@@ -52,10 +52,9 @@
   import { ref } from 'vue'
   import { useAccountStore } from '@/stores/accounts'
   import { useRouter } from 'vue-router'
-  import axios from 'axios'
+  import { createProblemSet } from "@/api/questions"
 
   // API
-  const API_URL = import.meta.env.VITE_REST_API_URL
 
   const emit = defineEmits(['close', 'created'])
 
@@ -68,18 +67,10 @@
   const createProblemSets = async () => {
     try {
       
-      const res = await axios.post(
-        `${API_URL}/questions/problemsets/`,
-        {
-          title: title.value,
-          description: description.value
-        },
-        {
-          headers: {
-            Authorization: `Token ${accountStore.token}`
-          }
-        }
-      )
+      const res = await createProblemSet({
+        title: title.value,
+        description: description.value,
+      })
 
       problemSet.value = res.data
       emit('created', res.data.id)
