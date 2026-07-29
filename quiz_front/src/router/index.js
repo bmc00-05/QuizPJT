@@ -3,8 +3,8 @@ import { useAccountStore } from '@/stores/accounts'
 import { useUserStore } from '@/stores/user'
 
 import StartPage from '@/views/StartPage.vue'
-import LoginPage from '@/components/LoginPage.vue'
-import SignUpPage from '@/components/SignUpPage.vue'
+import LoginPage from '@/views/LoginPage.vue'
+import SignUpPage from '@/views/SignUpPage.vue'
 import MainPage from '@/views/MainPage.vue'
 
 import Map from '@/views/Map.vue'
