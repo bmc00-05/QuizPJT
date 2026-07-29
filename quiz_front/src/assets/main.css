@@ -136,6 +136,13 @@
     image-rendering: pixelated;
   }
 
+  /* 터치 기기에서는 탭 후 hover 가 남아 눌린 상태로 보일 수 있어 감싼다 */
+  @media (hover: hover) {
+    .button-panel:hover {
+      border-image-source: url("./ui/button_retro_hover.png");
+    }
+  }
+
   .button-panel_click {
     border: 8px solid transparent;
     border-image-source: url("./ui/button_retro_click.png");

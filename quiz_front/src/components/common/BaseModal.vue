@@ -14,14 +14,20 @@
     >
       <!-- ✅ 닫기 버튼: 공중에 떠있는 absolute (공간 차지 0) -->
       <button
-        class="absolute top-3 right-3 z-30 w-8 h-8 flex items-center justify-center"
+        class="close-btn absolute top-3 right-3 z-30"
         @click="emitClose"
         aria-label="닫기"
       >
+        <!--
+          두 이미지를 겹쳐 두고 opacity 로 전환한다.
+          :src 를 바꾸면 첫 호버 시점에 이미지를 처음 내려받아 깜빡인다.
+        -->
+        <img :src="quitIcon" alt="닫기" class="icon-img icon-base" draggable="false" />
         <img
-          :src="quitIcon"
-          alt="닫기"
-          class="w-full h-full [image-rendering:pixelated] select-none pointer-events-none"
+          :src="quitIconHover"
+          alt=""
+          aria-hidden="true"
+          class="icon-img icon-hover"
           draggable="false"
         />
       </button>
@@ -36,7 +42,46 @@
 
 <script setup>
 import quitIcon from "@/assets/icons/quit_icon.png"
+import quitIconHover from "@/assets/icons/quit_icon_hover.png"
 
 const emit = defineEmits(["close"])
 const emitClose = () => emit("close")
 </script>
+
+<style scoped>
+/*
+  button 은 inline-block 이라 width/height 는 적용되지만,
+  자식 이미지를 absolute 로 깔려면 position 기준이 필요하다.
+*/
+.close-btn {
+  display: block;
+  position: absolute;
+  width: 26px;
+  height: 26px;
+}
+
+.icon-img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  image-rendering: pixelated;
+  user-select: none;
+  pointer-events: none;
+}
+
+.icon-hover {
+  opacity: 0;
+}
+
+/* 터치 기기에서는 탭 후 hover 가 남아 아이콘이 바뀐 채 고정될 수 있다 */
+@media (hover: hover) {
+  .close-btn:hover .icon-base {
+    opacity: 0;
+  }
+  .close-btn:hover .icon-hover {
+    opacity: 1;
+  }
+}
+</style>

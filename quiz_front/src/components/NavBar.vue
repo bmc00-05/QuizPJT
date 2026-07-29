@@ -22,7 +22,18 @@
 
         <span class="content">
           <span class="icon-box">
-            <img :src="item.icon" class="icon-img" :alt="item.label" />
+            <!--
+              두 이미지를 겹쳐 두고 CSS 로 전환한다.
+              :src 를 바꾸는 방식은 첫 호버 시점에 이미지를 처음 내려받아 깜빡인다.
+            -->
+            <img :src="item.icon" class="icon-img icon-base" :alt="item.label" />
+            <img
+              :src="item.iconHover"
+              class="icon-img icon-hover"
+              alt=""
+              aria-hidden="true"
+              draggable="false"
+            />
           </span>
         </span>
       </RouterLink>
@@ -42,6 +53,12 @@ import homeIcon from "@/assets/icons/home_icon.png"
 import aiIcon from "@/assets/icons/ai_icon.png"
 import rankIcon from "@/assets/icons/rank_icon.png"
 
+import mapIconHover from "@/assets/icons/map_icon_hover.png"
+import userIconHover from "@/assets/icons/user_icon_hover.png"
+import homeIconHover from "@/assets/icons/home_icon_hover.png"
+import aiIconHover from "@/assets/icons/ai_icon_hover.png"
+import rankIconHover from "@/assets/icons/rank_icon_hover.png"
+
 const route = useRoute()
 const accountStore = useAccountStore()
 
@@ -49,21 +66,50 @@ const accountStore = useAccountStore()
 const myId = computed(() => accountStore.user?.id ?? accountStore.userId ?? null)
 
 const items = computed(() => [
-  { name: "map", label: "맵", icon: mapIcon, activeBg: bg, to: { name: "map" } },
-  { name: "usermode", label: "유저", icon: userIcon, activeBg: bg, to: { name: "usermode" } },
+  {
+    name: "map",
+    label: "맵",
+    icon: mapIcon,
+    iconHover: mapIconHover,
+    activeBg: bg,
+    to: { name: "map" },
+  },
+  {
+    name: "usermode",
+    label: "유저",
+    icon: userIcon,
+    iconHover: userIconHover,
+    activeBg: bg,
+    to: { name: "usermode" },
+  },
 
   // ✅ profile은 id 필요!
   {
     name: "profile",
     label: "홈",
     icon: homeIcon,
+    iconHover: homeIconHover,
     activeBg: bg,
     to: myId.value ? { name: "profile" } : { name: "map" },
     disabled: !myId.value,
   },
 
-  { name: "aimode", label: "AI", icon: aiIcon, activeBg: bg, to: { name: "aimode" } },
-  { name: "ranking", label: "랭킹", icon: rankIcon, activeBg: bg, to: { name: "ranking" } },
+  {
+    name: "aimode",
+    label: "AI",
+    icon: aiIcon,
+    iconHover: aiIconHover,
+    activeBg: bg,
+    to: { name: "aimode" },
+  },
+  {
+    name: "ranking",
+    label: "랭킹",
+    icon: rankIcon,
+    iconHover: rankIconHover,
+    activeBg: bg,
+    to: { name: "ranking" },
+  },
 ])
 
 const isActive = (item) => route.name === item.name
@@ -89,7 +135,7 @@ const isActive = (item) => route.name === item.name
 /* ✅ 위아래 1px 더 키우기 */
 .active-bg {
   position: absolute;
-  inset: -1px 0;          /* top/bottom -1px, left/right 0 */
+  inset: 1px 0;          /* top/bottom -1px, left/right 0 */
   object-fit: cover;
   image-rendering: pixelated;
   z-index: 0;
@@ -103,17 +149,46 @@ const isActive = (item) => route.name === item.name
 }
 
 .icon-box {
+  /* span 은 기본이 inline 이라 width/height 가 적용되지 않는다.
+     자식 이미지를 absolute 로 깔기 위한 기준 박스이므로 block 이어야 한다. */
+  display: block;
+  position: relative;
   width: 40px;
   height: 40px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
 }
+
 .icon-img {
+  position: absolute;
+  inset: 0;
   width: 100%;
   height: 100%;
   object-fit: contain;
   image-rendering: pixelated;
   display: block;
+}
+
+.icon-hover {
+  opacity: 0;
+}
+
+/*
+  hover: hover 로 감싼다.
+  터치 기기에서는 탭 후 hover 상태가 남아 아이콘이 바뀐 채로 고정될 수 있다.
+*/
+@media (hover: hover) {
+  .nav-item:hover .icon-base {
+    opacity: 0;
+  }
+  .nav-item:hover .icon-hover {
+    opacity: 1;
+  }
+}
+
+/* 현재 위치한 탭은 호버 아이콘을 유지해 선택 상태를 강조한다 */
+.nav-item.active .icon-base {
+  opacity: 0;
+}
+.nav-item.active .icon-hover {
+  opacity: 1;
 }
 </style>
