@@ -164,13 +164,10 @@
 
 <script setup>
 import { ref } from "vue"
-import axios from "axios"
-import { useAccountStore } from "@/stores/accounts"
+import { requestFeedback } from "@/api/ai"
 import { useModalStore } from "@/stores/modal"
 import BaseModal from "@/components/common/BaseModal.vue"
 
-const API_URL = import.meta.env.VITE_REST_API_URL
-const accountStore = useAccountStore()
 const modal = useModalStore()
 
 // ✅ 사용자 입력(최대 500자)
@@ -231,15 +228,11 @@ const startCoaching = async () => {
   coachingMeta.value = { count: 0, from_days: 7, model: "" }
 
   try {
-    const res = await axios.post(
-      `${API_URL}/ai/feedback/`,
-      {
-        days: 7,
-        limit: 20,
-        extra_input: extraInput.value.trim(),
-      },
-      { headers: { Authorization: `Token ${accountStore.token}` } }
-    )
+    const res = await requestFeedback({
+      days: 7,
+      limit: 20,
+      extraInput: extraInput.value.trim(),
+    })
 
     const feedback = (res.data.feedback ?? "").trim()
     if (!feedback) {

@@ -53,9 +53,6 @@
     <!-- AI 히스토리 모달 -->
     <BaseModal v-if="historyOpen" @close="closeHistory">
       <AIHistory
-        :apiUrl="API_URL"
-        :token="accountStore.token"
-        :endpoint="`/ai/feedback/history/`"
         @close="closeHistory"
         @select="onSelectCoaching"
       />

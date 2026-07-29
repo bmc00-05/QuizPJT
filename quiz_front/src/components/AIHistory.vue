@@ -154,13 +154,7 @@
 
 <script setup>
 import { ref, onMounted, computed } from "vue"
-import axios from "axios"
-
-const props = defineProps({
-  apiUrl: { type: String, required: true },
-  token: { type: String, required: true },
-  endpoint: { type: String, required: true }, // list/history endpoint
-})
+import { fetchFeedbackHistory, deleteFeedback } from "@/api/ai"
 
 const emit = defineEmits(["close", "select"])
 const emitClose = () => emit("close")
@@ -184,9 +178,7 @@ const fetchHistory = async () => {
   loading.value = true
   error.value = ""
   try {
-    const res = await axios.get(`${props.apiUrl}${props.endpoint}`, {
-      headers: { Authorization: `Token ${props.token}` },
-    })
+    const res = await fetchFeedbackHistory()
     raw.value = res.data
   } catch (e) {
     console.error(e)
@@ -206,16 +198,6 @@ const backToList = () => {
   mode.value = "list"
   selected.value = null
   deleteError.value = ""
-}
-
-/**
- * ✅ 삭제 URL 빌더
- * - 여기만 네 API에 맞게 바꿔서 쓰면 됨.
- */
-const buildDeleteUrl = (id) => {
-  // TODO: 네 서버 삭제 URL로 교체
-  // 예) return `${props.apiUrl}/ai/feedback/history/${id}/`
-  return `${props.apiUrl}/ai/feedback/history/${id}/delete/`
 }
 
 const removeFromList = (id) => {
@@ -239,10 +221,7 @@ const deleteSelected = async () => {
   deleteError.value = ""
 
   try {
-    const url = buildDeleteUrl(selected.value.id)
-    await axios.delete(url, {
-      headers: { Authorization: `Token ${props.token}` },
-    })
+    await deleteFeedback(selected.value.id)
 
     // ✅ 삭제 성공: 리스트에서 제거 + 목록으로 복귀
     removeFromList(selected.value.id)
