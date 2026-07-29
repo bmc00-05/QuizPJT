@@ -3,20 +3,19 @@
     <!-- ✅ 상단 상태창 -->
     <div class="nav-panel shrink-0 bg-black">
       <div class="pixel-panel__content p-0 flex items-center gap-2 h-12 overflow-hidden whitespace-nowrap">
-        <!-- ✅ 좌측: 뱃지 -->
-        <div class="shrink-0">
-          <div class="input-panel-icon px-2 py-1">
-            <div class="pixel-panel__content p-0 w-10 h-10 flex items-center justify-center">
-              <img
-                v-if="badgeIconUrl"
-                :src="badgeIconUrl"
-                :alt="badgeName"
-                class="w-20 h-8 [image-rendering:pixelated] select-none"
-                draggable="false"
-              />
-              <span v-else class="text-[10px] opacity-60">NO</span>
-            </div>
-          </div>
+        <!-- ✅ 좌측: 착용 뱃지 (우측 설정 버튼과 동일한 정사각형 영역) -->
+        <div
+          class="shrink-0 input-panel-icon w-12 h-12 flex items-center justify-center"
+          :title="badgeName"
+        >
+          <img
+            v-if="badgeIconUrl"
+            :src="badgeIconUrl"
+            :alt="badgeName"
+            class="w-full h-full object-contain [image-rendering:pixelated] select-none"
+            draggable="false"
+          />
+          <span v-else class="text-[10px] opacity-60">NO</span>
         </div>
 
         <!-- 가운데 -->
@@ -37,14 +36,14 @@
 </div>
         <!-- 오른쪽 -->
 <button
-  class="shrink-0 input-panel-icon hover:bg-white/20"
+  class="shrink-0 input-panel-icon w-12 h-12 flex items-center justify-center"
   @click="openMenu"
   aria-label="설정"
 >
   <img
     :src="settingsIcon"
     alt=""
-    class="w-8 h-8 [image-rendering:pixelated] select-none"
+    class="w-full h-full object-contain [image-rendering:pixelated] select-none"
     draggable="false"
   />
 </button>
