@@ -55,45 +55,56 @@
     </div>
 <!-- 아래 패널 (스크롤 버전) -->
 <div class="pixel-panel flex-[9] min-h-0">
-  <div class="pixel-panel__content p-3 h-full min-h-0 flex flex-col">
+  <div class="pixel-panel__content p-2 h-full min-h-0 flex flex-col">
 
     <!-- ✅ 본문만 스크롤 -->
-    <div class="flex-1 min-h-0 overflow-auto">
+    <div class="flex-1 min-h-0 overflow-auto flex flex-col">
       <template v-if="mapData">
 
 
-        <div class="grid grid-cols-3 gap-2">
+        <div class="grid grid-cols-3 gap-2 w-full my-auto">
           <!-- 왼쪽(2칸) -->
           <div class="col-span-2 min-w-0">
-      <div class="ml-2 mb-1 text-lg font-bold">
+      <!-- 맵 이름 · 지역명 · 난이도를 한 줄에 배치 -->
+      <div class="ml-2 mt-1 mb-2 flex items-baseline flex-wrap gap-x-2 text-lg font-bold min-h-7">
           {{ currentMapName }}
-        <!-- 난이도 -->
-        <span v-if="problemSetData" class="mt-2 text-sm text-gray-800">
-            {{ problemSetData.title }}  
-        </span>                     
-          <!-- 지역명 -->
-          <div class="font-bold text-sm min-h-[20px]">
-              {{ currentRegionName }}
-          </div>
 
+          <!-- 지역명 -->
+          <span class="text-sm">
+              {{ currentRegionName }}
+          </span>
+
+          <!-- 난이도 -->
+          <span v-if="problemSetData" class="text-sm text-gray-800">
+              {{ problemSetData.title }}
+          </span>
         </div>
 
 
-<!-- 썸네일/배너 -->
-<div class="w-full h-28 input-panel-icon rounded mb-2 overflow-hidden bg-black/10">
+<!-- 썸네일/배너 : 난이도가 선택된 상태면 눌러서 바로 진입할 수 있다 -->
+<button
+  type="button"
+  class="w-full h-28 input-panel-icon rounded mb-2 overflow-hidden bg-black/10 block"
+  :class="problemSetData ? '' : 'cursor-default'"
+  :disabled="!problemSetData"
+  :aria-label="problemSetData ? `${currentMapName} ${problemSetData.title} 시작하기` : undefined"
+  @click="openModal()"
+>
 <img
   :src="currentBannerUrl"
   alt=""
   class="w-full h-full object-cover [image-rendering:pixelated]"
   draggable="false"
 />
-</div>
+</button>
 
-    <p class="input-panel-icon text-xs font-normal">{{ currentDescriptionText }}</p>
+    <p class="input-panel-icon text-xs font-normal leading-4 min-h-12">
+      {{ currentDescriptionText }}
+    </p>
     </div>
 
   <!-- 오른쪽(1칸) -->
-    <div class="col-span-1 flex flex-col items-end">
+    <div class="col-span-1 flex flex-col items-end justify-center">
             
 <button
   :class="[
@@ -102,7 +113,7 @@
   ]"
   @click="selectProblemSet('easy'); setActiveBtn('easy')"
 >
-  <div class="pixel-panel__content p-2 font-bold">EASY</div>
+  <div class="pixel-panel__content py-1 px-2 font-bold">EASY</div>
 </button>
 
 <button
@@ -112,7 +123,7 @@
   ]"
   @click="selectProblemSet('normal'); setActiveBtn('normal')"
 >
-  <div class="pixel-panel__content p-2 font-bold">NORMAL</div>
+  <div class="pixel-panel__content py-1 px-2 font-bold">NORMAL</div>
 </button>
 
 <button
@@ -122,15 +133,17 @@
   ]"
   @click="selectProblemSet('hard'); setActiveBtn('hard')"
 >
-  <div class="pixel-panel__content p-2 font-bold">HARD</div>
+  <div class="pixel-panel__content py-1 px-2 font-bold">HARD</div>
 </button>
 
 <button
-  v-if="problemSetData"
   class="button-panel w-full max-w-[100px]"
+  :class="problemSetData ? '' : 'invisible pointer-events-none'"
+  :disabled="!problemSetData"
+  :aria-hidden="!problemSetData"
   @click="openModal()"
 >
-  <div class="pixel-panel__content p-2 font-bold">GO!</div>
+  <div class="pixel-panel__content py-1 px-2 font-bold">GO!</div>
 </button>
 
           </div>
@@ -138,8 +151,8 @@
       </template>
 
       <template v-else>
-        <div class="text-sm text-gray-500">
-          위 지도에서 맵을 선택하면 정보가 표시됩니다.
+        <div class="my-auto w-full text-center text-sm text-gray-500">
+          지도에서 탐험할 장소를 선택해주세요
         </div>
       </template>
     </div>
