@@ -155,6 +155,9 @@
 <script setup>
 import { ref, onMounted, computed } from "vue"
 import { fetchFeedbackHistory, deleteFeedback } from "@/api/ai"
+import { useDialogStore } from "@/stores/dialog"
+
+const dialog = useDialogStore()
 
 const emit = defineEmits(["close", "select"])
 const emitClose = () => emit("close")
@@ -214,7 +217,10 @@ const deleteSelected = async () => {
   if (!selected.value?.id) return
   if (deleting.value) return
 
-  const ok = window.confirm("이 히스토리를 삭제할까요?")
+  const ok = await dialog.confirm("이 히스토리를 삭제할까요?", {
+    tone: "danger",
+    confirmText: "삭제",
+  })
   if (!ok) return
 
   deleting.value = true

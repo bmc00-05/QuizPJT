@@ -88,7 +88,10 @@
 <script setup>
 import { ref, watch } from 'vue'
 import { fetchProblem, updateProblem, deleteProblem } from "@/api/questions"
+import { useDialogStore } from "@/stores/dialog"
 import { useAccountStore } from '@/stores/accounts'
+
+const dialog = useDialogStore()
 
 const props = defineProps({
   quizid: { type: [Number, String], required: true },
@@ -168,14 +171,18 @@ const save = async () => {
     emit('saved')
   } catch (err) {
     console.error(err)
-    alert('저장에 실패했습니다.')
+    dialog.alert('저장에 실패했습니다.', { tone: 'danger' })
   } finally {
     saving.value = false
   }
 }
 
 const remove = async () => {
-  if (!confirm('정말 삭제할까요?')) return
+  const ok = await dialog.confirm("이 문제를 삭제할까요?", {
+    tone: "danger",
+    confirmText: "삭제",
+  })
+  if (!ok) return
 
   deleting.value = true
   try {
@@ -183,7 +190,7 @@ const remove = async () => {
     emit('deleted')
   } catch (err) {
     console.error(err)
-    alert('삭제에 실패했습니다.')
+    dialog.alert('삭제에 실패했습니다.', { tone: 'danger' })
   } finally {
     deleting.value = false
   }

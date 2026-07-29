@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory /* or createWebHashHistory */ } from 'vue-router'
 import { useAccountStore } from '@/stores/accounts'
 import { useUserStore } from '@/stores/user'
+import { useDialogStore } from '@/stores/dialog'
 
 import StartPage from '@/views/StartPage.vue'
 import LoginPage from '@/views/LoginPage.vue'
@@ -60,13 +61,13 @@ router.beforeEach(async (to) => {
 
   // ✅ /main 하위 전부 보호
   if (to.meta.requiresAuth && !accountStore.isLogin) {
-    window.alert('로그인이 필요합니다.')
+    useDialogStore().alert('로그인이 필요합니다.')
     return { name: 'login' }
   }
 
   // ✅ 로그인 상태면 로그인/회원가입 막기
   if ((to.name === 'signup' || to.name === 'login') && accountStore.isLogin) {
-    window.alert('이미 로그인 되어 있습니다.')
+    useDialogStore().alert('이미 로그인 되어 있습니다.')
     return { name: 'map' } // start 말고 실제 메인으로 보내는게 UX 보통 더 좋음
   }
 

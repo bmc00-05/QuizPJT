@@ -70,7 +70,10 @@ import { ref, computed, watch } from 'vue'
 import { useAccountStore } from '@/stores/accounts'
 import { useRoute } from 'vue-router'
 import { fetchProblemSet, updateProblemSet, deleteProblemSet } from "@/api/questions"
+import { useDialogStore } from "@/stores/dialog"
 import QuizList from '@/components/QuizList.vue'
+
+const dialog = useDialogStore()
 
 const accountStore = useAccountStore()
 const route = useRoute()
@@ -107,23 +110,26 @@ const updateQuizSet = async () => {
 
     quizSet.value = res.data
     emit('updated')
-    alert('문제집 수정 완료')
+    dialog.alert('문제집을 수정했습니다.')
   } catch (err) {
     console.error(err)
-    alert('문제집 수정 실패')
+    dialog.alert('문제집 수정에 실패했습니다.', { tone: 'danger' })
   }
 }
 
 const deleteQuizSet = async () => {
   if (!quizSetId.value) return
 
-  const ok = confirm("정말 이 문제집을 삭제할까요? (복구 불가)")
+  const ok = await dialog.confirm(
+    "정말 이 문제집을 삭제할까요? 삭제하면 복구할 수 없습니다.",
+    { tone: "danger", confirmText: "삭제" }
+  )
   if (!ok) return
 
   try {
     await deleteProblemSet(quizSetId.value)
 
-    alert("문제집 삭제 완료")
+    dialog.alert("문제집을 삭제했습니다.")
 
     // ✅ 부모에서 목록 다시 불러오게
     emit("deleted", quizSetId.value)
@@ -133,7 +139,7 @@ const deleteQuizSet = async () => {
     emit("close")
   } catch (err) {
     console.error(err)
-    alert("문제집 삭제 실패")
+    dialog.alert("문제집 삭제에 실패했습니다.", { tone: "danger" })
   }
 }
 

@@ -240,6 +240,7 @@ import { useRoute, useRouter, onBeforeRouteLeave } from "vue-router"
 import { startPlaySession, checkAnswer } from "@/api/game"
 import BaseModal from "@/components/common/BaseModal.vue"
 import { useModalStore } from "@/stores/modal"
+import { useDialogStore } from "@/stores/dialog"
 import LeaveConfirm from "@/components/LeaveConfirm.vue"
 import playerSheet from "@/assets/character/main_cat.png"
 import { ANIMS, PICK_RULES } from "@/game/anims"
@@ -272,6 +273,7 @@ const actionBgStyle = computed(() => ({
 }))
 
 const modal = useModalStore()
+const dialog = useDialogStore()
 const router = useRouter()
 const route = useRoute()
 
@@ -761,7 +763,7 @@ const createSession = async () => {
   isGameOver.value = false
   
   if (!problemSetId.value) {
-    alert("문제집 id가 없습니다.")
+    dialog.alert("문제집 id가 없습니다.")
     router.back()
     return
   }
@@ -777,7 +779,7 @@ const createSession = async () => {
     totalProblems.value = res.data.total_problems ?? quizList.value.length
 
     if (quizList.value.length === 0) {
-      alert("이 문제집에는 문제가 없습니다. 문제를 추가한 뒤 시작할 수 있어요.")
+      dialog.alert("이 문제집에는 문제가 없습니다. 문제를 추가한 뒤 시작할 수 있어요.")
       router.back()
       return
     }
@@ -785,7 +787,7 @@ const createSession = async () => {
     
   } catch (err) {
     console.error(err)
-    alert("게임을 시작할 수 없습니다. (문제집에 문제가 없거나 서버 오류)")
+    dialog.alert("게임을 시작할 수 없습니다. (문제집에 문제가 없거나 서버 오류)")
     router.back()
   } finally {
     isLoadingSession.value = false

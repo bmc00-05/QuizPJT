@@ -94,7 +94,10 @@
 <script setup>
 import { reactive, ref, vModelText } from 'vue'
 import { createProblem } from "@/api/questions"
+import { useDialogStore } from "@/stores/dialog"
 import { useAccountStore } from '@/stores/accounts'
+
+const dialog = useDialogStore()
 
 const accountStore = useAccountStore()
 
@@ -160,7 +163,7 @@ const createQuiz = async () => {
     })
 
     resetForm()
-    alert('퀴즈 생성 완료')
+    dialog.alert('퀴즈를 추가했습니다.')
 
     // ✅ 부모(UserMode)에게 "이제 ProblemSetCreate로 돌아가" 신호
     emit('done')

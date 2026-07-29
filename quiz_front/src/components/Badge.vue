@@ -92,7 +92,10 @@
 <script setup>
 import { ref, computed, onMounted } from "vue"
 import { fetchBadges, equipBadge, unequipBadge } from "@/api/profile"
+import { useDialogStore } from "@/stores/dialog"
 import { useAccountStore } from "@/stores/accounts"
+
+const dialog = useDialogStore()
 
 const accountStore = useAccountStore()
 
@@ -189,7 +192,7 @@ const equipSelected = async () => {
     await equipBadge(selected.value.id)
     await fetchDex()
   } catch (e) {
-    alert(e?.response?.data?.detail || "착용 실패")
+    dialog.alert(e?.response?.data?.detail || "착용 실패", { tone: "danger" })
   } finally {
     equipping.value = false
   }
@@ -201,7 +204,7 @@ const unequip = async () => {
     await unequipBadge()
     await fetchDex()
   } catch (e) {
-    alert(e?.response?.data?.detail || "해제 실패")
+    dialog.alert(e?.response?.data?.detail || "해제 실패", { tone: "danger" })
   } finally {
     equipping.value = false
   }
