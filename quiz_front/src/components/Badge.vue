@@ -15,14 +15,13 @@
         <button
           v-for="b in badges"
           :key="b.id"
-          class="relative aspect-square border rounded overflow-hidden"
+          class="relative aspect-square border rounded overflow-hidden hover:scale-[0.99]"
           :class="[
-            b.owned ? 'bg-white' : 'bg-gray-100',
+            b.owned ? 'bg-white' : 'bg-gray-100 opacity-60',
             b.equipped ? 'ring-2 ring-yellow-400' : '',
             selectedId === b.id ? 'outline outline-2 outline-blue-400' : '',
-            !b.owned ? 'opacity-50 cursor-not-allowed' : 'hover:scale-[0.99]'
           ]"
-          :disabled="!b.owned"
+          :aria-label="b.name"
           @click="select(b)"
         >
           <img
@@ -56,13 +55,28 @@
 
       <div class="mt-3 border-t pt-3">
         <div v-if="selected">
-          <div class="font-bold">{{ selected.name }}</div>
+          <div class="flex items-center gap-2">
+            <div class="font-bold">{{ selected.name }}</div>
+            <span
+              v-if="!selected.owned"
+              class="text-[10px] px-1 py-0.5 bg-gray-200 text-gray-600 rounded"
+            >
+              미보유
+            </span>
+          </div>
+
           <div class="text-xs text-gray-700 mt-1">{{ selected.description }}</div>
+
           <div class="text-xs text-gray-500 mt-1" v-if="selected.earned_at">
             획득: {{ formatDate(selected.earned_at) }}
           </div>
 
-          <div class="mt-3 flex gap-2">
+          <!-- 미보유 뱃지는 설명만 보여주고 착용 버튼을 노출하지 않는다 -->
+          <div v-if="!selected.owned" class="mt-3 text-xs text-gray-500">
+            아직 획득하지 않은 뱃지입니다.
+          </div>
+
+          <div v-else class="mt-3 flex gap-2">
             <button
               class="button-green px-1"
               :disabled="selected.equipped || equipping"
@@ -82,7 +96,7 @@
         </div>
 
         <div v-else class="text-sm text-gray-500">
-          보유한 뱃지를 선택하면 설명과 착용 버튼이 표시됩니다.
+          뱃지를 선택하면 설명이 표시됩니다.
         </div>
       </div>
     </div>
@@ -93,11 +107,8 @@
 import { ref, computed, onMounted } from "vue"
 import { fetchBadges, equipBadge, unequipBadge } from "@/api/profile"
 import { useDialogStore } from "@/stores/dialog"
-import { useAccountStore } from "@/stores/accounts"
 
 const dialog = useDialogStore()
-
-const accountStore = useAccountStore()
 
 const badges = ref([])
 const loading = ref(false)
@@ -180,8 +191,12 @@ const fetchDex = async () => {
   }
 }
 
+/**
+ * 미보유 뱃지도 선택할 수 있다.
+ * 도감이므로 어떤 뱃지가 있는지 미리 볼 수 있어야 하고,
+ * 착용만 막으면 충분하다.
+ */
 const select = (b) => {
-  if (!b.owned) return
   selectedId.value = b.id
 }
 
