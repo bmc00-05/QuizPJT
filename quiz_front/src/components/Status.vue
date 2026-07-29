@@ -129,7 +129,7 @@
 
 <script setup>
 import { useAccountStore } from "@/stores/accounts"
-import axios from "axios"
+import { fetchStatus } from "@/api/profile"
 import { ref, watch, computed } from "vue"
 
 const props = defineProps({
@@ -137,7 +137,6 @@ const props = defineProps({
 })
 
 const accountStore = useAccountStore()
-const API_URL = import.meta.env.VITE_REST_API_URL
 
 const stats = ref(null)
 const loading = ref(false)
@@ -146,20 +145,13 @@ const error = ref("")
 // ✅ 탭 상태
 const activeTab = ref("status") // 'status' | 'mastery'
 
-const buildUrl = () => {
-  if (!props.userId) return `${API_URL}/profile/status/`
-  return `${API_URL}/profile/status/${props.userId}/`
-}
-
 const getStatus = async () => {
   if (!accountStore.token) return
 
   loading.value = true
   error.value = ""
   try {
-    const res = await axios.get(buildUrl(), {
-      headers: { Authorization: `Token ${accountStore.token}` },
-    })
+    const res = await fetchStatus(props.userId)
     stats.value = res.data
   } catch (e) {
     console.error(e)

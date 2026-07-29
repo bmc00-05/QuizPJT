@@ -91,10 +91,9 @@
 
 <script setup>
 import { ref, computed, onMounted } from "vue"
-import axios from "axios"
+import { fetchBadges, equipBadge, unequipBadge } from "@/api/profile"
 import { useAccountStore } from "@/stores/accounts"
 
-const API_URL = import.meta.env.VITE_REST_API_URL
 const accountStore = useAccountStore()
 
 const badges = ref([])
@@ -159,9 +158,7 @@ const fetchDex = async () => {
   loading.value = true
   error.value = ""
   try {
-    const res = await axios.get(`${API_URL}/profile/badges/`, {
-      headers: { Authorization: `Token ${accountStore.token}` },
-    })
+    const res = await fetchBadges()
 
     badges.value = (res.data ?? []).map((b) => {
       const localIcon = resolveBadgeIcon(b.code)
@@ -189,11 +186,7 @@ const equipSelected = async () => {
   if (!selected.value) return
   equipping.value = true
   try {
-    await axios.post(
-      `${API_URL}/profile/equip-badge/`,
-      { badge_id: selected.value.id },
-      { headers: { Authorization: `Token ${accountStore.token}` } }
-    )
+    await equipBadge(selected.value.id)
     await fetchDex()
   } catch (e) {
     alert(e?.response?.data?.detail || "착용 실패")
@@ -205,11 +198,7 @@ const equipSelected = async () => {
 const unequip = async () => {
   equipping.value = true
   try {
-    await axios.post(
-      `${API_URL}/profile/unequip-badge/`,
-      {},
-      { headers: { Authorization: `Token ${accountStore.token}` } }
-    )
+    await unequipBadge()
     await fetchDex()
   } catch (e) {
     alert(e?.response?.data?.detail || "해제 실패")

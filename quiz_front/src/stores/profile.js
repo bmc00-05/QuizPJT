@@ -1,5 +1,6 @@
 import { defineStore } from "pinia"
-import axios from "axios"
+
+import * as profileApi from "@/api/profile"
 
 export const useProfileStore = defineStore("profile", {
   state: () => ({
@@ -10,13 +11,11 @@ export const useProfileStore = defineStore("profile", {
   }),
 
   actions: {
-    async fetchMyStatus(apiUrl, token) {
+    async fetchMyStatus() {
       this.loading = true
       this.error = null
       try {
-        const res = await axios.get(`${apiUrl}/profiles/status/`, {
-          headers: { Authorization: `Token ${token}` },
-        })
+        const res = await profileApi.fetchStatus()
         this.payload = res.data
         this.newBadges = res.data?.new_badges ?? []
         return res.data
@@ -28,13 +27,8 @@ export const useProfileStore = defineStore("profile", {
       }
     },
 
-    async ackNewBadges(apiUrl, token, codes) {
-      // codes 없으면 전부 ack 처리도 가능하지만, 안전하게 codes 보내는 방식 추천
-      await axios.post(
-        `${apiUrl}/profiles/me/badges/ack/`,
-        { codes },
-        { headers: { Authorization: `Token ${token}` } }
-      )
+    async ackNewBadges(codes) {
+      await profileApi.ackNewBadges(codes)
       this.newBadges = []
     },
   },

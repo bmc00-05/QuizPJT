@@ -35,8 +35,6 @@
           <div class="pixel-panel__content h-full min-h-0 p-1 overflow-hidden">
             <MemoPadInline
               v-if="accountStore.token"
-              :apiUrl="API_URL"
-              :token="accountStore.token"
               @openMyProblemSet="openMyProblem"
               @openHistory="openHistory"
               @openBadge="openBadge"
@@ -173,7 +171,7 @@ onMounted(() => {
 
 onMounted(async () => {
   // ✅ 홈(프로필) 진입 시 status 호출
-  await profileStore.fetchMyStatus(accountStore.apiUrl, accountStore.token)
+  await profileStore.fetchMyStatus()
 
   // ✅ 새 배지 있으면 모달 오픈
   if (badgesToShow.value.length > 0) {
@@ -187,7 +185,7 @@ async function closeBadgeModal() {
   // ✅ ack 호출(모달에서 실제로 보여준 codes만 보냄)
   const codes = badgesToShow.value.map(b => b.code)
   if (codes.length > 0) {
-    await profileStore.ackNewBadges(accountStore.apiUrl, accountStore.token, codes)
+    await profileStore.ackNewBadges(codes)
   }
 }
 

@@ -1,6 +1,5 @@
 import { defineStore } from "pinia"
-import axios from "axios"
-import { useAccountStore } from "@/stores/accounts"
+import { fetchProfile } from "@/api/profile"
 
 export const useUserStore = defineStore("user", {
   state: () => ({
@@ -44,13 +43,8 @@ export const useUserStore = defineStore("user", {
     async fetchUser({ force = false } = {}) {
       if (this.loaded && !force) return
 
-      const API_URL = import.meta.env.VITE_REST_API_URL
-      const accountStore = useAccountStore()
-
       try {
-        const res = await axios.get(`${API_URL}/profile/`, {
-          headers: { Authorization: `Token ${accountStore.token}` },
-        })
+        const res = await fetchProfile()
 
         this.applyProfile(res.data)
       } catch (e) {

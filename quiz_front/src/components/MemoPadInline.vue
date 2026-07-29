@@ -49,15 +49,10 @@
 </template>
 
 <script setup>
-import axios from "axios"
+import { fetchMemo, saveMemo } from "@/api/profile"
 import { ref, onMounted, onBeforeUnmount, watch } from "vue"
 
 defineEmits(["openHistory", "openBadge", "openMyProblemSet"])
-
-const props = defineProps({
-  apiUrl: { type: String, required: true },
-  token: { type: String, required: true },
-})
 
 const memo = ref("")
 const saving = ref(false)
@@ -65,12 +60,11 @@ const saved = ref(true)
 const error = ref("")
 let debounceTimer = null
 
-const headers = () => ({ Authorization: `Token ${props.token}` })
 
 const load = async () => {
   error.value = ""
   try {
-    const res = await axios.get(`${props.apiUrl}/profile/memo/`, { headers: headers() })
+    const res = await fetchMemo()
     memo.value = res.data.memo ?? ""
     saved.value = true
   } catch (e) {
@@ -84,11 +78,7 @@ const save = async () => {
   saving.value = true
   error.value = ""
   try {
-    await axios.patch(
-      `${props.apiUrl}/profile/memo/`,
-      { memo: memo.value },
-      { headers: headers() }
-    )
+    await saveMemo(memo.value)
     saved.value = true
   } catch (e) {
     console.error(e)

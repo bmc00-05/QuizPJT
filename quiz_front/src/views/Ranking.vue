@@ -76,7 +76,7 @@
 </template>
 
 <script setup>
-import axios from "axios"
+import { fetchRanking } from "@/api/profile"
 import { ref, onMounted } from "vue"
 import { useAccountStore } from "@/stores/accounts"
 
@@ -84,7 +84,6 @@ import BaseModal from "@/components/common/BaseModal.vue"
 import Status from "@/components/Status.vue"
 
 const accountStore = useAccountStore()
-const API_URL = import.meta.env.VITE_REST_API_URL
 
 const rankData = ref(null)
 
@@ -136,9 +135,7 @@ const closeUserModal = () => {
 }
 
 const getRank = async () => {
-  const res = await axios.get(`${API_URL}/profile/ranking/`, {
-    headers: { Authorization: `Token ${accountStore.token}` },
-  })
+  const res = await fetchRanking()
   rankData.value = res.data
 }
 
