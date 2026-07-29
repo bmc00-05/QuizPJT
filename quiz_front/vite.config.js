@@ -20,6 +20,16 @@ export default defineConfig({
     },
   },
 
+  server: {
+    // 포트를 고정한다.
+    // 기본 동작은 5173 이 사용 중이면 5174, 5175 로 조용히 밀리는데,
+    // 백엔드의 CORS_ALLOWED_ORIGINS 는 포트까지 포함해 허용하므로
+    // 포트가 바뀌면 preflight 가 막혀 "서버에 연결할 수 없습니다" 로 보인다.
+    // strictPort 로 조용히 밀리는 대신 즉시 실패하게 한다.
+    port: 5173,
+    strictPort: true,
+  },
+
   plugins: [
     // ✅ Tailwind v4: 반드시 Vite 플러그인으로 연결
     tailwindcss(),
