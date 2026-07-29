@@ -34,7 +34,15 @@
         <!-- =======================
              스테이터스 탭
         ======================== -->
-        <div v-if="activeTab === 'status'" class="flex flex-col gap-2" @click="activeTab='mastery'">
+        <div
+          v-if="activeTab === 'status'"
+          class="flex flex-col gap-2 cursor-pointer"
+          role="button"
+          tabindex="0"
+          aria-label="숙련도 탭으로 전환"
+          @click="activeTab='mastery'"
+          @keydown.enter.prevent="activeTab='mastery'"
+        >
           <!-- 1) 헤더 + EXP -->
           <div class="flex flex-col gap-1">
             <div class="flex items-baseline justify-between gap-2">
@@ -90,7 +98,15 @@
         <!-- =======================
              숙련도 탭
         ======================== -->
-        <div v-else class="flex flex-col gap-2" @click="activeTab='status'">
+        <div
+          v-else
+          class="flex flex-col gap-2 cursor-pointer"
+          role="button"
+          tabindex="0"
+          aria-label="스테이터스 탭으로 전환"
+          @click="activeTab='status'"
+          @keydown.enter.prevent="activeTab='status'"
+        >
           <div class="font-bold text-[12px]">숙련도</div>
 
           <div v-if="(stats.category_stats?.length ?? 0) === 0" class="text-[11px] opacity-70" > 

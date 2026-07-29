@@ -27,6 +27,31 @@
   #app {
     font-family: var(--font-sans);
   }
+
+  /*
+    클릭 가능한 요소에 손가락 커서를 준다.
+    Tailwind v4 의 preflight 는 button 커서를 default 로 지정하므로 명시가 필요하다.
+
+    클래스(.button-panel 등)가 아니라 요소·역할 기준으로 거는 이유:
+    .input-panel-icon 같은 스킨 클래스가 input / textarea 에도 함께 쓰이고 있어
+    클래스로 걸면 입력창까지 손가락 커서가 된다.
+  */
+  button,
+  summary,
+  a[href],
+  label[for],
+  select,
+  [role="button"],
+  ::file-selector-button {
+    cursor: pointer;
+  }
+
+  /* 비활성 상태는 클릭 불가임을 커서로 알린다 */
+  button:disabled,
+  select:disabled,
+  [aria-disabled="true"] {
+    cursor: not-allowed;
+  }
 }
 
 @layer components {
