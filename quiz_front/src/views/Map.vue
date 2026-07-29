@@ -79,7 +79,6 @@
         </div>
 
 
-
 <!-- 썸네일/배너 -->
 <div class="w-full h-28 input-panel-icon rounded mb-2 overflow-hidden bg-black/10">
 <img
@@ -216,13 +215,11 @@
 </template>
 
 
-
 <script setup>
 import { ref, computed, onMounted, watch } from 'vue'
-import { useAccountStore } from '@/stores/accounts'
 import { useModalStore } from '@/stores/modal'
 import { useRoute } from 'vue-router'
-import axios from 'axios'
+import { fetchMap, fetchMaps } from "@/api/game"
 import mapBgUrl from '@/assets/background/game_map.png'
 import BaseModal from '@/components/common/BaseModal.vue'
 import iconDefault from "@/assets/mapicons/default.png"
@@ -301,9 +298,7 @@ const currentBannerUrl = computed(() => {
 //   return MAP_BANNER[map.id] ?? bannerDefault
 // }
 
-const API_URL = import.meta.env.VITE_REST_API_URL
 const modal = useModalStore()
-const accountStore = useAccountStore()
 const maps = ref([])
 
 const hoverId = ref(null)
@@ -473,9 +468,7 @@ const getProblemSets = async (mapId) => {
 
   try {
     // ✅ 네 백엔드 map_detail: path('maps/<int:map_pk>/', views.map_detail)
-    const res = await axios.get(`${API_URL}/game/maps/${mapId}/`, {
-      headers: { Authorization: `Token ${accountStore.token}` },
-    })
+    const res = await fetchMap(mapId)
 
     // 서버 응답 구조에 따라 아래 둘 중 하나로 맞춰
     // 1) MapProblemSetSerializer가 { id, name, description, problem_sets: [...] } 형태라면:
@@ -514,9 +507,7 @@ const mapTransformStyle = computed(() => ({
 }))
 
 const getMaps = async () => {
-  const res = await axios.get(`${API_URL}/game/maps/`, {
-    headers: { Authorization: `Token ${accountStore.token}` },
-  })
+  const res = await fetchMaps()
   maps.value = res.data
 }
 

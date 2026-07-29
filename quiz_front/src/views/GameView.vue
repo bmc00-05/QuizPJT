@@ -235,10 +235,9 @@
 <script setup>
 import ActionSheet from "@/components/ActionSheet.vue"
 import { reactive, ref, onMounted, onBeforeUnmount, computed, watch, nextTick } from "vue"
-import { useAccountStore } from "@/stores/accounts"
 import { useUserStore } from "@/stores/user"
 import { useRoute, useRouter, onBeforeRouteLeave } from "vue-router"
-import axios from "axios"
+import { startPlaySession, checkAnswer } from "@/api/game"
 import BaseModal from "@/components/common/BaseModal.vue"
 import { useModalStore } from "@/stores/modal"
 import LeaveConfirm from "@/components/LeaveConfirm.vue"
@@ -276,8 +275,6 @@ const modal = useModalStore()
 const router = useRouter()
 const route = useRoute()
 
-const API_URL = import.meta.env.VITE_REST_API_URL
-const accountStore = useAccountStore()
 const userStore = useUserStore()
 
 const problemSetId = computed(() => route.params.id ?? route.params.problemSetId)
@@ -707,7 +704,6 @@ function onAnimFinished() {
 }
 
 
-
 // -----------------------------
 // UI 이벤트
 // -----------------------------
@@ -772,11 +768,9 @@ const createSession = async () => {
 
   isLoadingSession.value = true
   try {
-    const res = await axios.post(
-      `${API_URL}/game/quiz/play/`,
-      { problem_set_id: Number(problemSetId.value) },
-      { headers: { Authorization: `Token ${accountStore.token}` } }
-    )
+    const res = await startPlaySession({
+      problem_set_id: Number(problemSetId.value),
+    })
 
     sessionId.value = res.data.session_id
     quizList.value = res.data.problems || []
@@ -799,7 +793,6 @@ const createSession = async () => {
 }
 
 
-
 const checkQuiz = async () => {
   if (isGameOver.value) return
   if (!sessionId.value || !currentQuestion.value || selectedChoice.value === null) return
@@ -807,15 +800,11 @@ const checkQuiz = async () => {
   try {
     isChecking.value = true
 
-    const res = await axios.post(
-      `${API_URL}/game/quiz/check/`,
-      {
-        session_id: sessionId.value,
-        question_id: currentQuestion.value.id,
-        selected: selectedChoice.value,
-      },
-      { headers: { Authorization: `Token ${accountStore.token}` } }
-    )
+    const res = await checkAnswer({
+      session_id: sessionId.value,
+      question_id: currentQuestion.value.id,
+      selected: selectedChoice.value,
+    })
 
     result.value = res.data
     isAnswered.value = true

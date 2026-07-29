@@ -59,8 +59,6 @@
     <!-- 뱃지 모달 -->
     <BaseModal v-if="badgeOpen" @close="closeBadge">
       <Badge
-        :apiUrl="API_URL"
-        :token="accountStore.token"
         @close="closeBadge"
         @select="onSelectBadge"
       />
@@ -123,7 +121,6 @@ import Badge from "@/components/Badge.vue"
 import MyProblemSetManager from "@/components/MyProblemSetManager.vue"
 import { useUiStore } from "@/stores/ui"
 const router = useRouter()
-const API_URL = import.meta.env.VITE_REST_API_URL
 const accountStore = useAccountStore()
 const profileStore = useProfileStore()
 

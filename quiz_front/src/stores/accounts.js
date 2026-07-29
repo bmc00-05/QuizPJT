@@ -1,53 +1,33 @@
 import { ref, computed } from 'vue'
 import { defineStore } from 'pinia'
-import axios from 'axios'
-import { useRouter } from 'vue-router'
+
+import router from '@/router'
+import * as accountsApi from '@/api/accounts'
 
 export const useAccountStore = defineStore('account', () => {
 
-  const API_URL = import.meta.env.VITE_REST_API_URL
   const token = ref(null)
-
   const user = ref(null)
 
-  const router = useRouter()
-
   const signUp = async (payload) => {
-
-    try {
-        
-const res = await axios.post(
-        `${API_URL}/accounts/signup/`,
-        payload
-      )
-      return res.data
-
-    } catch (err) {
-      throw err
-    }
+    const res = await accountsApi.signUp(payload)
+    return res.data
   }
 
   const fetchMe = async () => {
     if (!token.value) return null
-    const res = await axios.get(`${API_URL}/accounts/user/`, {
-      headers: { Authorization: `Token ${token.value}` },
-    })
+    const res = await accountsApi.fetchMe()
     user.value = res.data
     return res.data
   }
 
   const logIn = async (payload) => {
-    try {
-      const res = await axios.post(`${API_URL}/accounts/login/`, payload)
+    const res = await accountsApi.logIn(payload)
 
-      token.value = res.data.key
+    token.value = res.data.key
+    await fetchMe()
 
-      await fetchMe()
-
-      return res
-    } catch (err) {
-      throw err
-    }
+    return res
   }
 
   const isLogin = computed(() => {
@@ -58,8 +38,12 @@ const res = await axios.post(
 
   const logOut = () => {
     token.value = null
+    user.value = null
+    // useRouter() 대신 라우터 인스턴스를 직접 import 한다.
+    // useRouter() 는 컴포넌트 setup 컨텍스트에서만 보장되므로,
+    // 스토어가 컴포넌트 밖에서 처음 사용되면 undefined 가 될 수 있다.
     router.push({ name: 'start' })
   }
 
-  return { token, user, userId, signUp, logIn, logOut, isLogin }
-}, { persist: true }) 
+  return { token, user, userId, signUp, logIn, logOut, fetchMe, isLogin }
+}, { persist: true })
