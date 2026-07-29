@@ -62,11 +62,11 @@
       <template v-if="mapData">
 
 
-        <div class="grid grid-cols-3 gap-2 w-full my-auto">
+        <div class="grid grid-cols-3 gap-2 w-full h-full">
           <!-- 왼쪽(2칸) -->
-          <div class="col-span-2 min-w-0">
+          <div class="col-span-2 min-w-0 flex flex-col min-h-0">
       <!-- 맵 이름 · 지역명 · 난이도를 한 줄에 배치 -->
-      <div class="ml-2 mt-1 mb-2 flex items-baseline flex-wrap gap-x-2 text-lg font-bold min-h-7">
+      <div class="shrink-0 ml-2 mt-1 mb-2 flex items-baseline flex-wrap gap-x-2 text-lg font-bold min-h-7">
           {{ currentMapName }}
 
           <!-- 지역명 -->
@@ -84,7 +84,7 @@
 <!-- 썸네일/배너 : 난이도가 선택된 상태면 눌러서 바로 진입할 수 있다 -->
 <button
   type="button"
-  class="w-full h-28 input-panel-icon rounded mb-2 overflow-hidden bg-black/10 block"
+  class="w-full flex-1 min-h-16 max-h-28 input-panel-icon rounded mb-2 overflow-hidden bg-black/10 block"
   :class="problemSetData ? '' : 'cursor-default'"
   :disabled="!problemSetData"
   :aria-label="problemSetData ? `${currentMapName} ${problemSetData.title} 시작하기` : undefined"
@@ -98,7 +98,7 @@
 />
 </button>
 
-    <p class="input-panel-icon text-xs font-normal leading-4 min-h-12">
+    <p class="shrink-0 input-panel-icon text-xs font-normal leading-4 min-h-12">
       {{ currentDescriptionText }}
     </p>
     </div>

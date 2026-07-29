@@ -1,5 +1,5 @@
 <template>
-  <div class="h-screen flex flex-col text-white min-h-0">
+  <div class="h-full flex flex-col text-white min-h-0">
     <!-- ✅ 상단 상태창 -->
     <div class="nav-panel shrink-0 bg-black">
       <div class="pixel-panel__content p-0 flex items-center gap-2 h-12 overflow-hidden whitespace-nowrap">

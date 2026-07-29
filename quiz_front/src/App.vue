@@ -1,6 +1,16 @@
 <template>
-  <div class="h-screen flex justify-center bg-neutral-900 overflow-x-auto">
-    <div class="w-full max-w-[420px] min-w-[420px] h-screen bg-amber-50 overflow-hidden">
+  <!--
+    h-[100dvh] : 모바일 브라우저 주소창 변화를 반영하는 동적 뷰포트 높이.
+                 100vh 는 주소창을 무시해 하단이 잘리거나 스크롤이 생긴다.
+    min-w 제거 : 420px 를 강제하면 375px(iPhone SE) 360px(갤럭시) 등
+                 대부분의 폰에서 가로 스크롤이 발생한다.
+    safe-area  : 노치와 홈 인디케이터를 피한다 (viewport-fit=cover 와 함께 동작).
+  -->
+  <div class="h-[100dvh] flex justify-center bg-neutral-900">
+    <div
+      class="w-full max-w-[420px] h-full bg-amber-50 overflow-hidden
+             pt-[env(safe-area-inset-top)] pb-[env(safe-area-inset-bottom)]"
+    >
       <RouterView class="h-full" />
     </div>
 

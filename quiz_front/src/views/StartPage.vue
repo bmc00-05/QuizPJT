@@ -1,10 +1,10 @@
 <template>
-  <div class="relative min-h-screen overflow-hidden flex flex-col">
+  <div class="relative min-h-full overflow-hidden flex flex-col">
     <div class="absolute inset-0 bg-start-bg bg-cover bg-center bg-no-repeat"></div>
     <div class="absolute inset-0 bg-black/30"></div>
 
-    <div class="relative z-10 flex min-h-screen flex-col">
-      <div class="min-h-screen flex items-center justify-center flex-col">
+    <div class="relative z-10 flex min-h-full flex-col">
+      <div class="min-h-full flex items-center justify-center flex-col">
         <!-- ✅ 타이틀 로고 -->
         <div class="fixed mt-10 top-0 z-20 h-32 w-full flex items-center justify-center pointer-events-none">
           <img
