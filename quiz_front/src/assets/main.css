@@ -212,6 +212,13 @@
     */
     padding: 5px;
     overflow: hidden;
+
+    /*
+      배경 이미지를 쓰는 경우 기본값(border-box)이면 프레임 바깥까지 칠해져
+      둥근 모서리 밖으로 삐져나온다. padding 안쪽으로만 그리도록 제한한다.
+      프레임 두께(13px)가 padding(5px)보다 크므로 경계에 빈틈은 생기지 않는다.
+    */
+    background-clip: content-box;
   }
 
   .frame-panel::after {

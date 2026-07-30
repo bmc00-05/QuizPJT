@@ -6,9 +6,16 @@
         <!-- 스프라이트 -->
         <div
           ref="spriteBox"
-          class="relative min-h-0 min-w-0 overflow-hidden bg-black/5 rounded"
+          class="relative min-h-0 min-w-0 frame-panel bg-cover bg-bottom"
+          :style="{ backgroundImage: `url(${houseBg})` }"
         >
-          <div class="absolute left-3/4 top-2/3 -translate-x-1/2 -translate-y-1/2">
+          <!--
+            배경(1024x434, 가로로 긴 이미지)을 세로 박스에 cover 로 채우면
+            박스 비율에 따라 잘리는 영역이 달라진다.
+            배경은 bg-bottom 으로 바닥선을 박스 하단에 고정하고,
+            캐릭터도 같은 기준(가로 중앙 + 하단)에 맞춰 배치한다.
+          -->
+          <div class="absolute left-[55%] bottom-[-15%] -translate-x-1/2">
             <SpriteSheet
               :src="idleSheet"
               :frameWidth="256"
@@ -111,6 +118,7 @@ import { useProfileStore } from "@/stores/profile"
 import BadgeCongratsModal from "@/components/BadgeCongratsModal.vue"
 
 import idleSheet from "@/assets/character/test_sheet.png"
+import houseBg from "@/assets/background/house.jpg"
 import SpriteSheet from "@/components/SpriteSheet.vue"
 import Status from "@/components/Status.vue"
 
@@ -207,11 +215,11 @@ const fitSprite = async () => {
   // SpriteSheet의 1배 크기 기준(256x256)
   const base = 256
 
-  // 박스에 맞게 축소(여유 0.92)
-  const s = Math.min(1, (bw / base) * 0.92, (bh / base) * 0.92)
+  // 박스에 맞게 조정. 계수를 키우면 캐릭터가 커진다.
+  const s = Math.min(1.3, (bw / base) * 1.3, (bh / base) * 1.3)
 
-  // 너무 작아지는 건 방지(원하면 0.5 → 0.4 등 조절)
-  spriteScale.value = Math.max(0.55, s)
+  // 너무 작아지는 건 방지
+  spriteScale.value = Math.max(0.65, s)
 }
 
 // 모달 상태
