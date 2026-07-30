@@ -72,14 +72,14 @@
             <div class="font-bold text-[12px] mb-1">통계</div>
             <div class="grid grid-cols-2 gap-1">
               <div class="border border-black/20 bg-black/5 px-2 py-1">
-                <div class="text-[10px] opacity-80">품</div>
+                <div class="text-[10px] opacity-80">푼 문제</div>
                 <div class="font-bold text-[12px] leading-tight">
                   {{ stats.stats.total_solved }}
                 </div>
               </div>
 
               <div class="border border-black/20 bg-black/5 px-2 py-1">
-                <div class="text-[10px] opacity-80">맞춤</div>
+                <div class="text-[10px] opacity-80">맞춘 문제</div>
                 <div class="font-bold text-[12px] leading-tight">
                   {{ stats.stats.total_correct }}
                 </div>
