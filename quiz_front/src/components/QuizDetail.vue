@@ -1,20 +1,22 @@
 <template>
-  <div class="text-black h-full max-h-[70vh] flex flex-col px-2">
+  <div class="text-black h-full min-h-0 flex flex-col px-2">
     <!-- 헤더 -->
-    <div class="shrink-0 flex items-center justify-between mb-2">
-      <h1 class="text-base font-semibold">퀴즈 상세/수정</h1>
-
-    </div>
+    <h1 class="shrink-0 text-base font-semibold mb-2">퀴즈 상세/수정</h1>
 
     <!-- 상태 -->
     <p v-if="loading" class="text-sm text-gray-600">불러오는 중...</p>
     <p v-else-if="error" class="text-sm text-red-500">{{ error }}</p>
 
-    <!-- 본문 -->
-    <div v-else-if="form" class="flex-1 overflow-y-auto pr-1">
-      <div class="text-xs text-gray-500 mb-2">Quiz #{{ props.quizid }}</div>
-
-      <form @submit.prevent="save" class="space-y-3">
+    <!--
+      form 을 flex 컨테이너로 삼아 입력 영역만 스크롤시키고 버튼은 하단에 고정한다.
+      버튼을 스크롤 영역 안에 sticky 로 두면 배경이 없어 뒤 내용이 비쳐 보인다.
+    -->
+    <form
+      v-else-if="form"
+      @submit.prevent="save"
+      class="flex-1 min-h-0 flex flex-col"
+    >
+      <div class="flex-1 min-h-0 overflow-y-auto no-scrollbar space-y-3 pr-1">
         <!-- 문제 -->
         <div>
           <label class="block text-xs font-medium mb-1">문제</label>
@@ -53,13 +55,18 @@
           <textarea v-model="form.explanation" rows="3" class="w-full input-panel-icon px-2 py-1.5 text-sm" />
         </div>
 
-        <p v-if="validationError" class="text-red-500 text-xs">{{ validationError }}</p>
+      </div>
 
-        <!-- 하단 버튼 -->
-        <div class="sticky bottom-0 pt-2 pb-1 flex gap-2">
+      <!-- 하단 고정 영역 -->
+      <div class="shrink-0 pt-3">
+        <p v-if="validationError" class="text-red-500 text-xs mb-2">
+          {{ validationError }}
+        </p>
+
+        <div class="flex gap-2">
           <button
             type="submit"
-            class="flex-1 button-green py-2  disabled:opacity-50"
+            class="flex-1 button-green py-2 disabled:opacity-50"
             :disabled="saving"
           >
             {{ saving ? '저장 중...' : '저장' }}
@@ -71,15 +78,15 @@
 
           <button
             type="button"
-            class="px-2 button-red"
+            class="px-2 button-red disabled:opacity-50"
             @click="remove"
             :disabled="deleting"
           >
             {{ deleting ? '삭제 중...' : '삭제' }}
           </button>
         </div>
-      </form>
-    </div>
+      </div>
+    </form>
 
     <p v-else class="text-sm text-gray-600">데이터가 없습니다.</p>
   </div>
