@@ -466,12 +466,14 @@ const selectMap = async (map) => {
 }
 
 const selectProblemSet = (difficulty) => {
-  // difficulty: 'easy' | 'normal' | 'hard'
-  const idxMap = { easy: 0, normal: 1, hard: 2 }
-  const idx = idxMap[difficulty]
+  // ProblemSet.Meta.ordering 은 ['-created_at'] 이라 난이도 순서를 보장하지 않는다.
+  // 배열 인덱스로 고르면 생성 시각이 바뀌는 순간 다른 난이도가 선택된다.
+  // 제목(EASY / NORMAL / HARD)으로 찾는다.
+  const target = String(difficulty).toLowerCase()
+  const sets = problemSets.value ?? []
 
-  const picked = problemSets.value?.[idx] ?? null
-  problemSetData.value = picked
+  problemSetData.value =
+    sets.find((ps) => String(ps.title).trim().toLowerCase() === target) ?? null
 }
 
 const getProblemSets = async (mapId) => {
