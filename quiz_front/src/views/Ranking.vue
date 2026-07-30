@@ -19,10 +19,10 @@
                  input-panel-content border-black/20 bg-white/40
                  text-[11px] font-bold opacity-80"
         >
-          <span class="w-10 text-center">RANK</span>
-          <span class="flex-1 text-center">USER</span>
-          <span class="w-16 text-center">LEVEL</span>
-          <span class="w-24 text-right">TOTAL EXP</span>
+          <span class="w-8 text-center shrink-0">RANK</span>
+          <span class="flex-1 text-center min-w-0">USER</span>
+          <span class="w-12 text-center shrink-0">LV</span>
+          <span class="w-16 text-right shrink-0">EXP</span>
         </div>
       </div>
 
@@ -32,10 +32,10 @@
           <li
             v-for="rank in (rankData.items ?? [])"
             :key="rank.user_id"
-            class="w-full flex items-center justify-between px-3 py-2 input-panel-icon"
+            class="w-full flex items-center justify-between px-3 py-2 content-panel is-interactive font-bold"
             @click="openUser(rank.user_id)"
           >
-            <span class="w-10 text-center font-bold">{{ rank.rank }}</span>
+            <span class="w-8 text-center shrink-0">{{ rank.rank }}</span>
 
             <!-- ✅ USER + badge -->
             <span class="flex-1 flex items-center justify-center gap-2 min-w-0">
@@ -49,8 +49,8 @@
               <span class="truncate">{{ rank.username }}</span>
             </span>
 
-            <span class="w-16 text-center">Lv {{ rank.level }}</span>
-            <span class="w-24 text-right">{{ rank.total_experience }}</span>
+            <span class="w-12 text-center shrink-0">Lv {{ rank.level }}</span>
+            <span class="w-16 text-right shrink-0">{{ rank.total_experience }}</span>
           </li>
         </ul>
       </div>

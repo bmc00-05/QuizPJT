@@ -36,7 +36,11 @@
     <div class="flex-1  min-h-0">
       <textarea
         v-model="memo"
-        class="h-full w-full p-2 input-panel rounded border bg-white/80 text-sm outline-none resize-none"
+        class="h-full w-full p-2 resize-none no-scrollbar
+               bg-white/25 text-sm text-black
+               border-2 rounded-md border-black/25 outline-none transition-colors
+               focus:border-black/50
+               placeholder:text-black/40"
         placeholder="여기에 개인 메모를 작성하세요..."
       />
     </div>
