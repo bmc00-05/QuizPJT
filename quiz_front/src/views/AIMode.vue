@@ -4,7 +4,7 @@
     <div class="pixel-panel flex-[7] min-h-0">
       <div class="pixel-panel__content p-3 h-full min-h-0 overflow-hidden flex flex-col">
         <div class="shrink-0 flex items-center justify-between mb-2">
-          <h1 class="text-black text-lg font-bold">AI 모드</h1>
+          <h1 class="text-black text-lg font-bold">AI 도우미</h1>
 
           <!-- 무료 AI 티어로 운영되므로 남은 횟수를 미리 알려준다 -->
           <div v-if="quota" class="text-xs text-right leading-tight">
@@ -18,11 +18,13 @@
         </div>
 
         <!-- ✅ 결과/로딩/에러 영역 (스크롤 가능) -->
-        <div class="flex-1 input-panel-icon min-h-0 overflow-auto p-3">
+        <div class="flex-1 input-panel-icon min-h-0 overflow-auto p-3 scroll-slim">
           <!-- 로딩 -->
           <div class="pixel-panel__content p-0">
           <template v-if="coachingLoading">
-            <div class="text-sm text-black/80 font-semibold">코칭 생성 중...</div>
+            <div class="text-sm text-black/80 font-semibold">
+              코칭 생성 중<span class="dots"><span>.</span><span>.</span><span>.</span></span>
+            </div>
             <div class="mt-2 text-xs text-black/60">
               최근 오답 데이터를 분석하고 있어요. 잠시만 기다려주세요.
             </div>
@@ -72,20 +74,6 @@
               {{ coachingText }}
             </div>
 
-            <div class="mt-3 flex gap-2">
-              <button
-                class="px-3 py-2 text-sm text-black rounded border bg-white hover:bg-white/80"
-                @click="startCoaching"
-              >
-                새로 생성
-              </button>
-              <button
-                class="px-3 py-2 text-sm text-black rounded border bg-white hover:bg-white/80"
-                @click="clearCoaching"
-              >
-                지우기
-              </button>
-            </div>
           </template>
 
           <!-- 기본 안내 -->
@@ -111,7 +99,7 @@
 
         <textarea
           v-model="extraInput"
-          class="w-full flex-1 input-panel-icon min-h-0 resize-none
+          class="w-full flex-1 input-panel-icon min-h-0 resize-none no-scrollbar
           p-2 text-sm text-black
               "
           placeholder=
@@ -146,13 +134,16 @@
       <div class="text-black space-y-3">
         <h2 class="text-lg font-bold">AI 코칭 생성</h2>
     <div class="text-sm text-gray-700 space-y-2 whitespace-pre-wrap">
-      <p>• 최근 7일 내 오답(최대 20개)을 기반으로 학습 피드백을 생성합니다.</p>
-      <p>• 생성된 피드백은 참고용이며, 최종 판단은 본인이 확인해야 합니다.</p>
-      <p>• 네트워크 상황에 따라 요청 시간이 길어질 수 있습니다.</p>
-      <p class="text-red-600 font-medium">※ 오답이 없으면 코칭이 생성되지 않을 수 있습니다.</p>
+      <p> • 최근 7일 내 오답(최대 20개)을 기반으로 학습 피드백을 생성합니다.</p>
+      <p> • 네트워크 상황에 따라 요청 시간이 길어질 수 있습니다.</p>
       <p v-if="quota">
         • 이번 요청 후 남는 횟수: <b>{{ Math.max(0, quota.user_remaining - 1) }}회</b>
+        (하루 {{ quota.user_limit }}회)
       </p>
+      <p>
+        • 사용 횟수는 각 요청으로부터 <b>24시간</b>이 지나면 1회씩 복구됩니다.
+      </p>
+      <p class="text-red-600 font-medium">※ 오답이 없으면 코칭이 생성되지 않을 수 있습니다.</p>
     </div>
         <p class="text-sm text-black/70 whitespace-pre-wrap">
           최근 오답 기반 코칭을 생성할까요?
@@ -323,4 +314,35 @@ const startCoaching = async () => {
 </script>
 
 <style scoped>
+/* 요청이 진행 중임을 알리는 점 애니메이션 */
+.dots > span {
+  opacity: 0;
+  animation: dot-appear 1.4s infinite;
+}
+.dots > span:nth-child(2) { animation-delay: 0.2s; }
+.dots > span:nth-child(3) { animation-delay: 0.4s; }
+
+@keyframes dot-appear {
+  0%, 20%   { opacity: 0; }
+  40%, 100% { opacity: 1; }
+}
+
+/* 얇고 눈에 덜 띄는 스크롤바 */
+.scroll-slim {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0, 0, 0, 0.25) transparent;
+}
+.scroll-slim::-webkit-scrollbar {
+  width: 6px;
+}
+.scroll-slim::-webkit-scrollbar-track {
+  background: transparent;
+}
+.scroll-slim::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.25);
+  border-radius: 3px;
+}
+.scroll-slim::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, 0.4);
+}
 </style>
