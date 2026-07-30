@@ -5,17 +5,14 @@
 
     <div v-else-if="quizSet" class="space-y-4">
       <!-- ✅ 헤더 -->
-      <div class="flex items-start justify-between  gap-3">
-        <div class="min-w-0">
-          <div class="text-xs text-black/50 mb-3"> #{{ quizSet.id }}</div>
-          <h2 class="text-lg font-black leading-snug truncate">
-            {{ quizSet.title }}
-          </h2>
-        </div>
+      <div class="flex items-center gap-2 pl-2">
+        <h2 class="min-w-0 text-lg font-black leading-snug truncate">
+          {{ quizSet.title }}
+        </h2>
 
         <button
           v-if="canEdit"
-          class="shrink-0 mr-5 mt-3 px-2 input-panel-icon text-xs"
+          class="shrink-0 px-2 input-panel-icon text-xs"
           @click="emit('edit', quizSet.id)"
         >
           수정
@@ -23,7 +20,7 @@
       </div>
 
       <!-- ✅ 설명 -->
-      <div class="input-panel-icon p-2 pb-8">
+      <div class="content-panel p-2 pb-8">
         <div class="text-xs  mb-1">설명</div>
         <p class="text-sm whitespace-pre-wrap leading-relaxed text-black/80">
           {{ quizSet.description }}
@@ -32,33 +29,38 @@
 
       <!-- ✅ 요약 정보 카드들 -->
       <div class="grid grid-cols-3 gap-2">
-        <div class="input-panel-icon p-1">
+        <div class="content-panel p-1">
           <div class="text-[11px] text-black/50">작성자</div>
           <div class="text-sm font-bold truncate">
             {{ quizSet.created_by_name ?? "-" }}
           </div>
         </div>
 
-        <div class="input-panel-icon p-1">
+        <div class="content-panel p-1">
           <div class="text-[11px] text-black/50">문제 수</div>
           <div class="text-sm font-bold">
             {{ quizSet.problem_count ?? 0 }}
           </div>
         </div>
 
-        <div class="input-panel-icon p-1">
+        <div class="content-panel p-1">
           <div class="text-[11px] text-black/50">좋아요</div>
           <div class="flex items-center justify-between gap-2">
             <div class="text-sm font-bold">
               {{ quizSet.like_count ?? 0 }}
             </div>
 
+            <!-- GameView 의 체력 표시와 동일하게 이모지 + 투명도로 상태를 나타낸다 -->
             <button
-              class="px-2 py-1 border rounded text-[11px] disabled:opacity-40"
+              class="shrink-0 leading-none text-base transition
+                     active:scale-90 disabled:active:scale-100"
+              :class="quizSet.is_liked ? 'opacity-100' : 'opacity-30'"
               :disabled="liking"
+              :aria-pressed="!!quizSet.is_liked"
+              :aria-label="quizSet.is_liked ? '좋아요 취소' : '좋아요'"
               @click.stop="toggleLike"
             >
-              {{ quizSet.is_liked ? "♥" : "♡" }}
+              ❤️
             </button>
           </div>
         </div>

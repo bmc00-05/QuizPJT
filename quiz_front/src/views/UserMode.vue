@@ -47,8 +47,8 @@
     >
       <!-- ✅ 얇은 선 바운더리 + 살짝 패딩만 -->
       <div
-        class="mx-2 my-1 input-panel-content border-black/20 bg-white/40
-               px-3 py-2 hover:bg-white/60 transition"
+        class="mx-2 my-1 content-panel is-interactive
+               px-3 py-2 transition"
       >
         <div class="flex items-start justify-between gap-3">
           <div class="min-w-0">

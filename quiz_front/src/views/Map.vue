@@ -84,7 +84,7 @@
 <!-- 썸네일/배너 : 난이도가 선택된 상태면 눌러서 바로 진입할 수 있다 -->
 <button
   type="button"
-  class="w-full flex-1 min-h-16 max-h-28 input-panel-icon rounded mb-2 overflow-hidden bg-black/10 block"
+  class="w-full flex-1 min-h-16 max-h-28 frame-panel mb-2 overflow-hidden block"
   :class="problemSetData ? '' : 'cursor-default'"
   :disabled="!problemSetData"
   :aria-label="problemSetData ? `${currentMapName} ${problemSetData.title} 시작하기` : undefined"
@@ -98,7 +98,7 @@
 />
 </button>
 
-    <p class="shrink-0 input-panel-icon text-xs font-normal leading-4 min-h-12">
+    <p class="shrink-0 content-panel text-xs font-normal leading-4 min-h-12">
       {{ currentDescriptionText }}
     </p>
     </div>
@@ -167,24 +167,21 @@
       <div class=" flex flex-col gap-3">
 
         <!-- 헤더 -->
-        <div class="text-center">
-          <div class="text-[13px] font-black tracking-widest">
+        <div class="text-center font-bold">
+          <div class="text-[15px] tracking-widest">
             {{ currentMapName }}
           </div>
-          <div class="text-[11px] opacity-80 mt-0.5">
+          <div class="text-[12px] mt-0.5">
             {{ currentRegionName }}
           </div>
 
-          <div class="mt-2 inline-flex items-center gap-2">
-            <span class="text-[11px] opacity-70">난이도</span>
-            <span class="text-[12px] font-bold">
-              {{ problemSetData.title }}
-            </span>
+          <div class="mt-2 text-[11px]">
+            난이도 {{ problemSetData.title }}
           </div>
         </div>
 
         <!-- 선택된 맵 이미지 -->
-        <div class="w-full h-28 input-panel-icon overflow-hidden bg-black/10">
+        <div class="w-full h-28 frame-panel">
           <img
             :src="currentBannerUrl"
             alt=""
@@ -194,14 +191,9 @@
         </div>
 
         <!-- 설명 -->
-        <div class="input-panel-icon px-2 py-2 text-[11px] leading-relaxed">
-          <div class="font-bold mb-1">진입 안내</div>
-          <div class="opacity-90">
-            {{ currentRegionName}}
-          </div>
-          <div class="mt-2 font-bold">
-            퀴즈 세션에 진입하겠습니까?
-          </div>
+        <div class="content-panel px-2 py-2 text-[11px] leading-relaxed font-bold">
+          <div class="mb-1">진입 안내</div>
+          <div>퀴즈 세션에 진입하겠습니까?</div>
         </div>
 
         <!-- 버튼 -->
